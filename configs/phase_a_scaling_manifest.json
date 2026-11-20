@@ -1,0 +1,2774 @@
+[
+  {
+    "num_train": 100000,
+    "dim": 32,
+    "num_components": 64,
+    "batch_size": 4096,
+    "epochs": 2.0
+  },
+  {
+    "num_train": 100000,
+    "dim": 32,
+    "num_components": 64,
+    "batch_size": 4096,
+    "epochs": 3.0
+  },
+  {
+    "num_train": 100000,
+    "dim": 32,
+    "num_components": 64,
+    "batch_size": 4096,
+    "epochs": 5.0
+  },
+  {
+    "num_train": 100000,
+    "dim": 32,
+    "num_components": 64,
+    "batch_size": 16384,
+    "epochs": 2.0
+  },
+  {
+    "num_train": 100000,
+    "dim": 32,
+    "num_components": 64,
+    "batch_size": 16384,
+    "epochs": 3.0
+  },
+  {
+    "num_train": 100000,
+    "dim": 32,
+    "num_components": 64,
+    "batch_size": 16384,
+    "epochs": 5.0
+  },
+  {
+    "num_train": 100000,
+    "dim": 32,
+    "num_components": 64,
+    "batch_size": 65536,
+    "epochs": 2.0
+  },
+  {
+    "num_train": 100000,
+    "dim": 32,
+    "num_components": 64,
+    "batch_size": 65536,
+    "epochs": 3.0
+  },
+  {
+    "num_train": 100000,
+    "dim": 32,
+    "num_components": 64,
+    "batch_size": 65536,
+    "epochs": 5.0
+  },
+  {
+    "num_train": 100000,
+    "dim": 32,
+    "num_components": 512,
+    "batch_size": 4096,
+    "epochs": 2.0
+  },
+  {
+    "num_train": 100000,
+    "dim": 32,
+    "num_components": 512,
+    "batch_size": 4096,
+    "epochs": 3.0
+  },
+  {
+    "num_train": 100000,
+    "dim": 32,
+    "num_components": 512,
+    "batch_size": 4096,
+    "epochs": 5.0
+  },
+  {
+    "num_train": 100000,
+    "dim": 32,
+    "num_components": 512,
+    "batch_size": 16384,
+    "epochs": 2.0
+  },
+  {
+    "num_train": 100000,
+    "dim": 32,
+    "num_components": 512,
+    "batch_size": 16384,
+    "epochs": 3.0
+  },
+  {
+    "num_train": 100000,
+    "dim": 32,
+    "num_components": 512,
+    "batch_size": 16384,
+    "epochs": 5.0
+  },
+  {
+    "num_train": 100000,
+    "dim": 32,
+    "num_components": 512,
+    "batch_size": 65536,
+    "epochs": 2.0
+  },
+  {
+    "num_train": 100000,
+    "dim": 32,
+    "num_components": 512,
+    "batch_size": 65536,
+    "epochs": 3.0
+  },
+  {
+    "num_train": 100000,
+    "dim": 32,
+    "num_components": 512,
+    "batch_size": 65536,
+    "epochs": 5.0
+  },
+  {
+    "num_train": 100000,
+    "dim": 32,
+    "num_components": 4096,
+    "batch_size": 4096,
+    "epochs": 2.0
+  },
+  {
+    "num_train": 100000,
+    "dim": 32,
+    "num_components": 4096,
+    "batch_size": 4096,
+    "epochs": 3.0
+  },
+  {
+    "num_train": 100000,
+    "dim": 32,
+    "num_components": 4096,
+    "batch_size": 4096,
+    "epochs": 5.0
+  },
+  {
+    "num_train": 100000,
+    "dim": 32,
+    "num_components": 4096,
+    "batch_size": 16384,
+    "epochs": 2.0
+  },
+  {
+    "num_train": 100000,
+    "dim": 32,
+    "num_components": 4096,
+    "batch_size": 16384,
+    "epochs": 3.0
+  },
+  {
+    "num_train": 100000,
+    "dim": 32,
+    "num_components": 4096,
+    "batch_size": 16384,
+    "epochs": 5.0
+  },
+  {
+    "num_train": 100000,
+    "dim": 32,
+    "num_components": 4096,
+    "batch_size": 65536,
+    "epochs": 2.0
+  },
+  {
+    "num_train": 100000,
+    "dim": 32,
+    "num_components": 4096,
+    "batch_size": 65536,
+    "epochs": 3.0
+  },
+  {
+    "num_train": 100000,
+    "dim": 32,
+    "num_components": 4096,
+    "batch_size": 65536,
+    "epochs": 5.0
+  },
+  {
+    "num_train": 100000,
+    "dim": 96,
+    "num_components": 64,
+    "batch_size": 4096,
+    "epochs": 2.0
+  },
+  {
+    "num_train": 100000,
+    "dim": 96,
+    "num_components": 64,
+    "batch_size": 4096,
+    "epochs": 3.0
+  },
+  {
+    "num_train": 100000,
+    "dim": 96,
+    "num_components": 64,
+    "batch_size": 4096,
+    "epochs": 5.0
+  },
+  {
+    "num_train": 100000,
+    "dim": 96,
+    "num_components": 64,
+    "batch_size": 16384,
+    "epochs": 2.0
+  },
+  {
+    "num_train": 100000,
+    "dim": 96,
+    "num_components": 64,
+    "batch_size": 16384,
+    "epochs": 3.0
+  },
+  {
+    "num_train": 100000,
+    "dim": 96,
+    "num_components": 64,
+    "batch_size": 16384,
+    "epochs": 5.0
+  },
+  {
+    "num_train": 100000,
+    "dim": 96,
+    "num_components": 64,
+    "batch_size": 65536,
+    "epochs": 2.0
+  },
+  {
+    "num_train": 100000,
+    "dim": 96,
+    "num_components": 64,
+    "batch_size": 65536,
+    "epochs": 3.0
+  },
+  {
+    "num_train": 100000,
+    "dim": 96,
+    "num_components": 64,
+    "batch_size": 65536,
+    "epochs": 5.0
+  },
+  {
+    "num_train": 100000,
+    "dim": 96,
+    "num_components": 512,
+    "batch_size": 4096,
+    "epochs": 2.0
+  },
+  {
+    "num_train": 100000,
+    "dim": 96,
+    "num_components": 512,
+    "batch_size": 4096,
+    "epochs": 3.0
+  },
+  {
+    "num_train": 100000,
+    "dim": 96,
+    "num_components": 512,
+    "batch_size": 4096,
+    "epochs": 5.0
+  },
+  {
+    "num_train": 100000,
+    "dim": 96,
+    "num_components": 512,
+    "batch_size": 16384,
+    "epochs": 2.0
+  },
+  {
+    "num_train": 100000,
+    "dim": 96,
+    "num_components": 512,
+    "batch_size": 16384,
+    "epochs": 3.0
+  },
+  {
+    "num_train": 100000,
+    "dim": 96,
+    "num_components": 512,
+    "batch_size": 16384,
+    "epochs": 5.0
+  },
+  {
+    "num_train": 100000,
+    "dim": 96,
+    "num_components": 512,
+    "batch_size": 65536,
+    "epochs": 2.0
+  },
+  {
+    "num_train": 100000,
+    "dim": 96,
+    "num_components": 512,
+    "batch_size": 65536,
+    "epochs": 3.0
+  },
+  {
+    "num_train": 100000,
+    "dim": 96,
+    "num_components": 512,
+    "batch_size": 65536,
+    "epochs": 5.0
+  },
+  {
+    "num_train": 100000,
+    "dim": 96,
+    "num_components": 4096,
+    "batch_size": 4096,
+    "epochs": 2.0
+  },
+  {
+    "num_train": 100000,
+    "dim": 96,
+    "num_components": 4096,
+    "batch_size": 4096,
+    "epochs": 3.0
+  },
+  {
+    "num_train": 100000,
+    "dim": 96,
+    "num_components": 4096,
+    "batch_size": 4096,
+    "epochs": 5.0
+  },
+  {
+    "num_train": 100000,
+    "dim": 96,
+    "num_components": 4096,
+    "batch_size": 16384,
+    "epochs": 2.0
+  },
+  {
+    "num_train": 100000,
+    "dim": 96,
+    "num_components": 4096,
+    "batch_size": 16384,
+    "epochs": 3.0
+  },
+  {
+    "num_train": 100000,
+    "dim": 96,
+    "num_components": 4096,
+    "batch_size": 16384,
+    "epochs": 5.0
+  },
+  {
+    "num_train": 100000,
+    "dim": 96,
+    "num_components": 4096,
+    "batch_size": 65536,
+    "epochs": 2.0
+  },
+  {
+    "num_train": 100000,
+    "dim": 96,
+    "num_components": 4096,
+    "batch_size": 65536,
+    "epochs": 3.0
+  },
+  {
+    "num_train": 100000,
+    "dim": 96,
+    "num_components": 4096,
+    "batch_size": 65536,
+    "epochs": 5.0
+  },
+  {
+    "num_train": 100000,
+    "dim": 256,
+    "num_components": 64,
+    "batch_size": 4096,
+    "epochs": 2.0
+  },
+  {
+    "num_train": 100000,
+    "dim": 256,
+    "num_components": 64,
+    "batch_size": 4096,
+    "epochs": 3.0
+  },
+  {
+    "num_train": 100000,
+    "dim": 256,
+    "num_components": 64,
+    "batch_size": 4096,
+    "epochs": 5.0
+  },
+  {
+    "num_train": 100000,
+    "dim": 256,
+    "num_components": 64,
+    "batch_size": 16384,
+    "epochs": 2.0
+  },
+  {
+    "num_train": 100000,
+    "dim": 256,
+    "num_components": 64,
+    "batch_size": 16384,
+    "epochs": 3.0
+  },
+  {
+    "num_train": 100000,
+    "dim": 256,
+    "num_components": 64,
+    "batch_size": 16384,
+    "epochs": 5.0
+  },
+  {
+    "num_train": 100000,
+    "dim": 256,
+    "num_components": 64,
+    "batch_size": 65536,
+    "epochs": 2.0
+  },
+  {
+    "num_train": 100000,
+    "dim": 256,
+    "num_components": 64,
+    "batch_size": 65536,
+    "epochs": 3.0
+  },
+  {
+    "num_train": 100000,
+    "dim": 256,
+    "num_components": 64,
+    "batch_size": 65536,
+    "epochs": 5.0
+  },
+  {
+    "num_train": 100000,
+    "dim": 256,
+    "num_components": 512,
+    "batch_size": 4096,
+    "epochs": 2.0
+  },
+  {
+    "num_train": 100000,
+    "dim": 256,
+    "num_components": 512,
+    "batch_size": 4096,
+    "epochs": 3.0
+  },
+  {
+    "num_train": 100000,
+    "dim": 256,
+    "num_components": 512,
+    "batch_size": 4096,
+    "epochs": 5.0
+  },
+  {
+    "num_train": 100000,
+    "dim": 256,
+    "num_components": 512,
+    "batch_size": 16384,
+    "epochs": 2.0
+  },
+  {
+    "num_train": 100000,
+    "dim": 256,
+    "num_components": 512,
+    "batch_size": 16384,
+    "epochs": 3.0
+  },
+  {
+    "num_train": 100000,
+    "dim": 256,
+    "num_components": 512,
+    "batch_size": 16384,
+    "epochs": 5.0
+  },
+  {
+    "num_train": 100000,
+    "dim": 256,
+    "num_components": 512,
+    "batch_size": 65536,
+    "epochs": 2.0
+  },
+  {
+    "num_train": 100000,
+    "dim": 256,
+    "num_components": 512,
+    "batch_size": 65536,
+    "epochs": 3.0
+  },
+  {
+    "num_train": 100000,
+    "dim": 256,
+    "num_components": 512,
+    "batch_size": 65536,
+    "epochs": 5.0
+  },
+  {
+    "num_train": 100000,
+    "dim": 256,
+    "num_components": 4096,
+    "batch_size": 4096,
+    "epochs": 2.0
+  },
+  {
+    "num_train": 100000,
+    "dim": 256,
+    "num_components": 4096,
+    "batch_size": 4096,
+    "epochs": 3.0
+  },
+  {
+    "num_train": 100000,
+    "dim": 256,
+    "num_components": 4096,
+    "batch_size": 4096,
+    "epochs": 5.0
+  },
+  {
+    "num_train": 100000,
+    "dim": 256,
+    "num_components": 4096,
+    "batch_size": 16384,
+    "epochs": 2.0
+  },
+  {
+    "num_train": 100000,
+    "dim": 256,
+    "num_components": 4096,
+    "batch_size": 16384,
+    "epochs": 3.0
+  },
+  {
+    "num_train": 100000,
+    "dim": 256,
+    "num_components": 4096,
+    "batch_size": 16384,
+    "epochs": 5.0
+  },
+  {
+    "num_train": 100000,
+    "dim": 256,
+    "num_components": 4096,
+    "batch_size": 65536,
+    "epochs": 2.0
+  },
+  {
+    "num_train": 100000,
+    "dim": 256,
+    "num_components": 4096,
+    "batch_size": 65536,
+    "epochs": 3.0
+  },
+  {
+    "num_train": 100000,
+    "dim": 256,
+    "num_components": 4096,
+    "batch_size": 65536,
+    "epochs": 5.0
+  },
+  {
+    "num_train": 100000,
+    "dim": 768,
+    "num_components": 64,
+    "batch_size": 4096,
+    "epochs": 2.0
+  },
+  {
+    "num_train": 100000,
+    "dim": 768,
+    "num_components": 64,
+    "batch_size": 4096,
+    "epochs": 3.0
+  },
+  {
+    "num_train": 100000,
+    "dim": 768,
+    "num_components": 64,
+    "batch_size": 4096,
+    "epochs": 5.0
+  },
+  {
+    "num_train": 100000,
+    "dim": 768,
+    "num_components": 64,
+    "batch_size": 16384,
+    "epochs": 2.0
+  },
+  {
+    "num_train": 100000,
+    "dim": 768,
+    "num_components": 64,
+    "batch_size": 16384,
+    "epochs": 3.0
+  },
+  {
+    "num_train": 100000,
+    "dim": 768,
+    "num_components": 64,
+    "batch_size": 16384,
+    "epochs": 5.0
+  },
+  {
+    "num_train": 100000,
+    "dim": 768,
+    "num_components": 64,
+    "batch_size": 65536,
+    "epochs": 2.0
+  },
+  {
+    "num_train": 100000,
+    "dim": 768,
+    "num_components": 64,
+    "batch_size": 65536,
+    "epochs": 3.0
+  },
+  {
+    "num_train": 100000,
+    "dim": 768,
+    "num_components": 64,
+    "batch_size": 65536,
+    "epochs": 5.0
+  },
+  {
+    "num_train": 100000,
+    "dim": 768,
+    "num_components": 512,
+    "batch_size": 4096,
+    "epochs": 2.0
+  },
+  {
+    "num_train": 100000,
+    "dim": 768,
+    "num_components": 512,
+    "batch_size": 4096,
+    "epochs": 3.0
+  },
+  {
+    "num_train": 100000,
+    "dim": 768,
+    "num_components": 512,
+    "batch_size": 4096,
+    "epochs": 5.0
+  },
+  {
+    "num_train": 100000,
+    "dim": 768,
+    "num_components": 512,
+    "batch_size": 16384,
+    "epochs": 2.0
+  },
+  {
+    "num_train": 100000,
+    "dim": 768,
+    "num_components": 512,
+    "batch_size": 16384,
+    "epochs": 3.0
+  },
+  {
+    "num_train": 100000,
+    "dim": 768,
+    "num_components": 512,
+    "batch_size": 16384,
+    "epochs": 5.0
+  },
+  {
+    "num_train": 100000,
+    "dim": 768,
+    "num_components": 512,
+    "batch_size": 65536,
+    "epochs": 2.0
+  },
+  {
+    "num_train": 100000,
+    "dim": 768,
+    "num_components": 512,
+    "batch_size": 65536,
+    "epochs": 3.0
+  },
+  {
+    "num_train": 100000,
+    "dim": 768,
+    "num_components": 512,
+    "batch_size": 65536,
+    "epochs": 5.0
+  },
+  {
+    "num_train": 100000,
+    "dim": 768,
+    "num_components": 4096,
+    "batch_size": 4096,
+    "epochs": 2.0
+  },
+  {
+    "num_train": 100000,
+    "dim": 768,
+    "num_components": 4096,
+    "batch_size": 4096,
+    "epochs": 3.0
+  },
+  {
+    "num_train": 100000,
+    "dim": 768,
+    "num_components": 4096,
+    "batch_size": 4096,
+    "epochs": 5.0
+  },
+  {
+    "num_train": 100000,
+    "dim": 768,
+    "num_components": 4096,
+    "batch_size": 16384,
+    "epochs": 2.0
+  },
+  {
+    "num_train": 100000,
+    "dim": 768,
+    "num_components": 4096,
+    "batch_size": 16384,
+    "epochs": 3.0
+  },
+  {
+    "num_train": 100000,
+    "dim": 768,
+    "num_components": 4096,
+    "batch_size": 16384,
+    "epochs": 5.0
+  },
+  {
+    "num_train": 100000,
+    "dim": 768,
+    "num_components": 4096,
+    "batch_size": 65536,
+    "epochs": 2.0
+  },
+  {
+    "num_train": 100000,
+    "dim": 768,
+    "num_components": 4096,
+    "batch_size": 65536,
+    "epochs": 3.0
+  },
+  {
+    "num_train": 100000,
+    "dim": 768,
+    "num_components": 4096,
+    "batch_size": 65536,
+    "epochs": 5.0
+  },
+  {
+    "num_train": 1000000,
+    "dim": 32,
+    "num_components": 64,
+    "batch_size": 4096,
+    "epochs": 2.0
+  },
+  {
+    "num_train": 1000000,
+    "dim": 32,
+    "num_components": 64,
+    "batch_size": 4096,
+    "epochs": 3.0
+  },
+  {
+    "num_train": 1000000,
+    "dim": 32,
+    "num_components": 64,
+    "batch_size": 4096,
+    "epochs": 5.0
+  },
+  {
+    "num_train": 1000000,
+    "dim": 32,
+    "num_components": 64,
+    "batch_size": 16384,
+    "epochs": 2.0
+  },
+  {
+    "num_train": 1000000,
+    "dim": 32,
+    "num_components": 64,
+    "batch_size": 16384,
+    "epochs": 3.0
+  },
+  {
+    "num_train": 1000000,
+    "dim": 32,
+    "num_components": 64,
+    "batch_size": 16384,
+    "epochs": 5.0
+  },
+  {
+    "num_train": 1000000,
+    "dim": 32,
+    "num_components": 64,
+    "batch_size": 65536,
+    "epochs": 2.0
+  },
+  {
+    "num_train": 1000000,
+    "dim": 32,
+    "num_components": 64,
+    "batch_size": 65536,
+    "epochs": 3.0
+  },
+  {
+    "num_train": 1000000,
+    "dim": 32,
+    "num_components": 64,
+    "batch_size": 65536,
+    "epochs": 5.0
+  },
+  {
+    "num_train": 1000000,
+    "dim": 32,
+    "num_components": 512,
+    "batch_size": 4096,
+    "epochs": 2.0
+  },
+  {
+    "num_train": 1000000,
+    "dim": 32,
+    "num_components": 512,
+    "batch_size": 4096,
+    "epochs": 3.0
+  },
+  {
+    "num_train": 1000000,
+    "dim": 32,
+    "num_components": 512,
+    "batch_size": 4096,
+    "epochs": 5.0
+  },
+  {
+    "num_train": 1000000,
+    "dim": 32,
+    "num_components": 512,
+    "batch_size": 16384,
+    "epochs": 2.0
+  },
+  {
+    "num_train": 1000000,
+    "dim": 32,
+    "num_components": 512,
+    "batch_size": 16384,
+    "epochs": 3.0
+  },
+  {
+    "num_train": 1000000,
+    "dim": 32,
+    "num_components": 512,
+    "batch_size": 16384,
+    "epochs": 5.0
+  },
+  {
+    "num_train": 1000000,
+    "dim": 32,
+    "num_components": 512,
+    "batch_size": 65536,
+    "epochs": 2.0
+  },
+  {
+    "num_train": 1000000,
+    "dim": 32,
+    "num_components": 512,
+    "batch_size": 65536,
+    "epochs": 3.0
+  },
+  {
+    "num_train": 1000000,
+    "dim": 32,
+    "num_components": 512,
+    "batch_size": 65536,
+    "epochs": 5.0
+  },
+  {
+    "num_train": 1000000,
+    "dim": 32,
+    "num_components": 4096,
+    "batch_size": 4096,
+    "epochs": 2.0
+  },
+  {
+    "num_train": 1000000,
+    "dim": 32,
+    "num_components": 4096,
+    "batch_size": 4096,
+    "epochs": 3.0
+  },
+  {
+    "num_train": 1000000,
+    "dim": 32,
+    "num_components": 4096,
+    "batch_size": 4096,
+    "epochs": 5.0
+  },
+  {
+    "num_train": 1000000,
+    "dim": 32,
+    "num_components": 4096,
+    "batch_size": 16384,
+    "epochs": 2.0
+  },
+  {
+    "num_train": 1000000,
+    "dim": 32,
+    "num_components": 4096,
+    "batch_size": 16384,
+    "epochs": 3.0
+  },
+  {
+    "num_train": 1000000,
+    "dim": 32,
+    "num_components": 4096,
+    "batch_size": 16384,
+    "epochs": 5.0
+  },
+  {
+    "num_train": 1000000,
+    "dim": 32,
+    "num_components": 4096,
+    "batch_size": 65536,
+    "epochs": 2.0
+  },
+  {
+    "num_train": 1000000,
+    "dim": 32,
+    "num_components": 4096,
+    "batch_size": 65536,
+    "epochs": 3.0
+  },
+  {
+    "num_train": 1000000,
+    "dim": 32,
+    "num_components": 4096,
+    "batch_size": 65536,
+    "epochs": 5.0
+  },
+  {
+    "num_train": 1000000,
+    "dim": 32,
+    "num_components": 16384,
+    "batch_size": 4096,
+    "epochs": 2.0
+  },
+  {
+    "num_train": 1000000,
+    "dim": 32,
+    "num_components": 16384,
+    "batch_size": 4096,
+    "epochs": 3.0
+  },
+  {
+    "num_train": 1000000,
+    "dim": 32,
+    "num_components": 16384,
+    "batch_size": 4096,
+    "epochs": 5.0
+  },
+  {
+    "num_train": 1000000,
+    "dim": 32,
+    "num_components": 16384,
+    "batch_size": 16384,
+    "epochs": 2.0
+  },
+  {
+    "num_train": 1000000,
+    "dim": 32,
+    "num_components": 16384,
+    "batch_size": 16384,
+    "epochs": 3.0
+  },
+  {
+    "num_train": 1000000,
+    "dim": 32,
+    "num_components": 16384,
+    "batch_size": 16384,
+    "epochs": 5.0
+  },
+  {
+    "num_train": 1000000,
+    "dim": 32,
+    "num_components": 16384,
+    "batch_size": 65536,
+    "epochs": 2.0
+  },
+  {
+    "num_train": 1000000,
+    "dim": 32,
+    "num_components": 16384,
+    "batch_size": 65536,
+    "epochs": 3.0
+  },
+  {
+    "num_train": 1000000,
+    "dim": 32,
+    "num_components": 16384,
+    "batch_size": 65536,
+    "epochs": 5.0
+  },
+  {
+    "num_train": 1000000,
+    "dim": 96,
+    "num_components": 64,
+    "batch_size": 4096,
+    "epochs": 2.0
+  },
+  {
+    "num_train": 1000000,
+    "dim": 96,
+    "num_components": 64,
+    "batch_size": 4096,
+    "epochs": 3.0
+  },
+  {
+    "num_train": 1000000,
+    "dim": 96,
+    "num_components": 64,
+    "batch_size": 4096,
+    "epochs": 5.0
+  },
+  {
+    "num_train": 1000000,
+    "dim": 96,
+    "num_components": 64,
+    "batch_size": 16384,
+    "epochs": 2.0
+  },
+  {
+    "num_train": 1000000,
+    "dim": 96,
+    "num_components": 64,
+    "batch_size": 16384,
+    "epochs": 3.0
+  },
+  {
+    "num_train": 1000000,
+    "dim": 96,
+    "num_components": 64,
+    "batch_size": 16384,
+    "epochs": 5.0
+  },
+  {
+    "num_train": 1000000,
+    "dim": 96,
+    "num_components": 64,
+    "batch_size": 65536,
+    "epochs": 2.0
+  },
+  {
+    "num_train": 1000000,
+    "dim": 96,
+    "num_components": 64,
+    "batch_size": 65536,
+    "epochs": 3.0
+  },
+  {
+    "num_train": 1000000,
+    "dim": 96,
+    "num_components": 64,
+    "batch_size": 65536,
+    "epochs": 5.0
+  },
+  {
+    "num_train": 1000000,
+    "dim": 96,
+    "num_components": 512,
+    "batch_size": 4096,
+    "epochs": 2.0
+  },
+  {
+    "num_train": 1000000,
+    "dim": 96,
+    "num_components": 512,
+    "batch_size": 4096,
+    "epochs": 3.0
+  },
+  {
+    "num_train": 1000000,
+    "dim": 96,
+    "num_components": 512,
+    "batch_size": 4096,
+    "epochs": 5.0
+  },
+  {
+    "num_train": 1000000,
+    "dim": 96,
+    "num_components": 512,
+    "batch_size": 16384,
+    "epochs": 2.0
+  },
+  {
+    "num_train": 1000000,
+    "dim": 96,
+    "num_components": 512,
+    "batch_size": 16384,
+    "epochs": 3.0
+  },
+  {
+    "num_train": 1000000,
+    "dim": 96,
+    "num_components": 512,
+    "batch_size": 16384,
+    "epochs": 5.0
+  },
+  {
+    "num_train": 1000000,
+    "dim": 96,
+    "num_components": 512,
+    "batch_size": 65536,
+    "epochs": 2.0
+  },
+  {
+    "num_train": 1000000,
+    "dim": 96,
+    "num_components": 512,
+    "batch_size": 65536,
+    "epochs": 3.0
+  },
+  {
+    "num_train": 1000000,
+    "dim": 96,
+    "num_components": 512,
+    "batch_size": 65536,
+    "epochs": 5.0
+  },
+  {
+    "num_train": 1000000,
+    "dim": 96,
+    "num_components": 4096,
+    "batch_size": 4096,
+    "epochs": 2.0
+  },
+  {
+    "num_train": 1000000,
+    "dim": 96,
+    "num_components": 4096,
+    "batch_size": 4096,
+    "epochs": 3.0
+  },
+  {
+    "num_train": 1000000,
+    "dim": 96,
+    "num_components": 4096,
+    "batch_size": 4096,
+    "epochs": 5.0
+  },
+  {
+    "num_train": 1000000,
+    "dim": 96,
+    "num_components": 4096,
+    "batch_size": 16384,
+    "epochs": 2.0
+  },
+  {
+    "num_train": 1000000,
+    "dim": 96,
+    "num_components": 4096,
+    "batch_size": 16384,
+    "epochs": 3.0
+  },
+  {
+    "num_train": 1000000,
+    "dim": 96,
+    "num_components": 4096,
+    "batch_size": 16384,
+    "epochs": 5.0
+  },
+  {
+    "num_train": 1000000,
+    "dim": 96,
+    "num_components": 4096,
+    "batch_size": 65536,
+    "epochs": 2.0
+  },
+  {
+    "num_train": 1000000,
+    "dim": 96,
+    "num_components": 4096,
+    "batch_size": 65536,
+    "epochs": 3.0
+  },
+  {
+    "num_train": 1000000,
+    "dim": 96,
+    "num_components": 4096,
+    "batch_size": 65536,
+    "epochs": 5.0
+  },
+  {
+    "num_train": 1000000,
+    "dim": 96,
+    "num_components": 16384,
+    "batch_size": 4096,
+    "epochs": 2.0
+  },
+  {
+    "num_train": 1000000,
+    "dim": 96,
+    "num_components": 16384,
+    "batch_size": 4096,
+    "epochs": 3.0
+  },
+  {
+    "num_train": 1000000,
+    "dim": 96,
+    "num_components": 16384,
+    "batch_size": 4096,
+    "epochs": 5.0
+  },
+  {
+    "num_train": 1000000,
+    "dim": 96,
+    "num_components": 16384,
+    "batch_size": 16384,
+    "epochs": 2.0
+  },
+  {
+    "num_train": 1000000,
+    "dim": 96,
+    "num_components": 16384,
+    "batch_size": 16384,
+    "epochs": 3.0
+  },
+  {
+    "num_train": 1000000,
+    "dim": 96,
+    "num_components": 16384,
+    "batch_size": 16384,
+    "epochs": 5.0
+  },
+  {
+    "num_train": 1000000,
+    "dim": 96,
+    "num_components": 16384,
+    "batch_size": 65536,
+    "epochs": 2.0
+  },
+  {
+    "num_train": 1000000,
+    "dim": 96,
+    "num_components": 16384,
+    "batch_size": 65536,
+    "epochs": 3.0
+  },
+  {
+    "num_train": 1000000,
+    "dim": 96,
+    "num_components": 16384,
+    "batch_size": 65536,
+    "epochs": 5.0
+  },
+  {
+    "num_train": 1000000,
+    "dim": 256,
+    "num_components": 64,
+    "batch_size": 4096,
+    "epochs": 2.0
+  },
+  {
+    "num_train": 1000000,
+    "dim": 256,
+    "num_components": 64,
+    "batch_size": 4096,
+    "epochs": 3.0
+  },
+  {
+    "num_train": 1000000,
+    "dim": 256,
+    "num_components": 64,
+    "batch_size": 4096,
+    "epochs": 5.0
+  },
+  {
+    "num_train": 1000000,
+    "dim": 256,
+    "num_components": 64,
+    "batch_size": 16384,
+    "epochs": 2.0
+  },
+  {
+    "num_train": 1000000,
+    "dim": 256,
+    "num_components": 64,
+    "batch_size": 16384,
+    "epochs": 3.0
+  },
+  {
+    "num_train": 1000000,
+    "dim": 256,
+    "num_components": 64,
+    "batch_size": 16384,
+    "epochs": 5.0
+  },
+  {
+    "num_train": 1000000,
+    "dim": 256,
+    "num_components": 64,
+    "batch_size": 65536,
+    "epochs": 2.0
+  },
+  {
+    "num_train": 1000000,
+    "dim": 256,
+    "num_components": 64,
+    "batch_size": 65536,
+    "epochs": 3.0
+  },
+  {
+    "num_train": 1000000,
+    "dim": 256,
+    "num_components": 64,
+    "batch_size": 65536,
+    "epochs": 5.0
+  },
+  {
+    "num_train": 1000000,
+    "dim": 256,
+    "num_components": 512,
+    "batch_size": 4096,
+    "epochs": 2.0
+  },
+  {
+    "num_train": 1000000,
+    "dim": 256,
+    "num_components": 512,
+    "batch_size": 4096,
+    "epochs": 3.0
+  },
+  {
+    "num_train": 1000000,
+    "dim": 256,
+    "num_components": 512,
+    "batch_size": 4096,
+    "epochs": 5.0
+  },
+  {
+    "num_train": 1000000,
+    "dim": 256,
+    "num_components": 512,
+    "batch_size": 16384,
+    "epochs": 2.0
+  },
+  {
+    "num_train": 1000000,
+    "dim": 256,
+    "num_components": 512,
+    "batch_size": 16384,
+    "epochs": 3.0
+  },
+  {
+    "num_train": 1000000,
+    "dim": 256,
+    "num_components": 512,
+    "batch_size": 16384,
+    "epochs": 5.0
+  },
+  {
+    "num_train": 1000000,
+    "dim": 256,
+    "num_components": 512,
+    "batch_size": 65536,
+    "epochs": 2.0
+  },
+  {
+    "num_train": 1000000,
+    "dim": 256,
+    "num_components": 512,
+    "batch_size": 65536,
+    "epochs": 3.0
+  },
+  {
+    "num_train": 1000000,
+    "dim": 256,
+    "num_components": 512,
+    "batch_size": 65536,
+    "epochs": 5.0
+  },
+  {
+    "num_train": 1000000,
+    "dim": 256,
+    "num_components": 4096,
+    "batch_size": 4096,
+    "epochs": 2.0
+  },
+  {
+    "num_train": 1000000,
+    "dim": 256,
+    "num_components": 4096,
+    "batch_size": 4096,
+    "epochs": 3.0
+  },
+  {
+    "num_train": 1000000,
+    "dim": 256,
+    "num_components": 4096,
+    "batch_size": 4096,
+    "epochs": 5.0
+  },
+  {
+    "num_train": 1000000,
+    "dim": 256,
+    "num_components": 4096,
+    "batch_size": 16384,
+    "epochs": 2.0
+  },
+  {
+    "num_train": 1000000,
+    "dim": 256,
+    "num_components": 4096,
+    "batch_size": 16384,
+    "epochs": 3.0
+  },
+  {
+    "num_train": 1000000,
+    "dim": 256,
+    "num_components": 4096,
+    "batch_size": 16384,
+    "epochs": 5.0
+  },
+  {
+    "num_train": 1000000,
+    "dim": 256,
+    "num_components": 4096,
+    "batch_size": 65536,
+    "epochs": 2.0
+  },
+  {
+    "num_train": 1000000,
+    "dim": 256,
+    "num_components": 4096,
+    "batch_size": 65536,
+    "epochs": 3.0
+  },
+  {
+    "num_train": 1000000,
+    "dim": 256,
+    "num_components": 4096,
+    "batch_size": 65536,
+    "epochs": 5.0
+  },
+  {
+    "num_train": 1000000,
+    "dim": 256,
+    "num_components": 16384,
+    "batch_size": 4096,
+    "epochs": 2.0
+  },
+  {
+    "num_train": 1000000,
+    "dim": 256,
+    "num_components": 16384,
+    "batch_size": 4096,
+    "epochs": 3.0
+  },
+  {
+    "num_train": 1000000,
+    "dim": 256,
+    "num_components": 16384,
+    "batch_size": 4096,
+    "epochs": 5.0
+  },
+  {
+    "num_train": 1000000,
+    "dim": 256,
+    "num_components": 16384,
+    "batch_size": 16384,
+    "epochs": 2.0
+  },
+  {
+    "num_train": 1000000,
+    "dim": 256,
+    "num_components": 16384,
+    "batch_size": 16384,
+    "epochs": 3.0
+  },
+  {
+    "num_train": 1000000,
+    "dim": 256,
+    "num_components": 16384,
+    "batch_size": 16384,
+    "epochs": 5.0
+  },
+  {
+    "num_train": 1000000,
+    "dim": 256,
+    "num_components": 16384,
+    "batch_size": 65536,
+    "epochs": 2.0
+  },
+  {
+    "num_train": 1000000,
+    "dim": 256,
+    "num_components": 16384,
+    "batch_size": 65536,
+    "epochs": 3.0
+  },
+  {
+    "num_train": 1000000,
+    "dim": 256,
+    "num_components": 16384,
+    "batch_size": 65536,
+    "epochs": 5.0
+  },
+  {
+    "num_train": 1000000,
+    "dim": 768,
+    "num_components": 64,
+    "batch_size": 4096,
+    "epochs": 2.0
+  },
+  {
+    "num_train": 1000000,
+    "dim": 768,
+    "num_components": 64,
+    "batch_size": 4096,
+    "epochs": 3.0
+  },
+  {
+    "num_train": 1000000,
+    "dim": 768,
+    "num_components": 64,
+    "batch_size": 4096,
+    "epochs": 5.0
+  },
+  {
+    "num_train": 1000000,
+    "dim": 768,
+    "num_components": 64,
+    "batch_size": 16384,
+    "epochs": 2.0
+  },
+  {
+    "num_train": 1000000,
+    "dim": 768,
+    "num_components": 64,
+    "batch_size": 16384,
+    "epochs": 3.0
+  },
+  {
+    "num_train": 1000000,
+    "dim": 768,
+    "num_components": 64,
+    "batch_size": 16384,
+    "epochs": 5.0
+  },
+  {
+    "num_train": 1000000,
+    "dim": 768,
+    "num_components": 64,
+    "batch_size": 65536,
+    "epochs": 2.0
+  },
+  {
+    "num_train": 1000000,
+    "dim": 768,
+    "num_components": 64,
+    "batch_size": 65536,
+    "epochs": 3.0
+  },
+  {
+    "num_train": 1000000,
+    "dim": 768,
+    "num_components": 64,
+    "batch_size": 65536,
+    "epochs": 5.0
+  },
+  {
+    "num_train": 1000000,
+    "dim": 768,
+    "num_components": 512,
+    "batch_size": 4096,
+    "epochs": 2.0
+  },
+  {
+    "num_train": 1000000,
+    "dim": 768,
+    "num_components": 512,
+    "batch_size": 4096,
+    "epochs": 3.0
+  },
+  {
+    "num_train": 1000000,
+    "dim": 768,
+    "num_components": 512,
+    "batch_size": 4096,
+    "epochs": 5.0
+  },
+  {
+    "num_train": 1000000,
+    "dim": 768,
+    "num_components": 512,
+    "batch_size": 16384,
+    "epochs": 2.0
+  },
+  {
+    "num_train": 1000000,
+    "dim": 768,
+    "num_components": 512,
+    "batch_size": 16384,
+    "epochs": 3.0
+  },
+  {
+    "num_train": 1000000,
+    "dim": 768,
+    "num_components": 512,
+    "batch_size": 16384,
+    "epochs": 5.0
+  },
+  {
+    "num_train": 1000000,
+    "dim": 768,
+    "num_components": 512,
+    "batch_size": 65536,
+    "epochs": 2.0
+  },
+  {
+    "num_train": 1000000,
+    "dim": 768,
+    "num_components": 512,
+    "batch_size": 65536,
+    "epochs": 3.0
+  },
+  {
+    "num_train": 1000000,
+    "dim": 768,
+    "num_components": 512,
+    "batch_size": 65536,
+    "epochs": 5.0
+  },
+  {
+    "num_train": 1000000,
+    "dim": 768,
+    "num_components": 4096,
+    "batch_size": 4096,
+    "epochs": 2.0
+  },
+  {
+    "num_train": 1000000,
+    "dim": 768,
+    "num_components": 4096,
+    "batch_size": 4096,
+    "epochs": 3.0
+  },
+  {
+    "num_train": 1000000,
+    "dim": 768,
+    "num_components": 4096,
+    "batch_size": 4096,
+    "epochs": 5.0
+  },
+  {
+    "num_train": 1000000,
+    "dim": 768,
+    "num_components": 4096,
+    "batch_size": 16384,
+    "epochs": 2.0
+  },
+  {
+    "num_train": 1000000,
+    "dim": 768,
+    "num_components": 4096,
+    "batch_size": 16384,
+    "epochs": 3.0
+  },
+  {
+    "num_train": 1000000,
+    "dim": 768,
+    "num_components": 4096,
+    "batch_size": 16384,
+    "epochs": 5.0
+  },
+  {
+    "num_train": 1000000,
+    "dim": 768,
+    "num_components": 4096,
+    "batch_size": 65536,
+    "epochs": 2.0
+  },
+  {
+    "num_train": 1000000,
+    "dim": 768,
+    "num_components": 4096,
+    "batch_size": 65536,
+    "epochs": 3.0
+  },
+  {
+    "num_train": 1000000,
+    "dim": 768,
+    "num_components": 4096,
+    "batch_size": 65536,
+    "epochs": 5.0
+  },
+  {
+    "num_train": 1000000,
+    "dim": 768,
+    "num_components": 16384,
+    "batch_size": 4096,
+    "epochs": 2.0
+  },
+  {
+    "num_train": 1000000,
+    "dim": 768,
+    "num_components": 16384,
+    "batch_size": 4096,
+    "epochs": 3.0
+  },
+  {
+    "num_train": 1000000,
+    "dim": 768,
+    "num_components": 16384,
+    "batch_size": 4096,
+    "epochs": 5.0
+  },
+  {
+    "num_train": 1000000,
+    "dim": 768,
+    "num_components": 16384,
+    "batch_size": 16384,
+    "epochs": 2.0
+  },
+  {
+    "num_train": 1000000,
+    "dim": 768,
+    "num_components": 16384,
+    "batch_size": 16384,
+    "epochs": 3.0
+  },
+  {
+    "num_train": 1000000,
+    "dim": 768,
+    "num_components": 16384,
+    "batch_size": 16384,
+    "epochs": 5.0
+  },
+  {
+    "num_train": 1000000,
+    "dim": 768,
+    "num_components": 16384,
+    "batch_size": 65536,
+    "epochs": 2.0
+  },
+  {
+    "num_train": 1000000,
+    "dim": 768,
+    "num_components": 16384,
+    "batch_size": 65536,
+    "epochs": 3.0
+  },
+  {
+    "num_train": 1000000,
+    "dim": 768,
+    "num_components": 16384,
+    "batch_size": 65536,
+    "epochs": 5.0
+  },
+  {
+    "num_train": 10000000,
+    "dim": 32,
+    "num_components": 64,
+    "batch_size": 4096,
+    "epochs": 2.0
+  },
+  {
+    "num_train": 10000000,
+    "dim": 32,
+    "num_components": 64,
+    "batch_size": 4096,
+    "epochs": 3.0
+  },
+  {
+    "num_train": 10000000,
+    "dim": 32,
+    "num_components": 64,
+    "batch_size": 4096,
+    "epochs": 5.0
+  },
+  {
+    "num_train": 10000000,
+    "dim": 32,
+    "num_components": 64,
+    "batch_size": 16384,
+    "epochs": 2.0
+  },
+  {
+    "num_train": 10000000,
+    "dim": 32,
+    "num_components": 64,
+    "batch_size": 16384,
+    "epochs": 3.0
+  },
+  {
+    "num_train": 10000000,
+    "dim": 32,
+    "num_components": 64,
+    "batch_size": 16384,
+    "epochs": 5.0
+  },
+  {
+    "num_train": 10000000,
+    "dim": 32,
+    "num_components": 64,
+    "batch_size": 65536,
+    "epochs": 2.0
+  },
+  {
+    "num_train": 10000000,
+    "dim": 32,
+    "num_components": 64,
+    "batch_size": 65536,
+    "epochs": 3.0
+  },
+  {
+    "num_train": 10000000,
+    "dim": 32,
+    "num_components": 64,
+    "batch_size": 65536,
+    "epochs": 5.0
+  },
+  {
+    "num_train": 10000000,
+    "dim": 32,
+    "num_components": 512,
+    "batch_size": 4096,
+    "epochs": 2.0
+  },
+  {
+    "num_train": 10000000,
+    "dim": 32,
+    "num_components": 512,
+    "batch_size": 4096,
+    "epochs": 3.0
+  },
+  {
+    "num_train": 10000000,
+    "dim": 32,
+    "num_components": 512,
+    "batch_size": 4096,
+    "epochs": 5.0
+  },
+  {
+    "num_train": 10000000,
+    "dim": 32,
+    "num_components": 512,
+    "batch_size": 16384,
+    "epochs": 2.0
+  },
+  {
+    "num_train": 10000000,
+    "dim": 32,
+    "num_components": 512,
+    "batch_size": 16384,
+    "epochs": 3.0
+  },
+  {
+    "num_train": 10000000,
+    "dim": 32,
+    "num_components": 512,
+    "batch_size": 16384,
+    "epochs": 5.0
+  },
+  {
+    "num_train": 10000000,
+    "dim": 32,
+    "num_components": 512,
+    "batch_size": 65536,
+    "epochs": 2.0
+  },
+  {
+    "num_train": 10000000,
+    "dim": 32,
+    "num_components": 512,
+    "batch_size": 65536,
+    "epochs": 3.0
+  },
+  {
+    "num_train": 10000000,
+    "dim": 32,
+    "num_components": 512,
+    "batch_size": 65536,
+    "epochs": 5.0
+  },
+  {
+    "num_train": 10000000,
+    "dim": 32,
+    "num_components": 4096,
+    "batch_size": 4096,
+    "epochs": 2.0
+  },
+  {
+    "num_train": 10000000,
+    "dim": 32,
+    "num_components": 4096,
+    "batch_size": 4096,
+    "epochs": 3.0
+  },
+  {
+    "num_train": 10000000,
+    "dim": 32,
+    "num_components": 4096,
+    "batch_size": 4096,
+    "epochs": 5.0
+  },
+  {
+    "num_train": 10000000,
+    "dim": 32,
+    "num_components": 4096,
+    "batch_size": 16384,
+    "epochs": 2.0
+  },
+  {
+    "num_train": 10000000,
+    "dim": 32,
+    "num_components": 4096,
+    "batch_size": 16384,
+    "epochs": 3.0
+  },
+  {
+    "num_train": 10000000,
+    "dim": 32,
+    "num_components": 4096,
+    "batch_size": 16384,
+    "epochs": 5.0
+  },
+  {
+    "num_train": 10000000,
+    "dim": 32,
+    "num_components": 4096,
+    "batch_size": 65536,
+    "epochs": 2.0
+  },
+  {
+    "num_train": 10000000,
+    "dim": 32,
+    "num_components": 4096,
+    "batch_size": 65536,
+    "epochs": 3.0
+  },
+  {
+    "num_train": 10000000,
+    "dim": 32,
+    "num_components": 4096,
+    "batch_size": 65536,
+    "epochs": 5.0
+  },
+  {
+    "num_train": 10000000,
+    "dim": 32,
+    "num_components": 16384,
+    "batch_size": 4096,
+    "epochs": 2.0
+  },
+  {
+    "num_train": 10000000,
+    "dim": 32,
+    "num_components": 16384,
+    "batch_size": 4096,
+    "epochs": 3.0
+  },
+  {
+    "num_train": 10000000,
+    "dim": 32,
+    "num_components": 16384,
+    "batch_size": 4096,
+    "epochs": 5.0
+  },
+  {
+    "num_train": 10000000,
+    "dim": 32,
+    "num_components": 16384,
+    "batch_size": 16384,
+    "epochs": 2.0
+  },
+  {
+    "num_train": 10000000,
+    "dim": 32,
+    "num_components": 16384,
+    "batch_size": 16384,
+    "epochs": 3.0
+  },
+  {
+    "num_train": 10000000,
+    "dim": 32,
+    "num_components": 16384,
+    "batch_size": 16384,
+    "epochs": 5.0
+  },
+  {
+    "num_train": 10000000,
+    "dim": 32,
+    "num_components": 16384,
+    "batch_size": 65536,
+    "epochs": 2.0
+  },
+  {
+    "num_train": 10000000,
+    "dim": 32,
+    "num_components": 16384,
+    "batch_size": 65536,
+    "epochs": 3.0
+  },
+  {
+    "num_train": 10000000,
+    "dim": 32,
+    "num_components": 16384,
+    "batch_size": 65536,
+    "epochs": 5.0
+  },
+  {
+    "num_train": 10000000,
+    "dim": 96,
+    "num_components": 64,
+    "batch_size": 4096,
+    "epochs": 2.0
+  },
+  {
+    "num_train": 10000000,
+    "dim": 96,
+    "num_components": 64,
+    "batch_size": 4096,
+    "epochs": 3.0
+  },
+  {
+    "num_train": 10000000,
+    "dim": 96,
+    "num_components": 64,
+    "batch_size": 4096,
+    "epochs": 5.0
+  },
+  {
+    "num_train": 10000000,
+    "dim": 96,
+    "num_components": 64,
+    "batch_size": 16384,
+    "epochs": 2.0
+  },
+  {
+    "num_train": 10000000,
+    "dim": 96,
+    "num_components": 64,
+    "batch_size": 16384,
+    "epochs": 3.0
+  },
+  {
+    "num_train": 10000000,
+    "dim": 96,
+    "num_components": 64,
+    "batch_size": 16384,
+    "epochs": 5.0
+  },
+  {
+    "num_train": 10000000,
+    "dim": 96,
+    "num_components": 64,
+    "batch_size": 65536,
+    "epochs": 2.0
+  },
+  {
+    "num_train": 10000000,
+    "dim": 96,
+    "num_components": 64,
+    "batch_size": 65536,
+    "epochs": 3.0
+  },
+  {
+    "num_train": 10000000,
+    "dim": 96,
+    "num_components": 64,
+    "batch_size": 65536,
+    "epochs": 5.0
+  },
+  {
+    "num_train": 10000000,
+    "dim": 96,
+    "num_components": 512,
+    "batch_size": 4096,
+    "epochs": 2.0
+  },
+  {
+    "num_train": 10000000,
+    "dim": 96,
+    "num_components": 512,
+    "batch_size": 4096,
+    "epochs": 3.0
+  },
+  {
+    "num_train": 10000000,
+    "dim": 96,
+    "num_components": 512,
+    "batch_size": 4096,
+    "epochs": 5.0
+  },
+  {
+    "num_train": 10000000,
+    "dim": 96,
+    "num_components": 512,
+    "batch_size": 16384,
+    "epochs": 2.0
+  },
+  {
+    "num_train": 10000000,
+    "dim": 96,
+    "num_components": 512,
+    "batch_size": 16384,
+    "epochs": 3.0
+  },
+  {
+    "num_train": 10000000,
+    "dim": 96,
+    "num_components": 512,
+    "batch_size": 16384,
+    "epochs": 5.0
+  },
+  {
+    "num_train": 10000000,
+    "dim": 96,
+    "num_components": 512,
+    "batch_size": 65536,
+    "epochs": 2.0
+  },
+  {
+    "num_train": 10000000,
+    "dim": 96,
+    "num_components": 512,
+    "batch_size": 65536,
+    "epochs": 3.0
+  },
+  {
+    "num_train": 10000000,
+    "dim": 96,
+    "num_components": 512,
+    "batch_size": 65536,
+    "epochs": 5.0
+  },
+  {
+    "num_train": 10000000,
+    "dim": 96,
+    "num_components": 4096,
+    "batch_size": 4096,
+    "epochs": 2.0
+  },
+  {
+    "num_train": 10000000,
+    "dim": 96,
+    "num_components": 4096,
+    "batch_size": 4096,
+    "epochs": 3.0
+  },
+  {
+    "num_train": 10000000,
+    "dim": 96,
+    "num_components": 4096,
+    "batch_size": 4096,
+    "epochs": 5.0
+  },
+  {
+    "num_train": 10000000,
+    "dim": 96,
+    "num_components": 4096,
+    "batch_size": 16384,
+    "epochs": 2.0
+  },
+  {
+    "num_train": 10000000,
+    "dim": 96,
+    "num_components": 4096,
+    "batch_size": 16384,
+    "epochs": 3.0
+  },
+  {
+    "num_train": 10000000,
+    "dim": 96,
+    "num_components": 4096,
+    "batch_size": 16384,
+    "epochs": 5.0
+  },
+  {
+    "num_train": 10000000,
+    "dim": 96,
+    "num_components": 4096,
+    "batch_size": 65536,
+    "epochs": 2.0
+  },
+  {
+    "num_train": 10000000,
+    "dim": 96,
+    "num_components": 4096,
+    "batch_size": 65536,
+    "epochs": 3.0
+  },
+  {
+    "num_train": 10000000,
+    "dim": 96,
+    "num_components": 4096,
+    "batch_size": 65536,
+    "epochs": 5.0
+  },
+  {
+    "num_train": 10000000,
+    "dim": 96,
+    "num_components": 16384,
+    "batch_size": 4096,
+    "epochs": 2.0
+  },
+  {
+    "num_train": 10000000,
+    "dim": 96,
+    "num_components": 16384,
+    "batch_size": 4096,
+    "epochs": 3.0
+  },
+  {
+    "num_train": 10000000,
+    "dim": 96,
+    "num_components": 16384,
+    "batch_size": 4096,
+    "epochs": 5.0
+  },
+  {
+    "num_train": 10000000,
+    "dim": 96,
+    "num_components": 16384,
+    "batch_size": 16384,
+    "epochs": 2.0
+  },
+  {
+    "num_train": 10000000,
+    "dim": 96,
+    "num_components": 16384,
+    "batch_size": 16384,
+    "epochs": 3.0
+  },
+  {
+    "num_train": 10000000,
+    "dim": 96,
+    "num_components": 16384,
+    "batch_size": 16384,
+    "epochs": 5.0
+  },
+  {
+    "num_train": 10000000,
+    "dim": 96,
+    "num_components": 16384,
+    "batch_size": 65536,
+    "epochs": 2.0
+  },
+  {
+    "num_train": 10000000,
+    "dim": 96,
+    "num_components": 16384,
+    "batch_size": 65536,
+    "epochs": 3.0
+  },
+  {
+    "num_train": 10000000,
+    "dim": 96,
+    "num_components": 16384,
+    "batch_size": 65536,
+    "epochs": 5.0
+  },
+  {
+    "num_train": 10000000,
+    "dim": 256,
+    "num_components": 64,
+    "batch_size": 4096,
+    "epochs": 2.0
+  },
+  {
+    "num_train": 10000000,
+    "dim": 256,
+    "num_components": 64,
+    "batch_size": 4096,
+    "epochs": 3.0
+  },
+  {
+    "num_train": 10000000,
+    "dim": 256,
+    "num_components": 64,
+    "batch_size": 4096,
+    "epochs": 5.0
+  },
+  {
+    "num_train": 10000000,
+    "dim": 256,
+    "num_components": 64,
+    "batch_size": 16384,
+    "epochs": 2.0
+  },
+  {
+    "num_train": 10000000,
+    "dim": 256,
+    "num_components": 64,
+    "batch_size": 16384,
+    "epochs": 3.0
+  },
+  {
+    "num_train": 10000000,
+    "dim": 256,
+    "num_components": 64,
+    "batch_size": 16384,
+    "epochs": 5.0
+  },
+  {
+    "num_train": 10000000,
+    "dim": 256,
+    "num_components": 64,
+    "batch_size": 65536,
+    "epochs": 2.0
+  },
+  {
+    "num_train": 10000000,
+    "dim": 256,
+    "num_components": 64,
+    "batch_size": 65536,
+    "epochs": 3.0
+  },
+  {
+    "num_train": 10000000,
+    "dim": 256,
+    "num_components": 64,
+    "batch_size": 65536,
+    "epochs": 5.0
+  },
+  {
+    "num_train": 10000000,
+    "dim": 256,
+    "num_components": 512,
+    "batch_size": 4096,
+    "epochs": 2.0
+  },
+  {
+    "num_train": 10000000,
+    "dim": 256,
+    "num_components": 512,
+    "batch_size": 4096,
+    "epochs": 3.0
+  },
+  {
+    "num_train": 10000000,
+    "dim": 256,
+    "num_components": 512,
+    "batch_size": 4096,
+    "epochs": 5.0
+  },
+  {
+    "num_train": 10000000,
+    "dim": 256,
+    "num_components": 512,
+    "batch_size": 16384,
+    "epochs": 2.0
+  },
+  {
+    "num_train": 10000000,
+    "dim": 256,
+    "num_components": 512,
+    "batch_size": 16384,
+    "epochs": 3.0
+  },
+  {
+    "num_train": 10000000,
+    "dim": 256,
+    "num_components": 512,
+    "batch_size": 16384,
+    "epochs": 5.0
+  },
+  {
+    "num_train": 10000000,
+    "dim": 256,
+    "num_components": 512,
+    "batch_size": 65536,
+    "epochs": 2.0
+  },
+  {
+    "num_train": 10000000,
+    "dim": 256,
+    "num_components": 512,
+    "batch_size": 65536,
+    "epochs": 3.0
+  },
+  {
+    "num_train": 10000000,
+    "dim": 256,
+    "num_components": 512,
+    "batch_size": 65536,
+    "epochs": 5.0
+  },
+  {
+    "num_train": 10000000,
+    "dim": 256,
+    "num_components": 4096,
+    "batch_size": 4096,
+    "epochs": 2.0
+  },
+  {
+    "num_train": 10000000,
+    "dim": 256,
+    "num_components": 4096,
+    "batch_size": 4096,
+    "epochs": 3.0
+  },
+  {
+    "num_train": 10000000,
+    "dim": 256,
+    "num_components": 4096,
+    "batch_size": 4096,
+    "epochs": 5.0
+  },
+  {
+    "num_train": 10000000,
+    "dim": 256,
+    "num_components": 4096,
+    "batch_size": 16384,
+    "epochs": 2.0
+  },
+  {
+    "num_train": 10000000,
+    "dim": 256,
+    "num_components": 4096,
+    "batch_size": 16384,
+    "epochs": 3.0
+  },
+  {
+    "num_train": 10000000,
+    "dim": 256,
+    "num_components": 4096,
+    "batch_size": 16384,
+    "epochs": 5.0
+  },
+  {
+    "num_train": 10000000,
+    "dim": 256,
+    "num_components": 4096,
+    "batch_size": 65536,
+    "epochs": 2.0
+  },
+  {
+    "num_train": 10000000,
+    "dim": 256,
+    "num_components": 4096,
+    "batch_size": 65536,
+    "epochs": 3.0
+  },
+  {
+    "num_train": 10000000,
+    "dim": 256,
+    "num_components": 4096,
+    "batch_size": 65536,
+    "epochs": 5.0
+  },
+  {
+    "num_train": 10000000,
+    "dim": 256,
+    "num_components": 16384,
+    "batch_size": 4096,
+    "epochs": 2.0
+  },
+  {
+    "num_train": 10000000,
+    "dim": 256,
+    "num_components": 16384,
+    "batch_size": 4096,
+    "epochs": 3.0
+  },
+  {
+    "num_train": 10000000,
+    "dim": 256,
+    "num_components": 16384,
+    "batch_size": 4096,
+    "epochs": 5.0
+  },
+  {
+    "num_train": 10000000,
+    "dim": 256,
+    "num_components": 16384,
+    "batch_size": 16384,
+    "epochs": 2.0
+  },
+  {
+    "num_train": 10000000,
+    "dim": 256,
+    "num_components": 16384,
+    "batch_size": 16384,
+    "epochs": 3.0
+  },
+  {
+    "num_train": 10000000,
+    "dim": 256,
+    "num_components": 16384,
+    "batch_size": 16384,
+    "epochs": 5.0
+  },
+  {
+    "num_train": 10000000,
+    "dim": 256,
+    "num_components": 16384,
+    "batch_size": 65536,
+    "epochs": 2.0
+  },
+  {
+    "num_train": 10000000,
+    "dim": 256,
+    "num_components": 16384,
+    "batch_size": 65536,
+    "epochs": 3.0
+  },
+  {
+    "num_train": 10000000,
+    "dim": 256,
+    "num_components": 16384,
+    "batch_size": 65536,
+    "epochs": 5.0
+  },
+  {
+    "num_train": 10000000,
+    "dim": 768,
+    "num_components": 64,
+    "batch_size": 4096,
+    "epochs": 2.0
+  },
+  {
+    "num_train": 10000000,
+    "dim": 768,
+    "num_components": 64,
+    "batch_size": 4096,
+    "epochs": 3.0
+  },
+  {
+    "num_train": 10000000,
+    "dim": 768,
+    "num_components": 64,
+    "batch_size": 4096,
+    "epochs": 5.0
+  },
+  {
+    "num_train": 10000000,
+    "dim": 768,
+    "num_components": 64,
+    "batch_size": 16384,
+    "epochs": 2.0
+  },
+  {
+    "num_train": 10000000,
+    "dim": 768,
+    "num_components": 64,
+    "batch_size": 16384,
+    "epochs": 3.0
+  },
+  {
+    "num_train": 10000000,
+    "dim": 768,
+    "num_components": 64,
+    "batch_size": 16384,
+    "epochs": 5.0
+  },
+  {
+    "num_train": 10000000,
+    "dim": 768,
+    "num_components": 64,
+    "batch_size": 65536,
+    "epochs": 2.0
+  },
+  {
+    "num_train": 10000000,
+    "dim": 768,
+    "num_components": 64,
+    "batch_size": 65536,
+    "epochs": 3.0
+  },
+  {
+    "num_train": 10000000,
+    "dim": 768,
+    "num_components": 64,
+    "batch_size": 65536,
+    "epochs": 5.0
+  },
+  {
+    "num_train": 10000000,
+    "dim": 768,
+    "num_components": 512,
+    "batch_size": 4096,
+    "epochs": 2.0
+  },
+  {
+    "num_train": 10000000,
+    "dim": 768,
+    "num_components": 512,
+    "batch_size": 4096,
+    "epochs": 3.0
+  },
+  {
+    "num_train": 10000000,
+    "dim": 768,
+    "num_components": 512,
+    "batch_size": 4096,
+    "epochs": 5.0
+  },
+  {
+    "num_train": 10000000,
+    "dim": 768,
+    "num_components": 512,
+    "batch_size": 16384,
+    "epochs": 2.0
+  },
+  {
+    "num_train": 10000000,
+    "dim": 768,
+    "num_components": 512,
+    "batch_size": 16384,
+    "epochs": 3.0
+  },
+  {
+    "num_train": 10000000,
+    "dim": 768,
+    "num_components": 512,
+    "batch_size": 16384,
+    "epochs": 5.0
+  },
+  {
+    "num_train": 10000000,
+    "dim": 768,
+    "num_components": 512,
+    "batch_size": 65536,
+    "epochs": 2.0
+  },
+  {
+    "num_train": 10000000,
+    "dim": 768,
+    "num_components": 512,
+    "batch_size": 65536,
+    "epochs": 3.0
+  },
+  {
+    "num_train": 10000000,
+    "dim": 768,
+    "num_components": 512,
+    "batch_size": 65536,
+    "epochs": 5.0
+  },
+  {
+    "num_train": 10000000,
+    "dim": 768,
+    "num_components": 4096,
+    "batch_size": 4096,
+    "epochs": 2.0
+  },
+  {
+    "num_train": 10000000,
+    "dim": 768,
+    "num_components": 4096,
+    "batch_size": 4096,
+    "epochs": 3.0
+  },
+  {
+    "num_train": 10000000,
+    "dim": 768,
+    "num_components": 4096,
+    "batch_size": 4096,
+    "epochs": 5.0
+  },
+  {
+    "num_train": 10000000,
+    "dim": 768,
+    "num_components": 4096,
+    "batch_size": 16384,
+    "epochs": 2.0
+  },
+  {
+    "num_train": 10000000,
+    "dim": 768,
+    "num_components": 4096,
+    "batch_size": 16384,
+    "epochs": 3.0
+  },
+  {
+    "num_train": 10000000,
+    "dim": 768,
+    "num_components": 4096,
+    "batch_size": 16384,
+    "epochs": 5.0
+  },
+  {
+    "num_train": 10000000,
+    "dim": 768,
+    "num_components": 4096,
+    "batch_size": 65536,
+    "epochs": 2.0
+  },
+  {
+    "num_train": 10000000,
+    "dim": 768,
+    "num_components": 4096,
+    "batch_size": 65536,
+    "epochs": 3.0
+  },
+  {
+    "num_train": 10000000,
+    "dim": 768,
+    "num_components": 4096,
+    "batch_size": 65536,
+    "epochs": 5.0
+  },
+  {
+    "num_train": 10000000,
+    "dim": 768,
+    "num_components": 16384,
+    "batch_size": 4096,
+    "epochs": 2.0
+  },
+  {
+    "num_train": 10000000,
+    "dim": 768,
+    "num_components": 16384,
+    "batch_size": 4096,
+    "epochs": 3.0
+  },
+  {
+    "num_train": 10000000,
+    "dim": 768,
+    "num_components": 16384,
+    "batch_size": 4096,
+    "epochs": 5.0
+  },
+  {
+    "num_train": 10000000,
+    "dim": 768,
+    "num_components": 16384,
+    "batch_size": 16384,
+    "epochs": 2.0
+  },
+  {
+    "num_train": 10000000,
+    "dim": 768,
+    "num_components": 16384,
+    "batch_size": 16384,
+    "epochs": 3.0
+  },
+  {
+    "num_train": 10000000,
+    "dim": 768,
+    "num_components": 16384,
+    "batch_size": 16384,
+    "epochs": 5.0
+  },
+  {
+    "num_train": 10000000,
+    "dim": 768,
+    "num_components": 16384,
+    "batch_size": 65536,
+    "epochs": 2.0
+  },
+  {
+    "num_train": 10000000,
+    "dim": 768,
+    "num_components": 16384,
+    "batch_size": 65536,
+    "epochs": 3.0
+  },
+  {
+    "num_train": 10000000,
+    "dim": 768,
+    "num_components": 16384,
+    "batch_size": 65536,
+    "epochs": 5.0
+  }
+]

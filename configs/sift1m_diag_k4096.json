@@ -1,0 +1,20 @@
+{
+  "preset": "sift-1m",
+  "num_components": 4096,
+  "dim": 128,
+  "cov_type": "diag",
+  "cov_floor": 1e-4,
+  "init_sigma0": 1.0,
+  "alpha_0": 0.18,
+  "eps_floor": 0.1,
+  "use_cosine_schedule": true,
+  "e_step_mode": "flash_gemm",
+  "top_m": 8,
+  "chunk_k": 1024,
+  "split_interval": 5,
+  "split_tau": 0.1,
+  "split_delta": 0.5,
+  "split_strategy": "spectral_v1",
+  "finalization": "slow_ema",
+  "slow_ema_alpha": 0.005
+}

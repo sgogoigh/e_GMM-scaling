@@ -1,0 +1,19 @@
+{
+  "preset": "tiny-debug",
+  "num_components": 16,
+  "dim": 32,
+  "cov_type": "full",
+  "low_rank": 8,
+  "cov_floor": 1e-4,
+  "init_sigma0": 1.0,
+  "alpha_0": 0.25,
+  "eps_floor": 0.1,
+  "use_cosine_schedule": true,
+  "e_step_mode": "flash_gemm",
+  "top_m": null,
+  "split_interval": 5,
+  "split_tau": 0.1,
+  "split_delta": 0.5,
+  "split_strategy": "spectral_v1",
+  "finalization": "last_epoch"
+}
