@@ -551,7 +551,10 @@ class NumPyEGMM:
                 self.reset_last_epoch_accumulators()
             for xb in iter_minibatches(X64, batch_size, rng=self.rng, shuffle=True):
                 alpha_t = cosine_alpha(t, total_steps, a0, self.cfg.eps_floor, self.cfg.use_cosine_schedule)
-                allow_split = t < (total_steps - max(2, batches_per_epoch // 4))
+                if epochs > 1:
+                    allow_split = not is_last
+                else:
+                    allow_split = t < (total_steps - max(2, batches_per_epoch // 4))
                 nll_b = self.step_batch(xb, alpha_t, record_last_epoch=is_last, allow_split=allow_split)
                 batch_nlls.append(nll_b)
                 t += 1

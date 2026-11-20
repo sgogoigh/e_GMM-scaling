@@ -2,8 +2,8 @@
 PoC 2 (CPU / 1x GPU, $0 Cost): Covariance Collapse & Spectral Splitting Ablation
 =================================================================================
 
-Compares 8 methods on an Anisotropic Zipf-Imbalanced Gaussian Mixture (heavy cluster
-imbalance + starved slots):
+Runs a 3-seed benchmark on Rotated Anisotropic Zipf-Imbalanced Gaussian Mixtures
+comparing 8 methods:
   1. online_em_beta0.60  (Cappe & Moulines, low floor -> singular instability)
   2. online_em_beta0.85  (Cappe & Moulines, aggressive decay -> early stall)
   3. emeans_posthoc      (Hard e-means + 1 post-hoc covariance M-step)
@@ -37,16 +37,74 @@ from e_gmm.poc_logging import tee_poc_logs  # noqa: E402
 
 def parse_args():
     p = argparse.ArgumentParser(description="PoC 2: Collapse & Spectral Component Splitting Benchmark")
-    p.add_argument("--n-train", type=int, default=4000)
-    p.add_argument("--n-test", type=int, default=1200)
-    p.add_argument("--dim", type=int, default=24)
-    p.add_argument("--num-components", type=int, default=24)
-    p.add_argument("--batch-size", type=int, default=128)
-    p.add_argument("--epochs", type=int, default=5)
-    p.add_argument("--cov-type", type=str, default="diag", choices=["diag", "full"])
-    p.add_argument("--seed", type=int, default=42)
+    p.add_argument("--n-train", type=int, default=2400)
+    p.add_argument("--n-test", type=int, default=800)
+    p.add_argument("--dim", type=int, default=16)
+    p.add_argument("--num-components", type=int, default=16)
+    p.add_argument("--batch-size", type=int, default=64)
+    p.add_argument("--epochs", type=int, default=6)
+    p.add_argument("--cov-type", type=str, default="full", choices=["diag", "full"])
+    p.add_argument("--seeds", type=int, default=3)
     p.add_argument("--dry-run", action="store_true")
     return p.parse_args()
+
+
+def _eval_single(label: str, args, X_tr: np.ndarray, X_te: np.ndarray, seed: int) -> dict:
+    k, d, B, ep = args.num_components, args.dim, args.batch_size, args.epochs
+    ctype = args.cov_type
+
+    if label.startswith("online_em_beta"):
+        beta = float(label.split("beta")[1])
+        oem = NumPyOnlineEMCappeMoulines(
+            k, d, cov_type=ctype, beta=beta, t0=10.0, cov_floor=1e-8, init_sigma0=0.5, seed=seed
+        )
+        res = oem.fit(X_tr, batch_size=B, epochs=ep)
+        splits, sing_fb = 0, int(res["singular_events"])
+        pi, mu, cov, health = res["pi"], res["mu"], res["cov"], res["health"]
+    elif label == "emeans_posthoc":
+        epost = NumPyEMeansPostHocGMM(k, d, cov_type=ctype, cov_floor=1e-4, alpha_0=0.35, seed=seed)
+        res = epost.fit(X_tr, batch_size=B, epochs=ep)
+        splits, sing_fb = int(res["splits"]), 0
+        pi, mu, cov, health = res["pi"], res["mu"], res["cov"], res["health"]
+    else:
+        strat_map = {
+            "egmm_no_revive": "none",
+            "egmm_batch_resample": "batch_resample",
+            "egmm_faiss_alt": "faiss_alt",
+            "egmm_random_orth": "random_orth",
+            "egmm_spectral_v1": "spectral_v1",
+        }
+        cfg = EGMMConfig(
+            num_components=k,
+            dim=d,
+            cov_type=ctype,
+            cov_floor=1e-4,
+            init_prior_mass=1.0,
+            alpha_0=0.35,
+            split_interval=5,
+            split_tau=0.10,
+            split_delta=0.50,
+            split_strategy=strat_map[label],
+            finalization="last_epoch",
+            seed=seed,
+        )
+        m = NumPyEGMM(cfg)
+        res = m.fit(X_tr, batch_size=B, epochs=ep)
+        splits, sing_fb = int(res["splits"]), int(res["chol_fallbacks"])
+        pi, mu, cov, health = res["pi"], res["mu"], res["cov"], res["health"]
+
+    ev_tr = evaluate_gmm_nll(X_tr, pi, mu, cov, cov_type=ctype)
+    ev_te = evaluate_gmm_nll(X_te, pi, mu, cov, cov_type=ctype)
+    return {
+        "splits": splits,
+        "dead": int(health["dead_count"]),
+        "max_to_mean": float(health["max_to_mean"]),
+        "norm_entropy": float(health["norm_entropy"]),
+        "sing_fb": sing_fb,
+        "train_nll": float(ev_tr["nll"]),
+        "test_nll": float(ev_te["nll"]),
+        "test_bic": float(ev_te["bic"]),
+    }
 
 
 def main():
@@ -55,95 +113,54 @@ def main():
     with tee_poc_logs("poc_02", run_tag=tag):
         if args.dry_run:
             print("=== PoC 2 DRY RUN ===")
-            print(f"Config: n_train={args.n_train}, n_test={args.n_test}, d={args.dim}, k={args.num_components}, cov={args.cov_type}")
+            print(
+                f"Config: n_train={args.n_train}, n_test={args.n_test}, d={args.dim}, "
+                f"k={args.num_components}, cov={args.cov_type}, seeds={args.seeds}"
+            )
             return
 
-        X_all, _, _ = generate_gaussian_mixture(
-            n=args.n_train + args.n_test,
-            d=args.dim,
-            num_true_clusters=args.num_components,
-            zipf=True,
-            zipf_power=1.25,
-            anisotropic=True,
-            seed=args.seed,
-        )
-        X_tr, X_te = X_all[: args.n_train], X_all[args.n_train :]
-        k, d, B, ep = args.num_components, args.dim, args.batch_size, args.epochs
+        methods = [
+            "online_em_beta0.60",
+            "online_em_beta0.85",
+            "emeans_posthoc",
+            "egmm_no_revive",
+            "egmm_batch_resample",
+            "egmm_faiss_alt",
+            "egmm_random_orth",
+            "egmm_spectral_v1",
+        ]
+        per_method = {m: [] for m in methods}
+
+        for s in range(1, args.seeds + 1):
+            X_all, _, _ = generate_gaussian_mixture(
+                n=args.n_train + args.n_test,
+                d=args.dim,
+                num_true_clusters=args.num_components,
+                zipf=True,
+                zipf_power=1.20,
+                anisotropic=True,
+                rotated=(args.cov_type == "full"),
+                seed=s,
+            )
+            X_tr, X_te = X_all[: args.n_train], X_all[args.n_train :]
+            for mname in methods:
+                per_method[mname].append(_eval_single(mname, args, X_tr, X_te, seed=s))
 
         runs = []
-
-        for label, beta, floor in [("online_em_beta0.60", 0.60, 1e-9), ("online_em_beta0.85", 0.85, 1e-9)]:
-            oem = NumPyOnlineEMCappeMoulines(k, d, cov_type=args.cov_type, beta=beta, t0=10.0, cov_floor=floor, seed=args.seed)
-            res = oem.fit(X_tr, batch_size=B, epochs=ep)
-            ev_tr = evaluate_gmm_nll(X_tr, res["pi"], res["mu"], res["cov"], cov_type=args.cov_type)
-            ev_te = evaluate_gmm_nll(X_te, res["pi"], res["mu"], res["cov"], cov_type=args.cov_type)
+        for mname in methods:
+            recs = per_method[mname]
             runs.append(
                 {
-                    "method": label,
-                    "splits": 0,
-                    "dead_components": int(res["health"]["dead_count"]),
-                    "max_to_mean": round(res["health"]["max_to_mean"], 3),
-                    "norm_entropy": round(res["health"]["norm_entropy"], 4),
-                    "singular_or_floor_events": int(res["singular_events"]),
-                    "train_nll": round(ev_tr["nll"], 4),
-                    "test_nll": round(ev_te["nll"], 4),
-                    "test_bic": round(ev_te["bic"], 1),
-                }
-            )
-
-        epost = NumPyEMeansPostHocGMM(k, d, cov_type=args.cov_type, cov_floor=1e-4, alpha_0=0.45, seed=args.seed)
-        res_ep = epost.fit(X_tr, batch_size=B, epochs=ep)
-        ev_tr = evaluate_gmm_nll(X_tr, res_ep["pi"], res_ep["mu"], res_ep["cov"], cov_type=args.cov_type)
-        ev_te = evaluate_gmm_nll(X_te, res_ep["pi"], res_ep["mu"], res_ep["cov"], cov_type=args.cov_type)
-        runs.append(
-            {
-                "method": "emeans_posthoc",
-                "splits": int(res_ep["splits"]),
-                "dead_components": int(res_ep["health"]["dead_count"]),
-                "max_to_mean": round(res_ep["health"]["max_to_mean"], 3),
-                "norm_entropy": round(res_ep["health"]["norm_entropy"], 4),
-                "singular_or_floor_events": 0,
-                "train_nll": round(ev_tr["nll"], 4),
-                "test_nll": round(ev_te["nll"], 4),
-                "test_bic": round(ev_te["bic"], 1),
-            }
-        )
-
-        for label, strat in [
-            ("egmm_no_revive", "none"),
-            ("egmm_batch_resample", "batch_resample"),
-            ("egmm_faiss_alt", "faiss_alt"),
-            ("egmm_random_orth", "random_orth"),
-            ("egmm_spectral_v1", "spectral_v1"),
-        ]:
-            cfg = EGMMConfig(
-                num_components=k,
-                dim=d,
-                cov_type=args.cov_type,
-                cov_floor=1e-4,
-                alpha_0=0.45,
-                split_interval=5,
-                split_tau=0.10,
-                split_delta=0.50,
-                split_strategy=strat,
-                finalization="last_epoch",
-                seed=args.seed,
-            )
-            m = NumPyEGMM(cfg)
-            res_m = m.fit(X_tr, batch_size=B, epochs=ep)
-            ev_tr = evaluate_gmm_nll(X_tr, res_m["pi"], res_m["mu"], res_m["cov"], cov_type=args.cov_type)
-            ev_te = evaluate_gmm_nll(X_te, res_m["pi"], res_m["mu"], res_m["cov"], cov_type=args.cov_type)
-            runs.append(
-                {
-                    "method": label,
-                    "splits": int(res_m["splits"]),
-                    "dead_components": int(res_m["health"]["dead_count"]),
-                    "max_to_mean": round(res_m["health"]["max_to_mean"], 3),
-                    "norm_entropy": round(res_m["health"]["norm_entropy"], 4),
-                    "singular_or_floor_events": int(res_m["chol_fallbacks"]),
-                    "train_nll": round(ev_tr["nll"], 4),
-                    "test_nll": round(ev_te["nll"], 4),
-                    "test_bic": round(ev_te["bic"], 1),
+                    "method": mname,
+                    "splits": round(float(np.mean([r["splits"] for r in recs])), 1),
+                    "dead_components": round(float(np.mean([r["dead"] for r in recs])), 1),
+                    "max_to_mean": round(float(np.mean([r["max_to_mean"] for r in recs])), 2),
+                    "norm_entropy": round(float(np.mean([r["norm_entropy"] for r in recs])), 4),
+                    "singular_or_floor_events": round(float(np.mean([r["sing_fb"] for r in recs])), 1),
+                    "train_nll": round(float(np.mean([r["train_nll"] for r in recs])), 4),
+                    "test_nll": round(float(np.mean([r["test_nll"] for r in recs])), 4),
+                    "test_nll_std": round(float(np.std([r["test_nll"] for r in recs])), 4),
+                    "test_bic": round(float(np.mean([r["test_bic"] for r in recs])), 1),
                 }
             )
 
@@ -152,19 +169,19 @@ def main():
         out_path = out_dir / "poc_02_results.json"
         payload = {
             "poc_id": "poc_02",
-            "title": "Anisotropic Zipf-GMM Collapse & Spectral Splitting Ablation",
+            "title": "Rotated Anisotropic Zipf-GMM Collapse & Spectral Splitting Ablation",
             "config": vars(args),
             "runs": runs,
         }
         out_path.write_text(json.dumps(payload, indent=2), encoding="utf-8")
 
         print("=== PoC 2 COMPLETE ===")
-        print(f"{'Method':<22} {'Splits':>6} {'Dead':>5} {'Max/Mean':>9} {'Entropy':>8} {'Sing/FB':>8} {'TestNLL':>10}")
-        print("-" * 78)
+        print(f"{'Method':<22} {'Splits':>6} {'Dead':>6} {'Max/Mean':>9} {'Entropy':>8} {'Sing/FB':>8} {'TestNLL':>10}")
+        print("-" * 80)
         for r in runs:
             print(
-                f"{r['method']:<22} {r['splits']:>6d} {r['dead_components']:>5d} "
-                f"{r['max_to_mean']:>8.2f}x {r['norm_entropy']:>8.4f} {r['singular_or_floor_events']:>8d} {r['test_nll']:>10.4f}"
+                f"{r['method']:<22} {r['splits']:>6.1f} {r['dead_components']:>6.1f} "
+                f"{r['max_to_mean']:>8.2f}x {r['norm_entropy']:>8.4f} {r['singular_or_floor_events']:>8.1f} {r['test_nll']:>10.4f}"
             )
         print(f"Saved JSON telemetry -> {out_path}")
 

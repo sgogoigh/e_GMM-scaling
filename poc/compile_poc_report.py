@@ -83,17 +83,17 @@ def main():
         if p3:
             fw = p3["fit_with_d"]
             fnd = p3["fit_no_d"]
-            ood = p3["ood_zipf_gmm_transfer"]
+            ood = p3["ood_unseen_d_transfer"]
             lines += [
                 "---",
                 "",
-                "## PoC 3: Empirical Dimension-Aware Scaling Law & OOD Transfer",
+                "## PoC 3: Empirical Dimension-Aware Scaling Law & Unseen-$d$ Transfer",
                 "",
-                f"- **Sweep Size**: {p3['num_observations']} $(n, d, k, B)$ configurations on `AnisotropicGMM`",
-                f"- **Fitted $d$-Aware Law**: $\\alpha_0 = {fw['c_alpha']} \\cdot k^{{{fw['a_k']:+.2f}}} B^{{{fw['a_b']:+.2f}}} n^{{{fw['a_n']:+.2f}}} d^{{{fw['a_d']:+.2f}}}$ ($R^2 = {fw['r2_log']}$)",
+                f"- **Sweep Size**: {p3['num_observations']} $(n, d, k, B)$ configurations on `StretchedGaussian`",
+                f"- **Fitted $d$-Aware Law**: $\\alpha_0 = {fw['c_alpha']} \\cdot k^{{{fw['a_k']:+.2f}}} B^{{{fw['a_b']:+.2f}}} n^{{{fw['a_n']:+.2f}}} d^{{{fw['a_d']:+.2f}}}$ ($R^2 = {fw['r2_log']}$ vs. `{fnd['r2_log']}` without $d$)",
                 f"- **LODO-$d$ Rel Error**: `{fw['lodo_mean_rel_err_pct']}%` (with $d^{{a_d}}$) vs. `{fnd['lodo_mean_rel_err_pct']}%` (without $d$)",
                 f"- **LOSO-$n$ Rel Error**: `{fw['loso_mean_rel_err_pct']}%`",
-                f"- **Zero-Shot OOD Zipf-GMM**: Oracle NLL `{ood['oracle_nll']:.4f}` | With-$d$ Law `{ood['with_d_nll']:.4f}` (`{ood['with_d_gap_nats']:+.4f}` nats) | No-$d$ Law `{ood['no_d_nll']:.4f}` (`{ood['no_d_gap_nats']:+.4f}` nats)",
+                f"- **Zero-Shot Unseen $d=24$ Transfer**: Oracle NLL `{ood['oracle_nll']:.4f}` | With-$d$ Law `{ood['with_d_nll']:.4f}` (`{ood['with_d_gap_nats']:+.4f}` nats, $\\alpha_0={ood['with_d_pred_alpha0']}$) | No-$d$ Law `{ood['no_d_nll']:.4f}` (`{ood['no_d_gap_nats']:+.4f}` nats, $\\alpha_0={ood['no_d_pred_alpha0']}$)",
                 "",
             ]
 

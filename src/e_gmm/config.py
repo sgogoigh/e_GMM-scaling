@@ -132,7 +132,7 @@ class EGMMConfig:
     # Covariance positive-definiteness & initialization
     cov_floor: float = 1e-4       # lambda_0 I_d
     init_sigma0: float = 1.0      # initial isotropic std
-    init_prior_mass: float = 1e-10
+    init_prior_mass: float = 1.0  # prior weight preventing Batch-1 covariance collapse
     center_data: bool = False
 
     # Cosine EMA step schedule
