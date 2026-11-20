@@ -39,8 +39,11 @@ python scripts/mini_run_math_verify.py
 # 3. Generate Phase-A dimension-aware scaling sweep manifest & verify OLS + LOSO/LODO fitter
 python scripts/plan_scaling_sweep.py
 
-# 4. Run offline mathematical unit tests (pure NumPy)
-python -m unittest discover -s tests -p "*numpy*.py" -v
+# 4. Run preliminary diagnostics & baseline comparison readiness audit
+python scripts/run_preliminary_diagnostics.py
+
+# 5. Run offline mathematical & diagnostic unit tests (pure NumPy)
+python -m unittest discover -s tests -v
 
 # 5. Run offline Proof-of-Concept suite (PoC 1-3) & compile COMPILED-POC-REPORT.md
 python poc/poc_01_math_and_profiler.py

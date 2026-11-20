@@ -257,7 +257,7 @@ def compute_gmm_health(
     if cov_or_var is not None:
         cov_np = _to_numpy(cov_or_var)
         if cov_type == "diag":
-            floor_hit_rate = float(np.mean(cov_np <= cov_floor * (1.0 + 1e-4)))
+            floor_hit_rate = float(np.mean(cov_np <= cov_floor * 1.05))
             mean_trace = float(np.mean(np.sum(cov_np, axis=1)))
             conds = np.max(cov_np, axis=1) / np.maximum(np.min(cov_np, axis=1), 1e-12)
             max_cond = float(np.max(conds))
@@ -267,14 +267,14 @@ def compute_gmm_health(
         elif cov_type == "low_rank_diag":
             U_np = _to_numpy(U) if U is not None else np.zeros((k, cov_np.shape[1], 1))
             diag_full = cov_np + np.sum(U_np ** 2, axis=2)
-            floor_hit_rate = float(np.mean(cov_np <= cov_floor * (1.0 + 1e-4)))
+            floor_hit_rate = float(np.mean(cov_np <= cov_floor * 1.05))
             mean_trace = float(np.mean(np.sum(diag_full, axis=1)))
             max_cond = float(np.max(np.max(diag_full, axis=1) / np.maximum(np.min(cov_np, axis=1), 1e-12)))
             mean_eff_rank = float(cov_np.shape[1])
         else:
             evals = np.linalg.eigvalsh(0.5 * (cov_np + np.swapaxes(cov_np, -1, -2)))
             evals = np.maximum(evals, 1e-12)
-            floor_hit_rate = float(np.mean(np.min(evals, axis=1) <= cov_floor * (1.0 + 1e-3)))
+            floor_hit_rate = float(np.mean(np.min(evals, axis=1) <= cov_floor * 1.05))
             mean_trace = float(np.mean(np.sum(evals, axis=1)))
             max_cond = float(np.max(np.max(evals, axis=1) / np.min(evals, axis=1)))
             s_norm = evals / np.maximum(np.sum(evals, axis=1, keepdims=True), 1e-12)
