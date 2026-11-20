@@ -5,26 +5,26 @@
     {
       "top_m": 2,
       "m_step_work_ratio": 0.0625,
-      "test_nll": 15.3042,
-      "fit_ms": 38.3
+      "test_nll": 14.7435,
+      "fit_ms": 31.0
     },
     {
       "top_m": 4,
       "m_step_work_ratio": 0.125,
-      "test_nll": 15.0457,
-      "fit_ms": 88.6
+      "test_nll": 14.1575,
+      "fit_ms": 30.6
     },
     {
       "top_m": 8,
       "m_step_work_ratio": 0.25,
-      "test_nll": 14.8106,
-      "fit_ms": 39.3
+      "test_nll": 14.4512,
+      "fit_ms": 27.4
     },
     {
       "top_m": "dense",
       "m_step_work_ratio": 1.0,
-      "test_nll": 14.8101,
-      "fit_ms": 39.3
+      "test_nll": 14.451,
+      "fit_ms": 28.3
     }
   ],
   "covariance_mode_ablation": [
@@ -50,18 +50,18 @@
   "finalization_ablation": [
     {
       "finalizer": "main_ema",
-      "train_nll": 23.8844,
-      "test_nll": 24.6012
+      "train_nll": 23.9068,
+      "test_nll": 24.6154
     },
     {
       "finalizer": "last_epoch",
-      "train_nll": 23.8566,
-      "test_nll": 24.6297
+      "train_nll": 23.8808,
+      "test_nll": 24.6447
     },
     {
       "finalizer": "slow_ema",
-      "train_nll": 23.9431,
-      "test_nll": 24.5706
+      "train_nll": 23.9421,
+      "test_nll": 24.5874
     }
   ],
   "torch_parity": null

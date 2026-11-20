@@ -344,18 +344,29 @@ class NumPyEGMM:
                 self.splits_done += 1
             return n_pick
 
-        donor_pool = np.where((self.N > mean_n) & (self.cooldown == 0))[0]
+        donor_pool = np.where((self.N > self.cfg.donor_min_mult * mean_n) & (self.cooldown == 0))[0]
+        if donor_pool.size == 0:
+            donor_pool = np.where((self.N > mean_n) & (self.cooldown == 0))[0]
         if donor_pool.size == 0:
             donor_pool = np.where(self.N > mean_n)[0]
         if donor_pool.size == 0:
             return 0
 
         n_pairs = min(int(dead_ids.size), int(donor_pool.size), self.cfg.max_splits_per_step)
-        probs = np.maximum(self.N[donor_pool], 1e-12)
+        _, mu_cur, cov_cur, U_cur = self._readout_from_tuples(self.N, self.S, self.Q, self.U)
+        if self.cfg.donor_weight_by == "variance_mass":
+            if self.cov_type == "diag":
+                traces = np.sum(cov_cur[donor_pool], axis=1)
+            elif self.cov_type == "low_rank_diag":
+                u_tr = np.sum(U_cur[donor_pool] ** 2, axis=(1, 2)) if U_cur is not None else 0.0
+                traces = np.sum(cov_cur[donor_pool], axis=1) + u_tr
+            else:
+                traces = np.trace(cov_cur[donor_pool], axis1=1, axis2=2)
+            probs = np.maximum(self.N[donor_pool] * np.maximum(traces, 1e-8), 1e-12)
+        else:
+            probs = np.maximum(self.N[donor_pool], 1e-12)
         probs /= probs.sum()
         donors = self.rng.choice(donor_pool, size=n_pairs, replace=False, p=probs)
-
-        _, mu_cur, cov_cur, U_cur = self._readout_from_tuples(self.N, self.S, self.Q, self.U)
         delta = float(self.cfg.split_delta)
         floor = float(self.cfg.cov_floor)
 
@@ -514,6 +525,8 @@ class NumPyEGMM:
         self.N_slow = g_s * self.N_slow + a_s * n_b
         self.S_slow = g_s * self.S_slow + a_s * s_b
         self.Q_slow = g_s * self.Q_slow + a_s * q_b
+        if self.cov_type == "low_rank_diag" and self.U is not None and self.U_slow is not None:
+            self.U_slow = g_s * self.U_slow + a_s * self.U
 
         if record_last_epoch:
             self.N_last += n_b

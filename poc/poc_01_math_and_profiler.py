@@ -51,9 +51,18 @@ def verify_identities() -> dict:
     lj_dense, _, fb = gaussian_log_prob_full(X, pi, mu, cov_full)
     woodbury_max_diff = float(np.max(np.abs(lj_wb - lj_dense)))
 
-    # PSD check on rank-1 collapsed batch
+    # PSD check on rank-1 collapsed batch (worst-case negligible prior 1e-10)
     floor = 1e-3
-    m = NumPyEGMM(EGMMConfig(num_components=8, dim=d, cov_type="full", cov_floor=floor, split_strategy="none"))
+    m = NumPyEGMM(
+        EGMMConfig(
+            num_components=8,
+            dim=d,
+            cov_type="full",
+            cov_floor=floor,
+            init_prior_mass=1e-10,
+            split_strategy="none",
+        )
+    )
     x_rep = np.repeat(rng.normal(size=(1, d)), repeats=16, axis=0)
     m.init_from_data(x_rep + rng.normal(scale=1e-6, size=(16, d)))
     m.step_batch(x_rep, alpha_t=0.95, allow_split=False)

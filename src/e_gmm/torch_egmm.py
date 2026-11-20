@@ -1,11 +1,12 @@
 """PyTorch GPU/CPU e-GMM implementation with Flash-GMM 2d-GEMM, Woodbury low-rank, and Spectral Splitting."""
 
 import math
-from typing import Dict, Optional, Tuple
+from typing import Dict, List, Optional, Tuple
 import torch
 import torch.nn as nn
 
 from .config import EGMMConfig
+from .schedule import cosine_alpha
 from .triton_kernels import flash_gmm_diag_log_probs
 
 
@@ -24,6 +25,7 @@ class TorchEGMM(nn.Module):
     N_slow: torch.Tensor
     S_slow: torch.Tensor
     Q_slow: torch.Tensor
+    U_slow: Optional[torch.Tensor]
     N_last: torch.Tensor
     S_last: torch.Tensor
     Q_last: torch.Tensor
@@ -53,6 +55,10 @@ class TorchEGMM(nn.Module):
         self.register_buffer("N_slow", torch.zeros_like(self.N))
         self.register_buffer("S_slow", torch.zeros_like(self.S))
         self.register_buffer("Q_slow", torch.zeros_like(self.Q))
+        if self.U is not None:
+            self.register_buffer("U_slow", torch.zeros_like(self.U))
+        else:
+            self.U_slow = None
 
         # Last-epoch exact accumulators
         self.register_buffer("N_last", torch.zeros_like(self.N))
@@ -88,6 +94,8 @@ class TorchEGMM(nn.Module):
         if self.U is not None:
             u_init = torch.randn(self.k, self.d, self.rank, generator=g, dtype=torch.float32).to(device) * 1e-3
             self.U.copy_(u_init)
+            if self.U_slow is not None:
+                self.U_slow.copy_(self.U)
 
         self.N_slow.copy_(self.N)
         self.S_slow.copy_(self.S)
@@ -105,7 +113,13 @@ class TorchEGMM(nn.Module):
         self.S_last.zero_()
         self.Q_last.zero_()
 
-    def _readout_tuples(self, N: torch.Tensor, S: torch.Tensor, Q: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
+    def _readout_tuples(
+        self,
+        N: torch.Tensor,
+        S: torch.Tensor,
+        Q: torch.Tensor,
+        U: Optional[torch.Tensor] = None,
+    ) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
         n_safe = N.clamp_min(1e-30)
         pi = n_safe / n_safe.sum()
         mu = S / n_safe.unsqueeze(1)
@@ -116,9 +130,10 @@ class TorchEGMM(nn.Module):
             return pi, mu, var
 
         if self.cov_type == "low_rank_diag":
-            assert self.U is not None
+            u_ref = U if U is not None else self.U
+            assert u_ref is not None
             total_diag = (Q / n_safe.unsqueeze(1) - mu.pow(2)).clamp_min(0.0) + floor
-            u_diag = torch.sum(self.U.pow(2), dim=2)
+            u_diag = torch.sum(u_ref.pow(2), dim=2)
             d_var = (total_diag - u_diag).clamp_min(floor)
             return pi, mu, d_var
 
@@ -130,7 +145,7 @@ class TorchEGMM(nn.Module):
     def readout(self, mode: Optional[str] = None) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
         use_mode = mode or self.cfg.finalization
         if use_mode == "slow_ema":
-            return self._readout_tuples(self.N_slow, self.S_slow, self.Q_slow)
+            return self._readout_tuples(self.N_slow, self.S_slow, self.Q_slow, self.U_slow)
         if use_mode == "last_epoch" and float(self.N_last.sum()) > 1e-12:
             empty = self.N_last <= 1e-12
             n_eff = self.N_last.clamp_min(1e-12)
@@ -202,18 +217,30 @@ class TorchEGMM(nn.Module):
         if dead_ids.numel() == 0:
             return 0
 
-        donor_pool = torch.where((self.N > mean_n) & (self.cooldown == 0))[0]
+        donor_pool = torch.where((self.N > self.cfg.donor_min_mult * mean_n) & (self.cooldown == 0))[0]
+        if donor_pool.numel() == 0:
+            donor_pool = torch.where((self.N > mean_n) & (self.cooldown == 0))[0]
         if donor_pool.numel() == 0:
             donor_pool = torch.where(self.N > mean_n)[0]
         if donor_pool.numel() == 0:
             return 0
 
         n_pairs = min(dead_ids.numel(), donor_pool.numel(), self.cfg.max_splits_per_step)
-        probs = self.N[donor_pool].clamp_min(1e-12)
+        _, mu_cur, cov_cur = self._readout_tuples(self.N, self.S, self.Q)
+        if self.cfg.donor_weight_by == "variance_mass":
+            if self.cov_type == "diag":
+                traces = cov_cur[donor_pool].sum(dim=1)
+            elif self.cov_type == "low_rank_diag":
+                assert self.U is not None
+                traces = cov_cur[donor_pool].sum(dim=1) + self.U[donor_pool].pow(2).sum(dim=(1, 2))
+            else:
+                traces = torch.diagonal(cov_cur[donor_pool], dim1=-2, dim2=-1).sum(dim=1)
+            probs = (self.N[donor_pool] * traces.clamp_min(1e-8)).clamp_min(1e-12)
+        else:
+            probs = self.N[donor_pool].clamp_min(1e-12)
         probs = probs / probs.sum()
         donors = donor_pool[torch.multinomial(probs, num_samples=n_pairs, replacement=False)]
 
-        _, mu_cur, cov_cur = self._readout_tuples(self.N, self.S, self.Q)
         delta = float(self.cfg.split_delta)
         floor = float(self.cfg.cov_floor)
 
@@ -404,6 +431,8 @@ class TorchEGMM(nn.Module):
         self.N_slow.mul_(g_s).add_(n_b, alpha=a_s)
         self.S_slow.mul_(g_s).add_(s_b, alpha=a_s)
         self.Q_slow.mul_(g_s).add_(q_b, alpha=a_s)
+        if self.cov_type == "low_rank_diag" and self.U is not None and self.U_slow is not None:
+            self.U_slow.mul_(g_s).add_(self.U, alpha=a_s)
 
         if record_last_epoch:
             self.N_last.add_(n_b)
@@ -416,3 +445,54 @@ class TorchEGMM(nn.Module):
             self._revive_collapsed(x_f32)
 
         return float(-lse.mean().item())
+
+    @torch.no_grad()
+    def fit(
+        self,
+        X: torch.Tensor,
+        batch_size: int = 512,
+        epochs: int = 3,
+        alpha_0: Optional[float] = None,
+        use_bf16_gemm: bool = False,
+    ) -> Dict[str, object]:
+        """Train TorchEGMM over X for `epochs` passes with cosine schedule and split-free final epoch."""
+        if not self.initialized:
+            self.init_from_data(X)
+
+        a0 = float(alpha_0 if alpha_0 is not None else self.cfg.alpha_0)
+        n = X.shape[0]
+        batches_per_epoch = max(1, math.ceil(n / batch_size))
+        total_steps = epochs * batches_per_epoch
+        g = torch.Generator(device="cpu").manual_seed(self.cfg.seed)
+        batch_nlls: List[float] = []
+
+        t = 0
+        for ep in range(epochs):
+            is_last = ep == (epochs - 1)
+            if is_last:
+                self.reset_last_epoch()
+            perm = torch.randperm(n, generator=g).to(X.device)
+            for start in range(0, n, batch_size):
+                xb = X[perm[start : start + batch_size]]
+                alpha_t = cosine_alpha(t, total_steps, a0, self.cfg.eps_floor, self.cfg.use_cosine_schedule)
+                allow_split = (not is_last) if epochs > 1 else (t < (total_steps - max(2, batches_per_epoch // 4)))
+                nll_b = self.step_batch(
+                    xb,
+                    alpha_t,
+                    record_last_epoch=is_last,
+                    allow_split=allow_split,
+                    use_bf16_gemm=use_bf16_gemm,
+                )
+                batch_nlls.append(nll_b)
+                t += 1
+
+        pi, mu, cov = self.readout()
+        return {
+            "pi": pi,
+            "mu": mu,
+            "cov": cov,
+            "U": self.U,
+            "splits": self.splits_done,
+            "chol_fallbacks": self.chol_fallbacks,
+            "batch_nlls": batch_nlls,
+        }

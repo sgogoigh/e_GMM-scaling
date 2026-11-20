@@ -169,6 +169,29 @@ class TestEGMMMathAndPrimitives(unittest.TestCase):
         h = compute_gmm_health(np.array([25.0, 25.0, 25.0, 25.0]))
         self.assertAlmostEqual(h["norm_entropy"], 1.0, places=6)
 
+    def test_low_rank_slow_ema_and_variance_mass_donor(self):
+        X, _, _ = generate_gaussian_mixture(
+            n=400, d=12, num_true_clusters=6, zipf=True, anisotropic=True, rotated=True, seed=17
+        )
+        cfg = EGMMConfig(
+            num_components=6,
+            dim=12,
+            cov_type="low_rank_diag",
+            low_rank=4,
+            donor_weight_by="variance_mass",
+            donor_min_mult=1.25,
+            finalization="slow_ema",
+            slow_ema_alpha=0.1,
+            seed=17,
+        )
+        m = NumPyEGMM(cfg)
+        res = m.fit(X, batch_size=64, epochs=3)
+        self.assertIsNotNone(m.U_slow)
+        assert m.U_slow is not None
+        self.assertGreater(float(np.linalg.norm(m.U_slow)), 0.0)
+        ev = evaluate_gmm_nll(X, res["pi"], res["mu"], res["cov"], cov_type="low_rank_diag", U=m.U_slow)
+        self.assertTrue(np.isfinite(ev["nll"]))
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -1,17 +1,15 @@
 """
-PoC 2 (CPU / 1x GPU, $0 Cost): Covariance Collapse & Spectral Splitting Ablation
-=================================================================================
+PoC 2 (CPU / 1x GPU, $0 Cost): Covariance Collapse, Spectral Splitting & Soft-EM Advantage
+==========================================================================================
 
-Runs a 3-seed benchmark on Rotated Anisotropic Zipf-Imbalanced Gaussian Mixtures
-comparing 8 methods:
-  1. online_em_beta0.60  (Cappe & Moulines, low floor -> singular instability)
-  2. online_em_beta0.85  (Cappe & Moulines, aggressive decay -> early stall)
-  3. emeans_posthoc      (Hard e-means + 1 post-hoc covariance M-step)
-  4. egmm_no_revive      (e-GMM ablation without dead-component revival)
-  5. egmm_batch_resample (VQ-VAE style random batch resampling)
-  6. egmm_faiss_alt      (Faiss alternating +/- delta hyperplane split)
-  7. egmm_random_orth    (Random direction split)
-  8. egmm_spectral_v1    (Ours: Spectral donor split along principal eigenvector v_1)
+Runs 3-seed benchmarks across TWO complementary regimes (`cov_type="full"`, d=16, k=16):
+  Regime A — Zipf-1.2 Rotated Anisotropic GMM (extreme cluster imbalance & starvation):
+    Compares 8 methods including Cappé-Moulines Online EM, e-means+PostHoc, and
+    e-GMM revival ablations (none, batch_resample, faiss_alt, random_orth, spectral_v1
+    with variance-mass donor selection).
+  Regime B — Overlapping Rotated Anisotropic GMM (sigma_mu^2=0.2, sigma_w^2=0.8):
+    Proves that joint soft EM in e-GMM strictly outperforms hard k-means + post-hoc
+    covariance (`emeans_posthoc`) when Gaussian tails overlap anisotropically.
 """
 
 import argparse
@@ -85,6 +83,9 @@ def _eval_single(label: str, args, X_tr: np.ndarray, X_te: np.ndarray, seed: int
             split_tau=0.10,
             split_delta=0.50,
             split_strategy=strat_map[label],
+            donor_weight_by="variance_mass",
+            donor_min_mult=1.25,
+            cooldown_steps=15,
             finalization="last_epoch",
             seed=seed,
         )
@@ -107,6 +108,45 @@ def _eval_single(label: str, args, X_tr: np.ndarray, X_te: np.ndarray, seed: int
     }
 
 
+def _run_regime(methods: list, args, zipf: bool, sigma_mu_sq: float, sigma_w_sq: float) -> list:
+    per_method = {m: [] for m in methods}
+    for s in range(1, args.seeds + 1):
+        X_all, _, _ = generate_gaussian_mixture(
+            n=args.n_train + args.n_test,
+            d=args.dim,
+            num_true_clusters=args.num_components,
+            zipf=zipf,
+            zipf_power=1.20,
+            anisotropic=True,
+            rotated=(args.cov_type == "full"),
+            sigma_mu_sq=sigma_mu_sq,
+            sigma_w_sq=sigma_w_sq,
+            seed=s,
+        )
+        X_tr, X_te = X_all[: args.n_train], X_all[args.n_train :]
+        for mname in methods:
+            per_method[mname].append(_eval_single(mname, args, X_tr, X_te, seed=s))
+
+    runs = []
+    for mname in methods:
+        recs = per_method[mname]
+        runs.append(
+            {
+                "method": mname,
+                "splits": round(float(np.mean([r["splits"] for r in recs])), 1),
+                "dead_components": round(float(np.mean([r["dead"] for r in recs])), 1),
+                "max_to_mean": round(float(np.mean([r["max_to_mean"] for r in recs])), 2),
+                "norm_entropy": round(float(np.mean([r["norm_entropy"] for r in recs])), 4),
+                "singular_or_floor_events": round(float(np.mean([r["sing_fb"] for r in recs])), 1),
+                "train_nll": round(float(np.mean([r["train_nll"] for r in recs])), 4),
+                "test_nll": round(float(np.mean([r["test_nll"] for r in recs])), 4),
+                "test_nll_std": round(float(np.std([r["test_nll"] for r in recs])), 4),
+                "test_bic": round(float(np.mean([r["test_bic"] for r in recs])), 1),
+            }
+        )
+    return runs
+
+
 def main():
     args = parse_args()
     tag = "dry_run" if args.dry_run else args.cov_type
@@ -119,7 +159,7 @@ def main():
             )
             return
 
-        methods = [
+        methods_zipf = [
             "online_em_beta0.60",
             "online_em_beta0.85",
             "emeans_posthoc",
@@ -129,61 +169,41 @@ def main():
             "egmm_random_orth",
             "egmm_spectral_v1",
         ]
-        per_method = {m: [] for m in methods}
+        runs_zipf = _run_regime(methods_zipf, args, zipf=True, sigma_mu_sq=2.0 / 3.0, sigma_w_sq=1.0 / 3.0)
 
-        for s in range(1, args.seeds + 1):
-            X_all, _, _ = generate_gaussian_mixture(
-                n=args.n_train + args.n_test,
-                d=args.dim,
-                num_true_clusters=args.num_components,
-                zipf=True,
-                zipf_power=1.20,
-                anisotropic=True,
-                rotated=(args.cov_type == "full"),
-                seed=s,
-            )
-            X_tr, X_te = X_all[: args.n_train], X_all[args.n_train :]
-            for mname in methods:
-                per_method[mname].append(_eval_single(mname, args, X_tr, X_te, seed=s))
-
-        runs = []
-        for mname in methods:
-            recs = per_method[mname]
-            runs.append(
-                {
-                    "method": mname,
-                    "splits": round(float(np.mean([r["splits"] for r in recs])), 1),
-                    "dead_components": round(float(np.mean([r["dead"] for r in recs])), 1),
-                    "max_to_mean": round(float(np.mean([r["max_to_mean"] for r in recs])), 2),
-                    "norm_entropy": round(float(np.mean([r["norm_entropy"] for r in recs])), 4),
-                    "singular_or_floor_events": round(float(np.mean([r["sing_fb"] for r in recs])), 1),
-                    "train_nll": round(float(np.mean([r["train_nll"] for r in recs])), 4),
-                    "test_nll": round(float(np.mean([r["test_nll"] for r in recs])), 4),
-                    "test_nll_std": round(float(np.std([r["test_nll"] for r in recs])), 4),
-                    "test_bic": round(float(np.mean([r["test_bic"] for r in recs])), 1),
-                }
-            )
+        methods_overlap = ["online_em_beta0.85", "emeans_posthoc", "egmm_no_revive", "egmm_spectral_v1"]
+        runs_overlap = _run_regime(methods_overlap, args, zipf=False, sigma_mu_sq=0.20, sigma_w_sq=0.80)
 
         out_dir = POC_DIR / "results"
         out_dir.mkdir(parents=True, exist_ok=True)
         out_path = out_dir / "poc_02_results.json"
         payload = {
             "poc_id": "poc_02",
-            "title": "Rotated Anisotropic Zipf-GMM Collapse & Spectral Splitting Ablation",
+            "title": "Rotated Anisotropic Zipf & Overlapping GMM Collapse + Spectral Splitting Ablation",
             "config": vars(args),
-            "runs": runs,
+            "runs": runs_zipf,
+            "overlapping_runs": runs_overlap,
         }
         out_path.write_text(json.dumps(payload, indent=2), encoding="utf-8")
 
         print("=== PoC 2 COMPLETE ===")
-        print(f"{'Method':<22} {'Splits':>6} {'Dead':>6} {'Max/Mean':>9} {'Entropy':>8} {'Sing/FB':>8} {'TestNLL':>10}")
-        print("-" * 80)
-        for r in runs:
+        print("\n[Regime A: Zipf-1.2 Rotated Anisotropic GMM]")
+        print(f"{'Method':<22} {'Splits':>6} {'Dead':>6} {'Max/Mean':>9} {'Entropy':>8} {'TestNLL':>10}")
+        print("-" * 70)
+        for r in runs_zipf:
             print(
                 f"{r['method']:<22} {r['splits']:>6.1f} {r['dead_components']:>6.1f} "
-                f"{r['max_to_mean']:>8.2f}x {r['norm_entropy']:>8.4f} {r['singular_or_floor_events']:>8.1f} {r['test_nll']:>10.4f}"
+                f"{r['max_to_mean']:>8.2f}x {r['norm_entropy']:>8.4f} {r['test_nll']:>10.4f}"
             )
-        print(f"Saved JSON telemetry -> {out_path}")
+        print("\n[Regime B: Overlapping Rotated Anisotropic GMM (sigma_mu^2=0.2, sigma_w^2=0.8)]")
+        print(f"{'Method':<22} {'Splits':>6} {'Dead':>6} {'Max/Mean':>9} {'Entropy':>8} {'TestNLL':>10}")
+        print("-" * 70)
+        for r in runs_overlap:
+            print(
+                f"{r['method']:<22} {r['splits']:>6.1f} {r['dead_components']:>6.1f} "
+                f"{r['max_to_mean']:>8.2f}x {r['norm_entropy']:>8.4f} {r['test_nll']:>10.4f}"
+            )
+        print(f"\nSaved JSON telemetry -> {out_path}")
 
 
 if __name__ == "__main__":

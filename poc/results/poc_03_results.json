@@ -1,29 +1,37 @@
 {
   "poc_id": "poc_03",
-  "title": "Empirical Dimension-Aware Scaling Law Sweep & Unseen-d Transfer",
-  "num_observations": 48,
+  "title": "Empirical Dimension-Aware Scaling Law Sweep (alpha_0 & B_knee) + Unseen-d Transfer",
+  "num_observations": 72,
   "fit_with_d": {
-    "c_alpha": 2.6728,
-    "a_k": 0.1557,
-    "a_b": 0.8476,
-    "a_n": -0.5691,
-    "a_t": 1.0801,
-    "a_d": -1.1829,
-    "r2_log": 0.7218,
-    "lodo_mean_rel_err_pct": 82.09,
-    "loso_mean_rel_err_pct": 68.71
+    "c_alpha": 2.1336,
+    "a_k": 0.1905,
+    "a_b": 0.952,
+    "a_n": -0.5539,
+    "a_t": 0.8325,
+    "a_d": -1.2028,
+    "r2_log": 0.7139,
+    "lodo_mean_rel_err_pct": 89.44,
+    "loso_mean_rel_err_pct": 79.37
   },
   "fit_no_d": {
-    "r2_log": 0.2524,
-    "lodo_mean_rel_err_pct": 161.79
+    "r2_log": 0.2753,
+    "lodo_mean_rel_err_pct": 189.62
+  },
+  "fit_batch_knee": {
+    "num_observations": 18,
+    "c_b": 15.5206,
+    "b_k": -0.1111,
+    "b_n": 0.0833,
+    "b_d": -0.0833,
+    "r2_log": 0.2353
   },
   "ood_unseen_d_transfer": {
-    "oracle_nll": 28.692,
-    "with_d_pred_alpha0": 0.1216,
-    "with_d_nll": 28.7086,
-    "with_d_gap_nats": 0.0166,
-    "no_d_pred_alpha0": 0.1304,
-    "no_d_nll": 28.7102,
-    "no_d_gap_nats": 0.0182
+    "oracle_nll": 28.689,
+    "with_d_pred_alpha0": 0.1315,
+    "with_d_nll": 28.712,
+    "with_d_gap_nats": 0.023,
+    "no_d_pred_alpha0": 0.1412,
+    "no_d_nll": 28.7133,
+    "no_d_gap_nats": 0.0243
   }
 }

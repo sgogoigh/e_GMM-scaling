@@ -150,8 +150,10 @@ class EGMMConfig:
     split_tau: float = 0.10
     split_delta: float = 0.50
     split_strategy: str = "spectral_v1"  # "spectral_v1", "random_orth", "faiss_alt", "batch_resample", "none"
+    donor_weight_by: str = "variance_mass"  # "variance_mass" (N_j * tr(Sigma_j)) or "count" (N_j)
+    donor_min_mult: float = 1.25
     max_splits_per_step: int = 4
-    cooldown_steps: int = 10
+    cooldown_steps: int = 15
     power_iter_steps: int = 5
 
     # Finalization

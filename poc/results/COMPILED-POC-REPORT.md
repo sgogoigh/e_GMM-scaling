@@ -1,6 +1,6 @@
 # Compiled Proof-of-Concept Evidence Report (`e_GMM-scaling`)
 
-**Generated**: 2026-11-21 02:32:08  
+**Generated**: 2026-11-21 02:38:34  
 **Completed Tiers**: PoC 1, PoC 2, PoC 3, PoC 4
 
 ---
@@ -9,7 +9,7 @@
 
 - **Flash-GMM 2d-GEMM Max $|\Delta \ln p|$**: `2.842e-14`
 - **Woodbury + Determinant Lemma Max $|\Delta \ln p|$**: `1.421e-14`
-- **Rank-1 Collapsed Batch Min Eigenvalue**: `2.664103e-02` (floor `1.0e-03`)
+- **Rank-1 Collapsed Batch Min Eigenvalue**: `1.000000e-03` (floor `1.0e-03`)
 - **Spectral Split Mean Conservation Error**: `4.441e-16`
 - **Full-Covariance Memory Wall ($k=65536, d=1024$)**: `256.0 GiB` (`274.88 GB`)
 
@@ -25,28 +25,38 @@
 
 ---
 
-## PoC 2: Anisotropic Zipf-GMM Collapse & Spectral Splitting Ablation
+## PoC 2: Collapse, Spectral Splitting & Overlapping Soft-EM Advantage
 
+### Regime A: Zipf-1.2 Rotated Anisotropic GMM (Extreme Class Imbalance)
 | Method | Splits | Dead | Max/Mean | Norm Entropy | Sing/Floor Ev | Train NLL | Test NLL | Test BIC |
 | :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | ---: |
 | `online_em_beta0.60` | 0.0 | 5.3 | 5.6x | 0.7361 | 0.0 | 13.4997 | 15.1395 | 40580.5 |
 | `online_em_beta0.85` | 0.0 | 0.3 | 3.3x | 0.8933 | 0.0 | 13.7426 | 14.9859 | 40334.7 |
 | `emeans_posthoc` | 2.3 | 0.0 | 1.93x | 0.9575 | 0.0 | 13.6269 | 14.6991 | 39875.9 |
 | `egmm_no_revive` | 0.0 | 13.7 | 9.96x | 0.2652 | 0.0 | 17.1296 | 17.6951 | 44669.4 |
-| `egmm_batch_resample` | 72.3 | 1.7 | 6.43x | 0.7119 | 0.0 | 13.7360 | 15.0559 | 40446.7 |
-| `egmm_faiss_alt` | 39.7 | 0.0 | 2.33x | 0.9416 | 0.0 | 13.8253 | 14.9383 | 40258.6 |
-| `egmm_random_orth` | 54.3 | 0.3 | 2.18x | 0.9279 | 0.0 | 14.4389 | 15.5511 | 41239.0 |
-| `egmm_spectral_v1` | 44.7 | 0.3 | 2.44x | 0.9369 | 0.0 | 13.7731 | 14.9151 | 40221.5 |
+| `egmm_batch_resample` | 69.0 | 1.7 | 6.57x | 0.7055 | 0.0 | 13.9052 | 15.3059 | 40846.7 |
+| `egmm_faiss_alt` | 37.3 | 0.0 | 2.16x | 0.9511 | 0.0 | 13.9105 | 15.0130 | 40378.0 |
+| `egmm_random_orth` | 47.0 | 0.3 | 3.33x | 0.9038 | 0.0 | 13.9930 | 15.2321 | 40728.6 |
+| `egmm_spectral_v1` | 41.7 | 0.3 | 2.61x | 0.9212 | 0.0 | 13.6807 | 14.8957 | 40190.4 |
+
+### Regime B: Overlapping Rotated Anisotropic GMM ($\sigma_\mu^2 = 0.2, \sigma_w^2 = 0.8$)
+| Method | Splits | Dead | Max/Mean | Norm Entropy | Test NLL | Test BIC |
+| :--- | :---: | :---: | :---: | :---: | :---: | ---: |
+| `online_em_beta0.85` | 0.0 | 3.7 | 5.05x | 0.7584 | 19.7397 | 47940.7 |
+| `emeans_posthoc` | 2.3 | 0.0 | 1.82x | 0.9769 | 20.4754 | 49117.9 |
+| `egmm_no_revive` | 0.0 | 14.7 | 15.61x | 0.0451 | 21.8137 | 51259.2 |
+| `egmm_spectral_v1` | 48.0 | 0.0 | 2.42x | 0.9438 | 19.0163 | 46783.4 |
 
 ---
 
 ## PoC 3: Empirical Dimension-Aware Scaling Law & Unseen-$d$ Transfer
 
-- **Sweep Size**: 48 $(n, d, k, B)$ configurations on `StretchedGaussian`
-- **Fitted $d$-Aware Law**: $\alpha_0 = 2.6728 \cdot k^{+0.16} B^{+0.85} n^{-0.57} d^{-1.18}$ ($R^2 = 0.7218$ vs. `0.2524` without $d$)
-- **LODO-$d$ Rel Error**: `82.09%` (with $d^{a_d}$) vs. `161.79%` (without $d$)
-- **LOSO-$n$ Rel Error**: `68.71%`
-- **Zero-Shot Unseen $d=24$ Transfer**: Oracle NLL `28.6920` | With-$d$ Law `28.7086` (`+0.0166` nats, $\alpha_0=0.1216$) | No-$d$ Law `28.7102` (`+0.0182` nats, $\alpha_0=0.1304$)
+- **Sweep Size**: 72 $(n, d, k, B)$ configurations on `StretchedGaussian`
+- **Fitted $\alpha_0$ Law ($d$-Aware)**: $\alpha_0 = 2.1336 \cdot k^{+0.19} B^{+0.95} n^{-0.55} d^{-1.20}$ ($R^2 = 0.7139$ vs. `0.2753` without $d$)
+- **LODO-$d$ Rel Error**: `89.44%` (with $d^{a_d}$) vs. `189.62%` (without $d$)
+- **LOSO-$n$ Rel Error**: `79.37%`
+- **Fitted $B_{\text{knee}}$ Law ($d$-Aware)**: $B_{\text{knee}} = 15.5206 \cdot k^{-0.11} n^{+0.08} d^{-0.08}$ ($R^2 = 0.2353$)
+- **Zero-Shot Unseen $d=24$ Transfer**: Oracle NLL `28.6890` | With-$d$ Law `28.7120` (`+0.0230` nats, $\alpha_0=0.1315$) | No-$d$ Law `28.7133` (`+0.0243` nats, $\alpha_0=0.1412$)
 
 ---
 
@@ -55,10 +65,10 @@
 ### Top-$m$ Sparse Responsibility Truncation (`k=32`)
 | Top-$m$ | M-Step Work Ratio | Test NLL | Fit Time (ms) |
 | :---: | :---: | :---: | ---: |
-| `2` | 0.0625x | 15.3042 | 38.3 |
-| `4` | 0.125x | 15.0457 | 88.6 |
-| `8` | 0.25x | 14.8106 | 39.3 |
-| `dense` | 1.0x | 14.8101 | 39.3 |
+| `2` | 0.0625x | 14.7435 | 31.0 |
+| `4` | 0.125x | 14.1575 | 30.6 |
+| `8` | 0.25x | 14.4512 | 27.4 |
+| `dense` | 1.0x | 14.4510 | 28.3 |
 
 ### Rotated Correlated Embeddings (`diag` vs `low_rank_diag` vs `full`)
 | Covariance Mode | Effective Params | Test NLL | Test BIC |
@@ -70,6 +80,6 @@
 ### Finalization Strategy (`main_ema` vs `last_epoch` vs `slow_ema`)
 | Finalizer | Train NLL | Test NLL |
 | :--- | :---: | :---: |
-| `main_ema` | 23.8844 | 24.6012 |
-| `last_epoch` | 23.8566 | 24.6297 |
-| `slow_ema` | 23.9431 | 24.5706 |
+| `main_ema` | 23.9068 | 24.6154 |
+| `last_epoch` | 23.8808 | 24.6447 |
+| `slow_ema` | 23.9421 | 24.5874 |

@@ -60,6 +60,18 @@ class TestEGMMTorch(unittest.TestCase):
         self.assertTrue(torch.isfinite(torch.tensor(nll)))
         self.assertGreaterEqual(m.splits_done, 1)
 
+    def test_torch_egmm_fit_parity(self):
+        from e_gmm.config import EGMMConfig
+        from e_gmm.torch_egmm import TorchEGMM
+
+        torch.manual_seed(3)
+        X = torch.randn(256, 8)
+        cfg = EGMMConfig(num_components=4, dim=8, cov_type="low_rank_diag", low_rank=3, donor_weight_by="variance_mass")
+        m = TorchEGMM(cfg)
+        res = m.fit(X, batch_size=64, epochs=2)
+        self.assertEqual(res["mu"].shape, (4, 8))
+        self.assertIsNotNone(m.U_slow)
+
 
 if __name__ == "__main__":
     unittest.main()

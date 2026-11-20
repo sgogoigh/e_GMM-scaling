@@ -1,6 +1,6 @@
 {
   "poc_id": "poc_02",
-  "title": "Rotated Anisotropic Zipf-GMM Collapse & Spectral Splitting Ablation",
+  "title": "Rotated Anisotropic Zipf & Overlapping GMM Collapse + Spectral Splitting Ablation",
   "config": {
     "n_train": 2400,
     "n_test": 800,
@@ -63,51 +63,101 @@
     },
     {
       "method": "egmm_batch_resample",
-      "splits": 72.3,
+      "splits": 69.0,
       "dead_components": 1.7,
-      "max_to_mean": 6.43,
-      "norm_entropy": 0.7119,
+      "max_to_mean": 6.57,
+      "norm_entropy": 0.7055,
       "singular_or_floor_events": 0.0,
-      "train_nll": 13.736,
-      "test_nll": 15.0559,
-      "test_nll_std": 0.1033,
-      "test_bic": 40446.7
+      "train_nll": 13.9052,
+      "test_nll": 15.3059,
+      "test_nll_std": 0.0337,
+      "test_bic": 40846.7
     },
     {
       "method": "egmm_faiss_alt",
-      "splits": 39.7,
+      "splits": 37.3,
       "dead_components": 0.0,
-      "max_to_mean": 2.33,
-      "norm_entropy": 0.9416,
+      "max_to_mean": 2.16,
+      "norm_entropy": 0.9511,
       "singular_or_floor_events": 0.0,
-      "train_nll": 13.8253,
-      "test_nll": 14.9383,
-      "test_nll_std": 0.1262,
-      "test_bic": 40258.6
+      "train_nll": 13.9105,
+      "test_nll": 15.013,
+      "test_nll_std": 0.093,
+      "test_bic": 40378.0
     },
     {
       "method": "egmm_random_orth",
-      "splits": 54.3,
+      "splits": 47.0,
       "dead_components": 0.3,
-      "max_to_mean": 2.18,
-      "norm_entropy": 0.9279,
+      "max_to_mean": 3.33,
+      "norm_entropy": 0.9038,
       "singular_or_floor_events": 0.0,
-      "train_nll": 14.4389,
-      "test_nll": 15.5511,
-      "test_nll_std": 0.4522,
-      "test_bic": 41239.0
+      "train_nll": 13.993,
+      "test_nll": 15.2321,
+      "test_nll_std": 0.3115,
+      "test_bic": 40728.6
     },
     {
       "method": "egmm_spectral_v1",
-      "splits": 44.7,
+      "splits": 41.7,
       "dead_components": 0.3,
-      "max_to_mean": 2.44,
-      "norm_entropy": 0.9369,
+      "max_to_mean": 2.61,
+      "norm_entropy": 0.9212,
       "singular_or_floor_events": 0.0,
-      "train_nll": 13.7731,
-      "test_nll": 14.9151,
-      "test_nll_std": 0.2984,
-      "test_bic": 40221.5
+      "train_nll": 13.6807,
+      "test_nll": 14.8957,
+      "test_nll_std": 0.1355,
+      "test_bic": 40190.4
+    }
+  ],
+  "overlapping_runs": [
+    {
+      "method": "online_em_beta0.85",
+      "splits": 0.0,
+      "dead_components": 3.7,
+      "max_to_mean": 5.05,
+      "norm_entropy": 0.7584,
+      "singular_or_floor_events": 0.0,
+      "train_nll": 18.6089,
+      "test_nll": 19.7397,
+      "test_nll_std": 0.5959,
+      "test_bic": 47940.7
+    },
+    {
+      "method": "emeans_posthoc",
+      "splits": 2.3,
+      "dead_components": 0.0,
+      "max_to_mean": 1.82,
+      "norm_entropy": 0.9769,
+      "singular_or_floor_events": 0.0,
+      "train_nll": 19.4617,
+      "test_nll": 20.4754,
+      "test_nll_std": 0.248,
+      "test_bic": 49117.9
+    },
+    {
+      "method": "egmm_no_revive",
+      "splits": 0.0,
+      "dead_components": 14.7,
+      "max_to_mean": 15.61,
+      "norm_entropy": 0.0451,
+      "singular_or_floor_events": 0.0,
+      "train_nll": 21.2867,
+      "test_nll": 21.8137,
+      "test_nll_std": 0.0725,
+      "test_bic": 51259.2
+    },
+    {
+      "method": "egmm_spectral_v1",
+      "splits": 48.0,
+      "dead_components": 0.0,
+      "max_to_mean": 2.42,
+      "norm_entropy": 0.9438,
+      "singular_or_floor_events": 0.0,
+      "train_nll": 17.7694,
+      "test_nll": 19.0163,
+      "test_nll_std": 0.3646,
+      "test_bic": 46783.4
     }
   ]
 }

@@ -68,8 +68,9 @@ def main():
             lines += [
                 "---",
                 "",
-                "## PoC 2: Anisotropic Zipf-GMM Collapse & Spectral Splitting Ablation",
+                "## PoC 2: Collapse, Spectral Splitting & Overlapping Soft-EM Advantage",
                 "",
+                "### Regime A: Zipf-1.2 Rotated Anisotropic GMM (Extreme Class Imbalance)",
                 "| Method | Splits | Dead | Max/Mean | Norm Entropy | Sing/Floor Ev | Train NLL | Test NLL | Test BIC |",
                 "| :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | ---: |",
             ]
@@ -78,11 +79,24 @@ def main():
                     f"| `{r['method']}` | {r['splits']} | {r['dead_components']} | {r['max_to_mean']}x | "
                     f"{r['norm_entropy']} | {r['singular_or_floor_events']} | {r['train_nll']:.4f} | {r['test_nll']:.4f} | {r['test_bic']:.1f} |"
                 )
+            if p2.get("overlapping_runs"):
+                lines += [
+                    "",
+                    "### Regime B: Overlapping Rotated Anisotropic GMM ($\\sigma_\\mu^2 = 0.2, \\sigma_w^2 = 0.8$)",
+                    "| Method | Splits | Dead | Max/Mean | Norm Entropy | Test NLL | Test BIC |",
+                    "| :--- | :---: | :---: | :---: | :---: | :---: | ---: |",
+                ]
+                for r in p2["overlapping_runs"]:
+                    lines.append(
+                        f"| `{r['method']}` | {r['splits']} | {r['dead_components']} | {r['max_to_mean']}x | "
+                        f"{r['norm_entropy']} | {r['test_nll']:.4f} | {r['test_bic']:.1f} |"
+                    )
             lines.append("")
 
         if p3:
             fw = p3["fit_with_d"]
             fnd = p3["fit_no_d"]
+            fb = p3.get("fit_batch_knee")
             ood = p3["ood_unseen_d_transfer"]
             lines += [
                 "---",
@@ -90,9 +104,15 @@ def main():
                 "## PoC 3: Empirical Dimension-Aware Scaling Law & Unseen-$d$ Transfer",
                 "",
                 f"- **Sweep Size**: {p3['num_observations']} $(n, d, k, B)$ configurations on `StretchedGaussian`",
-                f"- **Fitted $d$-Aware Law**: $\\alpha_0 = {fw['c_alpha']} \\cdot k^{{{fw['a_k']:+.2f}}} B^{{{fw['a_b']:+.2f}}} n^{{{fw['a_n']:+.2f}}} d^{{{fw['a_d']:+.2f}}}$ ($R^2 = {fw['r2_log']}$ vs. `{fnd['r2_log']}` without $d$)",
+                f"- **Fitted $\\alpha_0$ Law ($d$-Aware)**: $\\alpha_0 = {fw['c_alpha']} \\cdot k^{{{fw['a_k']:+.2f}}} B^{{{fw['a_b']:+.2f}}} n^{{{fw['a_n']:+.2f}}} d^{{{fw['a_d']:+.2f}}}$ ($R^2 = {fw['r2_log']}$ vs. `{fnd['r2_log']}` without $d$)",
                 f"- **LODO-$d$ Rel Error**: `{fw['lodo_mean_rel_err_pct']}%` (with $d^{{a_d}}$) vs. `{fnd['lodo_mean_rel_err_pct']}%` (without $d$)",
                 f"- **LOSO-$n$ Rel Error**: `{fw['loso_mean_rel_err_pct']}%`",
+            ]
+            if fb:
+                lines.append(
+                    f"- **Fitted $B_{{\\text{{knee}}}}$ Law ($d$-Aware)**: $B_{{\\text{{knee}}}} = {fb['c_b']} \\cdot k^{{{fb['b_k']:+.2f}}} n^{{{fb['b_n']:+.2f}}} d^{{{fb['b_d']:+.2f}}}$ ($R^2 = {fb['r2_log']}$)"
+                )
+            lines += [
                 f"- **Zero-Shot Unseen $d=24$ Transfer**: Oracle NLL `{ood['oracle_nll']:.4f}` | With-$d$ Law `{ood['with_d_nll']:.4f}` (`{ood['with_d_gap_nats']:+.4f}` nats, $\\alpha_0={ood['with_d_pred_alpha0']}$) | No-$d$ Law `{ood['no_d_nll']:.4f}` (`{ood['no_d_gap_nats']:+.4f}` nats, $\\alpha_0={ood['no_d_pred_alpha0']}$)",
                 "",
             ]

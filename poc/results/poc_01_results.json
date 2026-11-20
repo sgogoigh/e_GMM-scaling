@@ -5,7 +5,7 @@
     "flash_gemm_max_log_diff": 2.842170943040401e-14,
     "woodbury_max_log_diff": 1.4210854715202004e-14,
     "woodbury_chol_fallbacks": 0,
-    "rank1_batch_min_eig": 0.026641025640942263,
+    "rank1_batch_min_eig": 0.0010000000026259563,
     "rank1_batch_floor": 0.001,
     "spectral_split_mean_diff": 4.440892098500626e-16,
     "spectral_split_min_eig": 0.20482198982442343
