@@ -208,7 +208,7 @@ class TorchEGMM(nn.Module):
         if donor_pool.numel() == 0:
             return 0
 
-        n_pairs = min(int(dead_ids.numel()), int(donor_pool.numel()), self.cfg.max_splits_per_step)
+        n_pairs = min(dead_ids.numel(), donor_pool.numel(), self.cfg.max_splits_per_step)
         probs = self.N[donor_pool].clamp_min(1e-12)
         probs = probs / probs.sum()
         donors = donor_pool[torch.multinomial(probs, num_samples=n_pairs, replacement=False)]
