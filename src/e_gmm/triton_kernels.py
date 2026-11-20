@@ -9,11 +9,6 @@ try:
     import triton.language as tl  # type: ignore[import-not-found]
 
     HAS_TRITON = True
-except ImportError:
-    HAS_TRITON = False
-
-
-if HAS_TRITON:
 
     @triton.jit
     def _flash_gmm_diag_lse_kernel(
@@ -70,6 +65,8 @@ if HAS_TRITON:
 
         lse = m_i + tl.log(l_i)
         tl.store(LSE_ptr + offs_m, lse, mask=mask_m)
+except ImportError:
+    HAS_TRITON = False
 
 
 def flash_gmm_diag_log_probs(
