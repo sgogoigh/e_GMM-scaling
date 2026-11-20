@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 410" font-family="Segoe UI, Inter, Arial, sans-serif">
+  <rect width="960" height="410" rx="14" fill="#0f172a" stroke="#334155" stroke-width="1.5"/>
+  <text x="480" y="34" text-anchor="middle" fill="#f8fafc" font-size="17" font-weight="800">Covariance Parametrizations: Breaking the O(k d²) Memory Wall</text>
+  <text x="480" y="54" text-anchor="middle" fill="#94a3b8" font-size="11.5">Benchmark Footprint at Scale: k = 65,536 components, d = 1,024 dimensions (FP32 accumulators)</text>
+
+  <!-- Card 1: Diagonal -->
+  <rect x="26" y="76" width="286" height="306" rx="10" fill="#1e293b" stroke="#4ade80" stroke-width="1.8"/>
+  <text x="169" y="102" text-anchor="middle" fill="#4ade80" font-size="14" font-weight="700">1. Diagonal e-GMM</text>
+  <text x="169" y="122" text-anchor="middle" fill="#86efac" font-size="10.5">Billion-Scale Default (SIFT / DEEP1B)</text>
+  <rect x="44" y="138" width="250" height="92" rx="6" fill="#0f172a"/>
+  <text x="56" y="160" fill="#e2e8f0" font-size="10.5" font-family="Consolas, monospace">Sigma_j = diag(sigma_j^2)</text>
+  <text x="56" y="182" fill="#e2e8f0" font-size="10.5" font-family="Consolas, monospace">Q_j shape: (k, d)</text>
+  <text x="56" y="204" fill="#4ade80" font-size="11" font-weight="700">Memory: 0.54 GB  (O(kd))</text>
+  <text x="56" y="222" fill="#94a3b8" font-size="9.5">(N + S + Q in FP32)</text>
+  <text x="44" y="256" fill="#cbd5e1" font-size="10.5">• E-step: Single 2d Flash-GMM GEMM</text>
+  <text x="44" y="276" fill="#cbd5e1" font-size="10.5">• Log-det: O(k d) sum of logs</text>
+  <text x="44" y="296" fill="#cbd5e1" font-size="10.5">• Spectral split: O(d) argmax(var_j*)</text>
+  <text x="44" y="328" fill="#4ade80" font-size="10.5" font-weight="700">Fits easily on 1x GPU (&lt;1 GB state)</text>
+  <text x="44" y="352" fill="#94a3b8" font-size="9.8">512x smaller than Full Covariance</text>
+
+  <!-- Card 2: Low-Rank + Diagonal -->
+  <rect x="337" y="76" width="286" height="306" rx="10" fill="#1e293b" stroke="#38bdf8" stroke-width="1.8"/>
+  <text x="480" y="102" text-anchor="middle" fill="#38bdf8" font-size="14" font-weight="700">2. Low-Rank + Diagonal</text>
+  <text x="480" y="122" text-anchor="middle" fill="#7dd3fc" font-size="10.5">Correlated Embeddings (DINOv2 / ViT, r=16)</text>
+  <rect x="355" y="138" width="250" height="92" rx="6" fill="#0f172a"/>
+  <text x="367" y="160" fill="#e2e8f0" font-size="10.5" font-family="Consolas, monospace">Sigma_j = D_j + U_j U_j^T</text>
+  <text x="367" y="182" fill="#e2e8f0" font-size="10.5" font-family="Consolas, monospace">U_j shape: (k, d, r)</text>
+  <text x="367" y="204" fill="#38bdf8" font-size="11" font-weight="700">Memory: 4.83 GB  (O(kdr))</text>
+  <text x="367" y="222" fill="#94a3b8" font-size="9.5">(r=16; captures top correlations)</text>
+  <text x="355" y="256" fill="#cbd5e1" font-size="10.5">• E-step: Woodbury inverse identity</text>
+  <text x="355" y="276" fill="#cbd5e1" font-size="10.5">• Log-det: Matrix Determinant Lemma</text>
+  <text x="355" y="296" fill="#cbd5e1" font-size="10.5">• Small r x r Cholesky: O(k r^3)</text>
+  <text x="355" y="328" fill="#38bdf8" font-size="10.5" font-weight="700">Fits easily on 1x 24GB/80GB GPU</text>
+  <text x="355" y="352" fill="#94a3b8" font-size="9.8">57x smaller than Full Covariance</text>
+
+  <!-- Card 3: Full Covariance -->
+  <rect x="648" y="76" width="286" height="306" rx="10" fill="#1e293b" stroke="#f87171" stroke-width="1.8"/>
+  <text x="791" y="102" text-anchor="middle" fill="#f87171" font-size="14" font-weight="700">3. Full Covariance e-GMM</text>
+  <text x="791" y="122" text-anchor="middle" fill="#fca5a5" font-size="10.5">Exact Densities (k &lt;= 4096 or Low-d)</text>
+  <rect x="666" y="138" width="250" height="92" rx="6" fill="#0f172a"/>
+  <text x="678" y="160" fill="#e2e8f0" font-size="10.5" font-family="Consolas, monospace">Sigma_j = Q/N - mu mu^T + l0 I</text>
+  <text x="678" y="182" fill="#e2e8f0" font-size="10.5" font-family="Consolas, monospace">Q_j shape: (k, d, d)</text>
+  <text x="678" y="204" fill="#f87171" font-size="11" font-weight="700">Memory: 275.4 GB  (O(kd^2))</text>
+  <text x="678" y="222" fill="#94a3b8" font-size="9.5">(At k=65k, d=1024: exceeds H100!)</text>
+  <text x="666" y="256" fill="#cbd5e1" font-size="10.5">• E-step: Cholesky L_j L_j^T = Sigma_j</text>
+  <text x="666" y="276" fill="#cbd5e1" font-size="10.5">• Cost: O(k d^3 + B k d^2)</text>
+  <text x="666" y="296" fill="#cbd5e1" font-size="10.5">• Spectral split: 5x power iteration</text>
+  <text x="666" y="328" fill="#fbbf24" font-size="10.5" font-weight="700">Best for k &lt;= 4k (e.g., ImageNet-1k)</text>
+  <text x="666" y="352" fill="#94a3b8" font-size="9.8">Or shard Q_j across 4-8 GPUs</text>
+</svg>
