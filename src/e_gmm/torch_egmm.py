@@ -357,17 +357,27 @@ class TorchEGMM(nn.Module):
                 q_b = torch.einsum("bk,bd,be->kde", r, x_f32, x_f32)
 
             if self.cov_type == "low_rank_diag":
+                floor = float(self.cfg.cov_floor)
+                rem_dim = max(self.d - self.rank, 1)
                 for j in range(self.k):
                     nb_j = float(n_b[j].item())
-                    if nb_j <= 1e-8:
+                    if nb_j <= 1e-6:
                         continue
                     w = r[:, j]
                     res = x_f32 - mu[j].unsqueeze(0)
-                    proj = res.t() @ (w.unsqueeze(1) * (res @ self.U[j])) / nb_j
-                    target = (1.0 - alpha_t) * self.U[j] + alpha_t * proj
-                    q_mat, _ = torch.linalg.qr(target)
-                    norms = torch.sqrt((torch.sum(w.unsqueeze(1) * (res @ q_mat).pow(2), dim=0) / nb_j - self.cfg.cov_floor).clamp_min(0.0))
-                    self.U[j].copy_(q_mat * norms.unsqueeze(0))
+                    v_cur, _ = torch.linalg.qr(self.U[j])
+                    proj = res.t() @ (w.unsqueeze(1) * (res @ v_cur)) / nb_j
+                    cand = (1.0 - alpha_t) * v_cur + alpha_t * (proj / proj.norm().clamp_min(1e-8))
+                    q_mat, _ = torch.linalg.qr(cand)
+                    signs = torch.where((q_mat * v_cur).sum(dim=0) >= 0.0, 1.0, -1.0)
+                    q_mat = q_mat * signs.unsqueeze(0)
+                    dir_vars = torch.sum(w.unsqueeze(1) * (res @ q_mat).pow(2), dim=0) / nb_j
+                    tot_var = float(torch.sum(w.unsqueeze(1) * res.pow(2)).item()) / nb_j
+                    bg_var = max((tot_var - float(dir_vars.sum().item())) / rem_dim, floor)
+                    excess = (dir_vars - bg_var).clamp_min(0.0)
+                    old_vars = self.U[j].pow(2).sum(dim=0)
+                    smoothed_vars = (1.0 - alpha_t) * old_vars + alpha_t * excess
+                    self.U[j].copy_(q_mat * torch.sqrt(smoothed_vars.clamp_min(0.0)).unsqueeze(0))
 
         self.N.mul_(gamma).add_(n_b, alpha=alpha_t)
         self.S.mul_(gamma).add_(s_b, alpha=alpha_t)

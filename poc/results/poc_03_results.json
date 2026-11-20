@@ -1,0 +1,29 @@
+{
+  "poc_id": "poc_03",
+  "title": "Empirical Dimension-Aware Scaling Law Sweep & OOD Transfer",
+  "num_observations": 24,
+  "fit_with_d": {
+    "c_alpha": 0.1168,
+    "a_k": 1.9174,
+    "a_b": -0.6331,
+    "a_n": 0.0078,
+    "a_t": -2.3591,
+    "a_d": 0.0387,
+    "r2_log": 0.456,
+    "lodo_mean_rel_err_pct": 111.98,
+    "loso_mean_rel_err_pct": 100.53
+  },
+  "fit_no_d": {
+    "r2_log": 0.4556,
+    "lodo_mean_rel_err_pct": 128.6
+  },
+  "ood_zipf_gmm_transfer": {
+    "oracle_nll": 20.7874,
+    "with_d_pred_alpha0": 0.0991,
+    "with_d_nll": 21.3761,
+    "with_d_gap_nats": 0.5888,
+    "no_d_pred_alpha0": 0.0976,
+    "no_d_nll": 21.3761,
+    "no_d_gap_nats": 0.5888
+  }
+}

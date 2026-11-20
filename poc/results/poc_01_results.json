@@ -1,0 +1,89 @@
+{
+  "poc_id": "poc_01",
+  "title": "Offline Mathematical Identities, PSD Floor Proof & Memory/HBM Scale Audit",
+  "identities": {
+    "flash_gemm_max_log_diff": 2.842170943040401e-14,
+    "woodbury_max_log_diff": 1.4210854715202004e-14,
+    "woodbury_chol_fallbacks": 0,
+    "rank1_batch_min_eig": 0.0010000000026259563,
+    "rank1_batch_floor": 0.001,
+    "spectral_split_mean_diff": 4.440892098500626e-16,
+    "spectral_split_min_eig": 0.20482198982442343
+  },
+  "scale_profiles": [
+    {
+      "preset": "sift-1m",
+      "cov_type": "diag",
+      "k": 4096,
+      "d": 128,
+      "B": 16384,
+      "state_fp32_GiB": 0.0039,
+      "naive_bk_HBM_GiB": 0.25,
+      "tiled_HBM_GiB": 0.125
+    },
+    {
+      "preset": "deep-1b",
+      "cov_type": "diag",
+      "k": 65536,
+      "d": 96,
+      "B": 262144,
+      "state_fp32_GiB": 0.0471,
+      "naive_bk_HBM_GiB": 64.0,
+      "tiled_HBM_GiB": 2.0
+    },
+    {
+      "preset": "spacev-100m",
+      "cov_type": "diag",
+      "k": 65536,
+      "d": 100,
+      "B": 131072,
+      "state_fp32_GiB": 0.0491,
+      "naive_bk_HBM_GiB": 32.0,
+      "tiled_HBM_GiB": 1.0
+    },
+    {
+      "preset": "dinov2-100m",
+      "cov_type": "diag",
+      "k": 16384,
+      "d": 1024,
+      "B": 65536,
+      "state_fp32_GiB": 0.1251,
+      "naive_bk_HBM_GiB": 4.0,
+      "tiled_HBM_GiB": 0.5
+    },
+    {
+      "preset": "dinov2-100m",
+      "cov_type": "low_rank_diag",
+      "k": 16384,
+      "d": 1024,
+      "B": 65536,
+      "state_fp32_GiB": 1.1251,
+      "naive_bk_HBM_GiB": 4.0,
+      "tiled_HBM_GiB": 0.5
+    },
+    {
+      "preset": "dinov2-100m",
+      "cov_type": "full",
+      "k": 16384,
+      "d": 1024,
+      "B": 65536,
+      "state_fp32_GiB": 64.0626,
+      "naive_bk_HBM_GiB": 4.0,
+      "tiled_HBM_GiB": 0.5
+    },
+    {
+      "preset": "imagenet-1k",
+      "cov_type": "full",
+      "k": 1024,
+      "d": 768,
+      "B": 16384,
+      "state_fp32_GiB": 2.2529,
+      "naive_bk_HBM_GiB": 0.062,
+      "tiled_HBM_GiB": 0.0625
+    }
+  ],
+  "full_cov_wall_k65k_d1024": {
+    "GiB": 256.0,
+    "GB_decimal": 274.88
+  }
+}

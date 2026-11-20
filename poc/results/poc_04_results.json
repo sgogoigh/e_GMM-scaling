@@ -1,0 +1,68 @@
+{
+  "poc_id": "poc_04",
+  "title": "Top-m Sparsity, Woodbury Low-Rank+Diag & Dual Finalization Ablations",
+  "top_m_ablation": [
+    {
+      "top_m": 2,
+      "m_step_work_ratio": 0.0625,
+      "test_nll": 14.9609,
+      "fit_ms": 34.1
+    },
+    {
+      "top_m": 4,
+      "m_step_work_ratio": 0.125,
+      "test_nll": 15.351,
+      "fit_ms": 32.5
+    },
+    {
+      "top_m": 8,
+      "m_step_work_ratio": 0.25,
+      "test_nll": 15.5054,
+      "fit_ms": 38.5
+    },
+    {
+      "top_m": "dense",
+      "m_step_work_ratio": 1.0,
+      "test_nll": 15.5458,
+      "fit_ms": 32.2
+    }
+  ],
+  "covariance_mode_ablation": [
+    {
+      "cov_type": "diag",
+      "test_nll": 14.5308,
+      "test_bic": 25007.3,
+      "n_params": 263
+    },
+    {
+      "cov_type": "low_rank_diag",
+      "test_nll": 13.963,
+      "test_bic": 27200.4,
+      "n_params": 727
+    },
+    {
+      "cov_type": "full",
+      "test_nll": 10.7477,
+      "test_bic": 25371.6,
+      "n_params": 1223
+    }
+  ],
+  "finalization_ablation": [
+    {
+      "finalizer": "main_ema",
+      "train_nll": 23.9652,
+      "test_nll": 24.5946
+    },
+    {
+      "finalizer": "last_epoch",
+      "train_nll": 23.9404,
+      "test_nll": 24.6211
+    },
+    {
+      "finalizer": "slow_ema",
+      "train_nll": 23.9935,
+      "test_nll": 24.5688
+    }
+  ],
+  "torch_parity": null
+}

@@ -228,22 +228,43 @@ class NumPyEGMM:
         n_b: np.ndarray,
         alpha_t: float,
     ) -> None:
-        """Online subspace tracking for low_rank_diag U_j in O(k d r) memory."""
+        """Online Oja subspace tracking for low_rank_diag U_j in O(k d r) memory."""
         if self.U is None:
             return
+        floor = float(self.cfg.cov_floor)
         for j in range(self.k):
-            if n_b[j] <= 1e-8:
+            if n_b[j] <= 1e-6:
                 continue
             weights = r[:, j]
             res = X64 - mu[j][None, :]  # (B, d)
-            # Weighted projection of residuals onto current rank-r basis: O(B d r)
-            proj = res.T @ (weights[:, None] * (res @ self.U[j])) / max(n_b[j], 1e-8)
-            # Small orthogonal QR step keeps subspace well-conditioned
-            target = (1.0 - alpha_t) * self.U[j] + alpha_t * proj
-            # Normalize columns softly while keeping scale via Gram-Schmidt + residual energy
-            q_mat, r_mat = np.linalg.qr(target)
-            col_norms = np.sqrt(np.maximum(np.sum((weights[:, None] * ((res @ q_mat) ** 2)), axis=0) / max(n_b[j], 1e-8), 0.0))
-            self.U[j] = q_mat * np.sqrt(np.maximum(col_norms - self.cfg.cov_floor, 0.0))[None, :]
+            # Extract current orthonormal basis Q_j from U_j
+            u_norm = np.linalg.norm(self.U[j], axis=0)
+            if np.all(u_norm > 1e-10):
+                V_cur, _ = np.linalg.qr(self.U[j])
+            else:
+                V_cur, _ = np.linalg.qr(self.rng.normal(size=(self.d, self.rank)))
+
+            # Batch covariance action on subspace: C_b @ V_cur = (res^T (w * (res @ V_cur))) / n_b
+            proj = res.T @ (weights[:, None] * (res @ V_cur)) / max(n_b[j], 1e-8)
+            # Smooth subspace update with EMA step alpha_t and sign-consistent QR
+            proj_norm = max(float(np.linalg.norm(proj)), 1e-8)
+            cand = (1.0 - alpha_t) * V_cur + alpha_t * (proj / proj_norm)
+            q_mat, _ = np.linalg.qr(cand)
+            # Align column signs to V_cur so basis never flips
+            signs = np.where(np.sum(q_mat * V_cur, axis=0) >= 0.0, 1.0, -1.0)
+            q_mat = q_mat * signs[None, :]
+
+            # Directional variances along q_mat columns
+            dir_vars = np.sum(weights[:, None] * ((res @ q_mat) ** 2), axis=0) / max(n_b[j], 1e-8)
+            # Residual average per-coordinate variance outside top-r subspace
+            tot_var_est = float(np.sum(weights[:, None] * (res ** 2)) / max(n_b[j], 1e-8))
+            rem_dim = max(self.d - self.rank, 1)
+            bg_var = max((tot_var_est - float(np.sum(dir_vars))) / rem_dim, floor)
+            excess_vars = np.maximum(dir_vars - bg_var, 0.0)
+            # Smooth directional variance rather than raw vector to prevent cancellation
+            old_vars = np.sum(self.U[j] ** 2, axis=0)
+            smoothed_vars = (1.0 - alpha_t) * old_vars + alpha_t * excess_vars
+            self.U[j] = q_mat * np.sqrt(np.maximum(smoothed_vars, 0.0))[None, :]
 
     def _revive_collapsed_components(self, X64: np.ndarray) -> int:
         strategy = self.cfg.split_strategy

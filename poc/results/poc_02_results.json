@@ -1,0 +1,105 @@
+{
+  "poc_id": "poc_02",
+  "title": "Anisotropic Zipf-GMM Collapse & Spectral Splitting Ablation",
+  "config": {
+    "n_train": 4000,
+    "n_test": 1200,
+    "dim": 24,
+    "num_components": 24,
+    "batch_size": 128,
+    "epochs": 5,
+    "cov_type": "diag",
+    "seed": 42,
+    "dry_run": false
+  },
+  "runs": [
+    {
+      "method": "online_em_beta0.60",
+      "splits": 0,
+      "dead_components": 6,
+      "max_to_mean": 8.191,
+      "norm_entropy": 0.7225,
+      "singular_or_floor_events": 0,
+      "train_nll": 21.0275,
+      "test_nll": 21.1067,
+      "test_bic": 58986.9
+    },
+    {
+      "method": "online_em_beta0.85",
+      "splits": 0,
+      "dead_components": 7,
+      "max_to_mean": 8.58,
+      "norm_entropy": 0.7034,
+      "singular_or_floor_events": 0,
+      "train_nll": 21.065,
+      "test_nll": 21.0571,
+      "test_bic": 58868.0
+    },
+    {
+      "method": "emeans_posthoc",
+      "splits": 4,
+      "dead_components": 0,
+      "max_to_mean": 2.394,
+      "norm_entropy": 0.9496,
+      "singular_or_floor_events": 0,
+      "train_nll": 21.102,
+      "test_nll": 20.9692,
+      "test_bic": 58657.0
+    },
+    {
+      "method": "egmm_no_revive",
+      "splits": 0,
+      "dead_components": 10,
+      "max_to_mean": 5.856,
+      "norm_entropy": 0.7188,
+      "singular_or_floor_events": 0,
+      "train_nll": 21.7207,
+      "test_nll": 21.7269,
+      "test_bic": 60475.4
+    },
+    {
+      "method": "egmm_batch_resample",
+      "splits": 14,
+      "dead_components": 0,
+      "max_to_mean": 3.749,
+      "norm_entropy": 0.8517,
+      "singular_or_floor_events": 0,
+      "train_nll": 19.3578,
+      "test_nll": 19.4987,
+      "test_bic": 55127.7
+    },
+    {
+      "method": "egmm_faiss_alt",
+      "splits": 15,
+      "dead_components": 0,
+      "max_to_mean": 2.682,
+      "norm_entropy": 0.936,
+      "singular_or_floor_events": 0,
+      "train_nll": 21.4842,
+      "test_nll": 21.373,
+      "test_bic": 59626.0
+    },
+    {
+      "method": "egmm_random_orth",
+      "splits": 16,
+      "dead_components": 0,
+      "max_to_mean": 2.769,
+      "norm_entropy": 0.9445,
+      "singular_or_floor_events": 0,
+      "train_nll": 20.7027,
+      "test_nll": 20.7642,
+      "test_bic": 58165.0
+    },
+    {
+      "method": "egmm_spectral_v1",
+      "splits": 15,
+      "dead_components": 0,
+      "max_to_mean": 3.508,
+      "norm_entropy": 0.9175,
+      "singular_or_floor_events": 0,
+      "train_nll": 20.9349,
+      "test_nll": 20.9188,
+      "test_bic": 58535.9
+    }
+  ]
+}
