@@ -17,6 +17,18 @@ class TorchEGMM(nn.Module):
       - `full`: Cholesky solve with adaptive jitter + 5-step power iteration spectral split
     """
 
+    N: torch.Tensor
+    S: torch.Tensor
+    Q: torch.Tensor
+    U: Optional[torch.Tensor]
+    N_slow: torch.Tensor
+    S_slow: torch.Tensor
+    Q_slow: torch.Tensor
+    N_last: torch.Tensor
+    S_last: torch.Tensor
+    Q_last: torch.Tensor
+    cooldown: torch.Tensor
+
     def __init__(self, cfg: EGMMConfig):
         super().__init__()
         self.cfg = cfg
@@ -104,6 +116,7 @@ class TorchEGMM(nn.Module):
             return pi, mu, var
 
         if self.cov_type == "low_rank_diag":
+            assert self.U is not None
             total_diag = (Q / n_safe.unsqueeze(1) - mu.pow(2)).clamp_min(0.0) + floor
             u_diag = torch.sum(self.U.pow(2), dim=2)
             d_var = (total_diag - u_diag).clamp_min(floor)
@@ -132,6 +145,7 @@ class TorchEGMM(nn.Module):
         return self._readout_tuples(self.N, self.S, self.Q)
 
     def _woodbury_log_joint(self, x_f32: torch.Tensor, pi: torch.Tensor, mu: torch.Tensor, d_var: torch.Tensor) -> torch.Tensor:
+        assert self.U is not None
         B, d = x_f32.shape
         const_term = d * math.log(2.0 * math.pi)
         eye_r = torch.eye(self.rank, device=x_f32.device, dtype=torch.float32).unsqueeze(0)
@@ -220,6 +234,7 @@ class TorchEGMM(nn.Module):
                 var_c = (var_d - (delta ** 2) * lam_max * v1.pow(2)).clamp_min(floor)
                 self._write_split_buffers(don_i, dead_i, n_half, mu_plus, mu_minus, var_c)
             elif self.cov_type == "low_rank_diag":
+                assert self.U is not None
                 d_var = cov_cur[don_i]
                 U_d = self.U[don_i]
                 v = torch.randn_like(mu_d)
@@ -357,6 +372,7 @@ class TorchEGMM(nn.Module):
                 q_b = torch.einsum("bk,bd,be->kde", r, x_f32, x_f32)
 
             if self.cov_type == "low_rank_diag":
+                assert self.U is not None
                 floor = float(self.cfg.cov_floor)
                 rem_dim = max(self.d - self.rank, 1)
                 for j in range(self.k):

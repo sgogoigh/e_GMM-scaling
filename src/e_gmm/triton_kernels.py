@@ -115,8 +115,8 @@ def flash_gmm_diag_log_probs(
         m_run = torch.full((B,), float("-inf"), device=device, dtype=torch.float32)
         l_run = torch.zeros((B,), device=device, dtype=torch.float32)
 
-        top_vals_acc = None
-        top_idx_acc = None
+        top_vals_acc: Optional[torch.Tensor] = None
+        top_idx_acc: Optional[torch.Tensor] = None
 
         for start in range(0, k, chunk_k):
             end = min(start + chunk_k, k)
@@ -130,7 +130,7 @@ def flash_gmm_diag_log_probs(
                 m_cur = min(top_m, end - start)
                 tv, ti = torch.topk(logits_c, k=m_cur, dim=1)
                 ti = ti + start
-                if top_vals_acc is None:
+                if top_vals_acc is None or top_idx_acc is None:
                     top_vals_acc, top_idx_acc = tv, ti
                 else:
                     cat_v = torch.cat([top_vals_acc, tv], dim=1)
@@ -141,6 +141,7 @@ def flash_gmm_diag_log_probs(
 
         lse = m_run + torch.log(l_run)
         if top_m is not None and 0 < top_m < k:
+            assert top_vals_acc is not None and top_idx_acc is not None
             r_sparse = torch.softmax(top_vals_acc, dim=1)
             return r_sparse, top_idx_acc, None, lse
 

@@ -1,8 +1,43 @@
 """Pure-NumPy e-GMM engine and baseline comparators (Online EM, Full-Batch EM, e-means+PostHoc)."""
 
 import math
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, Optional, Tuple, TypedDict
 import numpy as np
+
+
+class EGMMFitResult(TypedDict):
+    pi: np.ndarray
+    mu: np.ndarray
+    cov: np.ndarray
+    U: Optional[np.ndarray]
+    splits: int
+    chol_fallbacks: int
+    batch_nlls: List[float]
+    health: Dict[str, float]
+
+
+class OnlineEMFitResult(TypedDict):
+    pi: np.ndarray
+    mu: np.ndarray
+    cov: np.ndarray
+    singular_events: int
+    health: Dict[str, float]
+
+
+class FullBatchEMFitResult(TypedDict):
+    pi: np.ndarray
+    mu: np.ndarray
+    cov: np.ndarray
+    nll_history: List[float]
+    health: Dict[str, float]
+
+
+class EMeansPostHocFitResult(TypedDict):
+    pi: np.ndarray
+    mu: np.ndarray
+    cov: np.ndarray
+    splits: int
+    health: Dict[str, float]
 
 from .config import EGMMConfig
 from .datasets import iter_minibatches
@@ -77,23 +112,36 @@ class NumPyEGMM:
         self.rank = min(cfg.low_rank, cfg.dim)
         self.rng = np.random.default_rng(cfg.seed)
 
-        self.N: Optional[np.ndarray] = None
-        self.S: Optional[np.ndarray] = None
-        self.Q: Optional[np.ndarray] = None
+        self.N: np.ndarray = np.zeros(self.k, dtype=np.float64)
+        self.S: np.ndarray = np.zeros((self.k, self.d), dtype=np.float64)
+        if self.cov_type in ("diag", "low_rank_diag"):
+            self.Q: np.ndarray = np.zeros((self.k, self.d), dtype=np.float64)
+        elif self.cov_type == "full":
+            self.Q = np.zeros((self.k, self.d, self.d), dtype=np.float64)
+        else:
+            raise ValueError(f"Unsupported cov_type: {self.cov_type}")
+
         # For low_rank_diag: Q stores diagonal 2nd moments (k, d), plus factor U (k, d, r)
-        self.U: Optional[np.ndarray] = None
+        self.U: Optional[np.ndarray] = (
+            np.zeros((self.k, self.d, self.rank), dtype=np.float64)
+            if self.cov_type == "low_rank_diag"
+            else None
+        )
 
         # Passive Slow-EMA shadow accumulators
-        self.N_slow: Optional[np.ndarray] = None
-        self.S_slow: Optional[np.ndarray] = None
-        self.Q_slow: Optional[np.ndarray] = None
-        self.U_slow: Optional[np.ndarray] = None
+        self.N_slow: np.ndarray = np.zeros_like(self.N)
+        self.S_slow: np.ndarray = np.zeros_like(self.S)
+        self.Q_slow: np.ndarray = np.zeros_like(self.Q)
+        self.U_slow: Optional[np.ndarray] = (
+            np.zeros_like(self.U) if self.U is not None else None
+        )
 
         # Last-epoch exact EM accumulators
-        self.N_last: Optional[np.ndarray] = None
-        self.S_last: Optional[np.ndarray] = None
-        self.Q_last: Optional[np.ndarray] = None
+        self.N_last: np.ndarray = np.zeros_like(self.N)
+        self.S_last: np.ndarray = np.zeros_like(self.S)
+        self.Q_last: np.ndarray = np.zeros_like(self.Q)
 
+        self.initialized: bool = False
         self.cooldown = np.zeros(self.k, dtype=np.int64)
         self.step_count = 0
         self.splits_done = 0
@@ -138,6 +186,7 @@ class NumPyEGMM:
         self.Q_slow = self.Q.copy()
         self.U_slow = self.U.copy() if self.U is not None else None
         self.reset_last_epoch_accumulators()
+        self.initialized = True
         self.cooldown.fill(0)
         self.step_count = 0
         self.splits_done = 0
@@ -183,9 +232,9 @@ class NumPyEGMM:
     def readout(self, mode: Optional[str] = None) -> Tuple[np.ndarray, np.ndarray, np.ndarray, Optional[np.ndarray]]:
         """Read out (pi, mu, cov_or_var, U) from active, slow_ema, or last_epoch tuples."""
         use_mode = mode or self.cfg.finalization
-        if use_mode == "slow_ema" and self.N_slow is not None:
+        if use_mode == "slow_ema":
             return self._readout_from_tuples(self.N_slow, self.S_slow, self.Q_slow, self.U_slow)
-        if use_mode == "last_epoch" and self.N_last is not None and np.sum(self.N_last) > 1e-12:
+        if use_mode == "last_epoch" and np.sum(self.N_last) > 1e-12:
             N_eff = np.maximum(self.N_last, 1e-12)
             # Fall back for completely empty last-epoch components to active tuples
             empty = self.N_last <= 1e-12
@@ -213,6 +262,8 @@ class NumPyEGMM:
             return np.log(np.maximum(pi, 1e-30))[None, :] - 0.5 * (maha + logdet[None, :])
 
         if self.cov_type == "low_rank_diag":
+            if U is None:
+                raise ValueError("U must be initialized for cov_type='low_rank_diag'.")
             log_joint, _ = gaussian_log_prob_low_rank_diag(X_batch, pi, mu, cov_or_var, U)
             return log_joint
 
@@ -339,6 +390,8 @@ class NumPyEGMM:
                     self._assign_split_tuples(don_i, dead_i, n_half, mu_plus, mu_minus, var_child, var_child)
 
                 elif self.cov_type == "low_rank_diag":
+                    if U_cur is None:
+                        raise ValueError("U_cur must be present for low_rank_diag splitting.")
                     d_var = cov_cur[don_i]
                     U_d = U_cur[don_i]
                     if strategy == "spectral_v1":
@@ -413,18 +466,17 @@ class NumPyEGMM:
             self.Q[dead_i] = n_half * (cov_minus + np.outer(mu_minus, mu_minus))
 
         # Mirror split onto passive Slow-EMA shadow buffers
-        if self.N_slow is not None:
-            ns_half = 0.5 * self.N_slow[don_i]
-            self.N_slow[don_i] = ns_half
-            self.N_slow[dead_i] = ns_half
-            self.S_slow[don_i] = ns_half * mu_plus
-            self.S_slow[dead_i] = ns_half * mu_minus
-            if self.cov_type in ("diag", "low_rank_diag"):
-                self.Q_slow[don_i] = ns_half * (cov_plus + mu_plus ** 2)
-                self.Q_slow[dead_i] = ns_half * (cov_minus + mu_minus ** 2)
-            else:
-                self.Q_slow[don_i] = ns_half * (cov_plus + np.outer(mu_plus, mu_plus))
-                self.Q_slow[dead_i] = ns_half * (cov_minus + np.outer(mu_minus, mu_minus))
+        ns_half = 0.5 * self.N_slow[don_i]
+        self.N_slow[don_i] = ns_half
+        self.N_slow[dead_i] = ns_half
+        self.S_slow[don_i] = ns_half * mu_plus
+        self.S_slow[dead_i] = ns_half * mu_minus
+        if self.cov_type in ("diag", "low_rank_diag"):
+            self.Q_slow[don_i] = ns_half * (cov_plus + mu_plus ** 2)
+            self.Q_slow[dead_i] = ns_half * (cov_minus + mu_minus ** 2)
+        else:
+            self.Q_slow[don_i] = ns_half * (cov_plus + np.outer(mu_plus, mu_plus))
+            self.Q_slow[dead_i] = ns_half * (cov_minus + np.outer(mu_minus, mu_minus))
 
     def step_batch(
         self,
@@ -435,6 +487,8 @@ class NumPyEGMM:
     ) -> float:
         """Perform one E-step + 3-tuple EMA M-step on X_batch. Returns batch mean NLL."""
         X64 = np.asarray(X_batch, dtype=np.float64)
+        if not self.initialized:
+            self.init_from_data(X64)
         pi, mu, cov_or_var, U = self._readout_from_tuples(self.N, self.S, self.Q, self.U)
         log_joint = self._compute_log_joint(X64, pi, mu, cov_or_var, U)
         r, lse = _softmax_from_log_joint(log_joint, top_m=self.cfg.top_m)
@@ -455,14 +509,13 @@ class NumPyEGMM:
             self._update_low_rank_factors(X64, r, mu, n_b, alpha_t)
 
         # Passive Slow-EMA update
-        if self.N_slow is not None:
-            a_s = float(self.cfg.slow_ema_alpha)
-            g_s = 1.0 - a_s
-            self.N_slow = g_s * self.N_slow + a_s * n_b
-            self.S_slow = g_s * self.S_slow + a_s * s_b
-            self.Q_slow = g_s * self.Q_slow + a_s * q_b
+        a_s = float(self.cfg.slow_ema_alpha)
+        g_s = 1.0 - a_s
+        self.N_slow = g_s * self.N_slow + a_s * n_b
+        self.S_slow = g_s * self.S_slow + a_s * s_b
+        self.Q_slow = g_s * self.Q_slow + a_s * q_b
 
-        if record_last_epoch and self.N_last is not None:
+        if record_last_epoch:
             self.N_last += n_b
             self.S_last += s_b
             self.Q_last += q_b
@@ -480,10 +533,10 @@ class NumPyEGMM:
         batch_size: int = 512,
         epochs: int = 3,
         alpha_0: Optional[float] = None,
-    ) -> Dict[str, object]:
+    ) -> EGMMFitResult:
         """Train e-GMM over X for `epochs` passes."""
         X64 = np.asarray(X, dtype=np.float64)
-        if self.N is None:
+        if not self.initialized:
             self.init_from_data(X64)
 
         a0 = float(alpha_0 if alpha_0 is not None else self.cfg.alpha_0)
@@ -551,7 +604,7 @@ class NumPyOnlineEMCappeMoulines:
         self.rng = np.random.default_rng(seed)
         self.singular_events = 0
 
-    def fit(self, X: np.ndarray, batch_size: int = 512, epochs: int = 3) -> Dict[str, object]:
+    def fit(self, X: np.ndarray, batch_size: int = 512, epochs: int = 3) -> OnlineEMFitResult:
         X64 = np.asarray(X, dtype=np.float64)
         n, d = X64.shape
         idx = self.rng.choice(n, size=self.k, replace=n < self.k)
@@ -634,7 +687,7 @@ class NumPyFullBatchEM:
         self.init_sigma0 = init_sigma0
         self.rng = np.random.default_rng(seed)
 
-    def fit(self, X: np.ndarray, max_iters: int = 25, tol: float = 1e-4) -> Dict[str, object]:
+    def fit(self, X: np.ndarray, max_iters: int = 25, tol: float = 1e-4) -> FullBatchEMFitResult:
         X64 = np.asarray(X, dtype=np.float64)
         n, d = X64.shape
         idx = self.rng.choice(n, size=self.k, replace=n < self.k)
@@ -701,7 +754,7 @@ class NumPyEMeansPostHocGMM:
         self.alpha_0 = alpha_0
         self.rng = np.random.default_rng(seed)
 
-    def fit(self, X: np.ndarray, batch_size: int = 512, epochs: int = 3) -> Dict[str, object]:
+    def fit(self, X: np.ndarray, batch_size: int = 512, epochs: int = 3) -> EMeansPostHocFitResult:
         X64 = np.asarray(X, dtype=np.float64)
         n, d = X64.shape
         idx = self.rng.choice(n, size=self.k, replace=n < self.k)
