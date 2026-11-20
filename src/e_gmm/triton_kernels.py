@@ -5,8 +5,8 @@ from typing import Optional, Tuple
 import torch
 
 try:
-    import triton
-    import triton.language as tl
+    import triton  # type: ignore[import-not-found]
+    import triton.language as tl  # type: ignore[import-not-found]
 
     HAS_TRITON = True
 except ImportError:
