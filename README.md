@@ -17,6 +17,7 @@
 | **`scripts/`** | Zero-download profiler (`explore_egmm_memory_and_flops.py`), NumPy mathematical verification & benchmark (`mini_run_math_verify.py`), dimension-aware scaling-law sweep planner (`plan_scaling_sweep.py`), and PyTorch Flash-GMM validator (`mini_run_torch_flash_gmm.py`) |
 | **`configs/`** | Ready JSON specs for `tiny_egmm_debug`, `sift1m_diag_k4096`, `deep1b_diag_k65536`, `dinov2_100m_lowrank_k16384`, `imagenet1k_full_k1024`, and `phase_a_scaling_manifest` |
 | [**`poc/`**](./poc/README.md) | 4-Tier Proof-of-Concept suite + result compiler & compute proposal template (`poc_01`..`poc_04` + `compile_poc_report.py`) |
+| [**`experiments/`**](./experiments/README.md) | Complete research setting, formal hypotheses `H1`–`H7`, Phase A–C experimental scripts (`exp_00`..`exp_04`), tee'd logs (`experiments/logs/`), JSON telemetry + `FINAL-EXPERIMENT-REPORT.md` (`experiments/results/`) |
 | **`tests/`** | Automated NumPy mathematical unit tests & PyTorch Flash-GMM / Woodbury / spectral-split tests |
 
 ---
@@ -45,18 +46,34 @@ python scripts/run_preliminary_diagnostics.py
 # 5. Run offline mathematical & diagnostic unit tests (pure NumPy)
 python -m unittest discover -s tests -v
 
-# 5. Run offline Proof-of-Concept suite (PoC 1-3) & compile COMPILED-POC-REPORT.md
+# 6. Run offline Proof-of-Concept suite (PoC 1-3) & compile COMPILED-POC-REPORT.md
 python poc/poc_01_math_and_profiler.py
 python poc/poc_02_collapse_and_spectral_split.py
 python poc/poc_03_dimension_scaling_law.py
 python poc/compile_poc_report.py
+
+# 7. Run complete experimental suite (CPU smoke mode) & compile FINAL-EXPERIMENT-REPORT.md
+python experiments/exp_00_preflight_and_resource_audit.py
+python experiments/exp_01_phase_a_scaling_laws.py --mode smoke --seeds 2
+python experiments/exp_02_phase_b_billion_benchmarks.py --mode smoke --seeds 3
+python experiments/exp_03_phase_c_ablations.py --mode smoke --seeds 3
+python experiments/exp_04_kernel_and_memory_bench.py --mode smoke
+python experiments/compile_experiment_report.py
 ```
 
-### Cluster / PyTorch Dry-Run (On a Machine with `torch` Installed)
+### Cluster / PyTorch Run (On a Machine with `torch` + GPU Installed)
 
 ```bash
 # Verify Flash-GMM tiled 2d-GEMM E-step, Woodbury low-rank+diag, Top-m sparsity, and spectral split
 python scripts/mini_run_torch_flash_gmm.py
 python poc/poc_04_flash_gmm_and_lowrank.py
 pytest tests/
+
+# Full-scale H1-H7 experimental sweep (~200-300 GPU-hrs on A100/H100 80GB)
+python experiments/exp_00_preflight_and_resource_audit.py
+python experiments/exp_01_phase_a_scaling_laws.py --mode full --backend torch --data-dir /data/egmm --seeds 5
+python experiments/exp_02_phase_b_billion_benchmarks.py --mode full --backend torch --data-dir /data/egmm --seeds 5
+python experiments/exp_03_phase_c_ablations.py --mode full --backend torch --seeds 5
+python experiments/exp_04_kernel_and_memory_bench.py --mode full --backend torch
+python experiments/compile_experiment_report.py
 ```

@@ -1,0 +1,26 @@
+{
+  "experiment_id": "exp_04_kernel_and_memory_bench",
+  "mode": "smoke",
+  "shapes": {
+    "B": 2048,
+    "d": 64,
+    "k": 512,
+    "r": 8,
+    "k_lr": 64
+  },
+  "numpy_flash_gmm": {
+    "flash_2d_gemm_ms": 27.72,
+    "naive_broadcast_ms": 12645.05,
+    "speedup_vs_naive": 456.14,
+    "max_abs_log_diff": 1.9895196601282805e-13
+  },
+  "numpy_woodbury_vs_cholesky": {
+    "woodbury_ms": 100.69,
+    "cholesky_ms": 156.75,
+    "speedup_vs_cholesky": 1.56,
+    "max_abs_log_diff": 1.1368683772161603e-13
+  },
+  "torch_bench": {
+    "status": "skipped (torch not installed)"
+  }
+}

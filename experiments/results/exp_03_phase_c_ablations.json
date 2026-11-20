@@ -1,0 +1,168 @@
+{
+  "experiment_id": "exp_03_phase_c_ablations",
+  "mode": "smoke",
+  "seeds": 3,
+  "elapsed_sec": 9.05,
+  "revival_ablation": [
+    {
+      "split_strategy": "none",
+      "donor_weight_by": "count",
+      "test_nll_mean": 16.7915,
+      "test_nll_std": 0.1825,
+      "dead_mean": 12.67,
+      "splits_mean": 0.0
+    },
+    {
+      "split_strategy": "batch_resample",
+      "donor_weight_by": "count",
+      "test_nll_mean": 15.7167,
+      "test_nll_std": 0.2674,
+      "dead_mean": 2.67,
+      "splits_mean": 42.7
+    },
+    {
+      "split_strategy": "faiss_alt",
+      "donor_weight_by": "count",
+      "test_nll_mean": 15.6986,
+      "test_nll_std": 0.18,
+      "dead_mean": 0.0,
+      "splits_mean": 23.0
+    },
+    {
+      "split_strategy": "random_orth",
+      "donor_weight_by": "count",
+      "test_nll_mean": 15.751,
+      "test_nll_std": 0.2765,
+      "dead_mean": 0.0,
+      "splits_mean": 27.7
+    },
+    {
+      "split_strategy": "spectral_v1",
+      "donor_weight_by": "count",
+      "test_nll_mean": 15.4641,
+      "test_nll_std": 0.0672,
+      "dead_mean": 0.33,
+      "splits_mean": 24.7
+    },
+    {
+      "split_strategy": "spectral_v1",
+      "donor_weight_by": "variance_mass",
+      "test_nll_mean": 15.342,
+      "test_nll_std": 0.0547,
+      "dead_mean": 0.0,
+      "splits_mean": 25.3
+    }
+  ],
+  "cov_floor_ablation": [
+    {
+      "cov_floor": 1e-06,
+      "test_nll_mean": 11.7945,
+      "max_cond_mean": 525.1,
+      "floor_hit_pct": 0.0
+    },
+    {
+      "cov_floor": 0.0001,
+      "test_nll_mean": 11.7932,
+      "max_cond_mean": 520.5,
+      "floor_hit_pct": 0.0
+    },
+    {
+      "cov_floor": 0.01,
+      "test_nll_mean": 11.8888,
+      "max_cond_mean": 276.4,
+      "floor_hit_pct": 0.0
+    },
+    {
+      "cov_floor": 0.1,
+      "test_nll_mean": 15.0433,
+      "max_cond_mean": 76.0,
+      "floor_hit_pct": 0.0
+    }
+  ],
+  "cov_rank_ablation": [
+    {
+      "label": "diag",
+      "cov_type": "diag",
+      "rank": 0,
+      "n_params": 263,
+      "test_nll_mean": 15.9885,
+      "test_bic_mean": 20868.6
+    },
+    {
+      "label": "low_rank_r2",
+      "cov_type": "low_rank_diag",
+      "rank": 2,
+      "n_params": 511,
+      "test_nll_mean": 15.6015,
+      "test_bic_mean": 21990.6
+    },
+    {
+      "label": "low_rank_r4",
+      "cov_type": "low_rank_diag",
+      "rank": 4,
+      "n_params": 727,
+      "test_nll_mean": 13.6903,
+      "test_bic_mean": 21078.9
+    },
+    {
+      "label": "low_rank_r8",
+      "cov_type": "low_rank_diag",
+      "rank": 8,
+      "n_params": 1063,
+      "test_nll_mean": 14.0596,
+      "test_bic_mean": 23671.5
+    },
+    {
+      "label": "full",
+      "cov_type": "full",
+      "rank": 16,
+      "n_params": 1223,
+      "test_nll_mean": 10.9817,
+      "test_bic_mean": 21001.5
+    }
+  ],
+  "top_m_ablation": [
+    {
+      "top_m": 2,
+      "m_step_work_ratio": 0.0625,
+      "test_nll_mean": 13.7765
+    },
+    {
+      "top_m": 4,
+      "m_step_work_ratio": 0.125,
+      "test_nll_mean": 14.1036
+    },
+    {
+      "top_m": 8,
+      "m_step_work_ratio": 0.25,
+      "test_nll_mean": 13.6315
+    },
+    {
+      "top_m": 16,
+      "m_step_work_ratio": 0.5,
+      "test_nll_mean": 13.4946
+    },
+    {
+      "top_m": "dense",
+      "m_step_work_ratio": 1.0,
+      "test_nll_mean": 13.6601
+    }
+  ],
+  "finalization_ablation": [
+    {
+      "finalizer": "main_ema",
+      "train_nll_mean": 23.9544,
+      "test_nll_mean": 24.5959
+    },
+    {
+      "finalizer": "last_epoch",
+      "train_nll_mean": 23.9095,
+      "test_nll_mean": 24.627
+    },
+    {
+      "finalizer": "slow_ema",
+      "train_nll_mean": 24.0421,
+      "test_nll_mean": 24.5715
+    }
+  ]
+}

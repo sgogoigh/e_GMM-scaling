@@ -1,0 +1,41 @@
+{
+  "experiment_id": "exp_01_phase_a_scaling_laws",
+  "mode": "smoke",
+  "backend": "numpy",
+  "elapsed_sec": 51.69,
+  "num_alpha_observations": 72,
+  "fit_with_d": {
+    "c_alpha": 1.6243,
+    "a_k": 0.1527,
+    "a_b": 0.9918,
+    "a_n": -0.4944,
+    "a_t": 0.5329,
+    "a_d": -1.1755,
+    "r2_log": 0.7382,
+    "lodo_mean_rel_err_pct": 84.17,
+    "loso_mean_rel_err_pct": 69.76
+  },
+  "fit_no_d": {
+    "r2_log": 0.2969,
+    "lodo_mean_rel_err_pct": 179.74
+  },
+  "fit_batch_knee": {
+    "num_observations": 18,
+    "c_b": 16.8892,
+    "b_k": 0.0,
+    "b_n": -0.0,
+    "b_d": -0.0,
+    "r2_log": 1.0
+  },
+  "ood_transfer": {
+    "dim": 24,
+    "k": 12,
+    "oracle_nll": 19.2708,
+    "with_d_pred_alpha0": 0.134,
+    "with_d_nll": 20.1567,
+    "with_d_gap_nats": 0.8859,
+    "no_d_pred_alpha0": 0.1437,
+    "no_d_nll": 20.1569,
+    "no_d_gap_nats": 0.8861
+  }
+}

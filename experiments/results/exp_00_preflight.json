@@ -1,0 +1,104 @@
+{
+  "experiment_id": "exp_00_preflight",
+  "hardware": {
+    "cpu_count": 16,
+    "disk_free_GB": 106.92,
+    "torch_installed": false,
+    "cuda_available": false,
+    "gpus": [],
+    "triton_available": false,
+    "sklearn_available": false
+  },
+  "preset_resource_budgets": [
+    {
+      "preset": "tiny-debug",
+      "n": 10000,
+      "d": 32,
+      "k": 16,
+      "cov_type": "full",
+      "state_fp32_GiB": 0.0001,
+      "full_cov_equivalent_GiB": 0.0,
+      "naive_bk_HBM_GiB": 0.0,
+      "tiled_HBM_GiB": 0.0
+    },
+    {
+      "preset": "sift-1m",
+      "n": 1000000,
+      "d": 128,
+      "k": 4096,
+      "cov_type": "diag",
+      "state_fp32_GiB": 0.0039,
+      "full_cov_equivalent_GiB": 0.25,
+      "naive_bk_HBM_GiB": 0.25,
+      "tiled_HBM_GiB": 0.125
+    },
+    {
+      "preset": "deep-1m",
+      "n": 1000000,
+      "d": 96,
+      "k": 16384,
+      "cov_type": "diag",
+      "state_fp32_GiB": 0.0118,
+      "full_cov_equivalent_GiB": 0.57,
+      "naive_bk_HBM_GiB": 2.0,
+      "tiled_HBM_GiB": 0.25
+    },
+    {
+      "preset": "deep-1b",
+      "n": 1000000000,
+      "d": 96,
+      "k": 65536,
+      "cov_type": "diag",
+      "state_fp32_GiB": 0.0471,
+      "full_cov_equivalent_GiB": 2.27,
+      "naive_bk_HBM_GiB": 64.0,
+      "tiled_HBM_GiB": 2.0
+    },
+    {
+      "preset": "spacev-100m",
+      "n": 100000000,
+      "d": 100,
+      "k": 65536,
+      "cov_type": "diag",
+      "state_fp32_GiB": 0.0491,
+      "full_cov_equivalent_GiB": 2.47,
+      "naive_bk_HBM_GiB": 32.0,
+      "tiled_HBM_GiB": 1.0
+    },
+    {
+      "preset": "dinov2-100m",
+      "n": 100000000,
+      "d": 1024,
+      "k": 16384,
+      "cov_type": "low_rank_diag",
+      "state_fp32_GiB": 1.1251,
+      "full_cov_equivalent_GiB": 64.06,
+      "naive_bk_HBM_GiB": 4.0,
+      "tiled_HBM_GiB": 0.5
+    },
+    {
+      "preset": "imagenet-1k",
+      "n": 1281167,
+      "d": 768,
+      "k": 1024,
+      "cov_type": "full",
+      "state_fp32_GiB": 2.2529,
+      "full_cov_equivalent_GiB": 2.25,
+      "naive_bk_HBM_GiB": 0.062,
+      "tiled_HBM_GiB": 0.0625
+    },
+    {
+      "preset": "stretched-d768",
+      "n": 500000,
+      "d": 768,
+      "k": 2048,
+      "cov_type": "diag",
+      "state_fp32_GiB": 0.0117,
+      "full_cov_equivalent_GiB": 4.51,
+      "naive_bk_HBM_GiB": 0.062,
+      "tiled_HBM_GiB": 0.0625
+    }
+  ],
+  "data_dir": null,
+  "dataset_audit": []
+}
