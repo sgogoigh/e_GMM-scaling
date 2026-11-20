@@ -1,6 +1,6 @@
 # Final Experimental Synthesis Report (`e_GMM-scaling`)
 
-**Generated**: 2026-11-21 03:08:45  
+**Generated**: 2026-11-21 03:10:37  
 **Completed Modules**: Exp 00, Exp 01, Exp 02, Exp 03, Exp 04
 
 ---
@@ -20,7 +20,7 @@
 ---
 
 ## Exp 00: Preflight Hardware & Resource Budgets
-- **Host**: `CPUs=16`, `Disk Free=106.92 GiB`, `CUDA=False`, `Triton=False`
+- **Host**: `CPUs=16`, `Disk Free=106.91 GiB`, `CUDA=False`, `Triton=False`
 
 | Preset | Cov Mode | $k$ | $d$ | State (GiB) | Full-Cov Equiv (GiB) | Tiled HBM (GiB) |
 | :--- | :--- | ---: | ---: | ---: | ---: | ---: |

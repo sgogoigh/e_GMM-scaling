@@ -33,6 +33,7 @@ import os
 import pathlib
 import shutil
 import sys
+from typing import Any, Dict, List
 
 EXP_DIR = pathlib.Path(__file__).resolve().parent
 ROOT = EXP_DIR.parent
@@ -65,9 +66,9 @@ def parse_args():
     return p.parse_args()
 
 
-def detect_hardware() -> dict:
+def detect_hardware() -> Dict[str, Any]:
     disk = shutil.disk_usage(ROOT)
-    info = {
+    info: Dict[str, Any] = {
         "cpu_count": os.cpu_count(),
         "disk_free_GB": round(disk.free / (1024 ** 3), 2),
         "torch_installed": False,
@@ -80,8 +81,8 @@ def detect_hardware() -> dict:
         import torch
 
         info["torch_installed"] = True
-        info["torch_version"] = torch.__version__
-        info["cuda_available"] = bool(torch.cuda.is_available())
+        info["torch_version"] = str(torch.__version__)
+        info["cuda_available"] = torch.cuda.is_available()
         if torch.cuda.is_available():
             info["gpus"] = [
                 {
@@ -137,14 +138,14 @@ def audit_presets() -> list:
     return rows
 
 
-def audit_data_dir(data_dir: str | None) -> list:
+def audit_data_dir(data_dir: str | None) -> List[Dict[str, Any]]:
     if data_dir is None:
         return []
     dpath = pathlib.Path(data_dir)
-    found = []
+    found: List[Dict[str, Any]] = []
     for fname, desc in EXPECTED_DATASETS:
         fpath = dpath / fname
-        entry = {"file": fname, "description": desc, "exists": fpath.exists(), "shape": None, "dtype": None}
+        entry: Dict[str, Any] = {"file": fname, "description": desc, "exists": fpath.exists(), "shape": None, "dtype": None}
         if fpath.exists():
             try:
                 mm = load_vector_memmap(str(fpath), max_rows=8)

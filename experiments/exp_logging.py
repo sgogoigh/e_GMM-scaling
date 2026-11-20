@@ -6,7 +6,7 @@ import pathlib
 import platform
 import shutil
 import sys
-from typing import Iterator, Optional
+from typing import Generator, Optional
 
 EXPERIMENTS_DIR = pathlib.Path(__file__).resolve().parent
 LOGS_ROOT = EXPERIMENTS_DIR / "logs"
@@ -58,7 +58,7 @@ def _detect_env() -> str:
 
 
 @contextmanager
-def tee_experiment_logs(exp_name: str, run_tag: Optional[str] = None) -> Iterator[pathlib.Path]:
+def tee_experiment_logs(exp_name: str, run_tag: Optional[str] = None) -> Generator[pathlib.Path, None, None]:
     """
     Create `experiments/logs/<exp_name>/run_<YYYYMMDD_HHMMSS>[_<tag>].log`,
     mirror stdout & stderr cleanly, and update `latest.log`.
