@@ -1,0 +1,157 @@
+  d=   8 k=  4 n=  1200 B=   32 T=2: alpha*=0.5068
+  d=   8 k=  4 n=  1200 B=  128 T=2: alpha*=1.0000 CENSORED-high
+  d=   8 k=  4 n=  1200 B=   32 T=4: alpha*=0.2528
+  d=   8 k=  4 n=  1200 B=  128 T=4: alpha*=1.0000 CENSORED-high
+  d=   8 k=  8 n=  1200 B=   32 T=2: alpha*=0.4899
+  d=   8 k=  8 n=  1200 B=  128 T=2: alpha*=0.4949
+  d=   8 k=  8 n=  1200 B=   32 T=4: alpha*=0.4744
+  d=   8 k=  8 n=  1200 B=  128 T=4: alpha*=0.5932
+  d=   8 k= 16 n=  1200 B=   32 T=2: alpha*=0.2453
+  d=   8 k= 16 n=  1200 B=  128 T=2: alpha*=1.0000 CENSORED-high
+  d=   8 k= 16 n=  1200 B=   32 T=4: alpha*=0.0976
+  d=   8 k= 16 n=  1200 B=  128 T=4: alpha*=0.3717
+  d=   8 k=  4 n=  4800 B=   32 T=2: alpha*=0.4740
+  d=   8 k=  4 n=  4800 B=  128 T=2: alpha*=1.0000 CENSORED-high
+  d=   8 k=  4 n=  4800 B=   32 T=4: alpha*=1.0000 CENSORED-high
+  d=   8 k=  4 n=  4800 B=  128 T=4: alpha*=1.0000 CENSORED-high
+  d=   8 k=  8 n=  4800 B=   32 T=2: alpha*=0.1690
+  d=   8 k=  8 n=  4800 B=  128 T=2: alpha*=0.6936
+  d=   8 k=  8 n=  4800 B=   32 T=4: alpha*=0.1349
+  d=   8 k=  8 n=  4800 B=  128 T=4: alpha*=0.6196
+  d=   8 k= 16 n=  4800 B=   32 T=2: alpha*=0.1468
+  d=   8 k= 16 n=  4800 B=  128 T=2: alpha*=0.3424
+  d=   8 k= 16 n=  4800 B=   32 T=4: alpha*=0.1231
+  d=   8 k= 16 n=  4800 B=  128 T=4: alpha*=0.4036
+  d=  16 k=  4 n=  1200 B=   32 T=2: alpha*=0.5283
+  d=  16 k=  4 n=  1200 B=  128 T=2: alpha*=1.0000 CENSORED-high
+  d=  16 k=  4 n=  1200 B=   32 T=4: alpha*=0.5194
+  d=  16 k=  4 n=  1200 B=  128 T=4: alpha*=1.0000 CENSORED-high
+  d=  16 k=  8 n=  1200 B=   32 T=2: alpha*=0.2154
+  d=  16 k=  8 n=  1200 B=  128 T=2: alpha*=0.6850
+  d=  16 k=  8 n=  1200 B=   32 T=4: alpha*=0.3140
+  d=  16 k=  8 n=  1200 B=  128 T=4: alpha*=0.4587
+  d=  16 k= 16 n=  1200 B=   32 T=2: alpha*=0.0955
+  d=  16 k= 16 n=  1200 B=  128 T=2: alpha*=0.2558
+  d=  16 k= 16 n=  1200 B=   32 T=4: alpha*=0.1328
+  d=  16 k= 16 n=  1200 B=  128 T=4: alpha*=0.1375
+  d=  16 k=  4 n=  4800 B=   32 T=2: alpha*=0.3305
+  d=  16 k=  4 n=  4800 B=  128 T=2: alpha*=0.6814
+  d=  16 k=  4 n=  4800 B=   32 T=4: alpha*=0.4630
+  d=  16 k=  4 n=  4800 B=  128 T=4: alpha*=1.0000 CENSORED-high
+  d=  16 k=  8 n=  4800 B=   32 T=2: alpha*=0.1461
+  d=  16 k=  8 n=  4800 B=  128 T=2: alpha*=0.5639
+  d=  16 k=  8 n=  4800 B=   32 T=4: alpha*=0.3019
+  d=  16 k=  8 n=  4800 B=  128 T=4: alpha*=0.5599
+  d=  16 k= 16 n=  4800 B=   32 T=2: alpha*=0.1405
+  d=  16 k= 16 n=  4800 B=  128 T=2: alpha*=0.1916
+  d=  16 k= 16 n=  4800 B=   32 T=4: alpha*=0.0955
+  d=  16 k= 16 n=  4800 B=  128 T=4: alpha*=0.2010
+  d=  32 k=  4 n=  1200 B=   32 T=2: alpha*=0.4743
+  d=  32 k=  4 n=  1200 B=  128 T=2: alpha*=1.0000 CENSORED-high
+  d=  32 k=  4 n=  1200 B=   32 T=4: alpha*=0.5769
+  d=  32 k=  4 n=  1200 B=  128 T=4: alpha*=1.0000 CENSORED-high
+  d=  32 k=  8 n=  1200 B=   32 T=2: alpha*=0.3529
+  d=  32 k=  8 n=  1200 B=  128 T=2: alpha*=0.3361
+  d=  32 k=  8 n=  1200 B=   32 T=4: alpha*=0.4759
+  d=  32 k=  8 n=  1200 B=  128 T=4: alpha*=0.3034
+  d=  32 k= 16 n=  1200 B=   32 T=2: alpha*=0.1431
+  d=  32 k= 16 n=  1200 B=  128 T=2: alpha*=0.4584
+  d=  32 k= 16 n=  1200 B=   32 T=4: alpha*=0.0532
+  d=  32 k= 16 n=  1200 B=  128 T=4: alpha*=0.2574
+  d=  32 k=  4 n=  4800 B=   32 T=2: alpha*=0.3959
+  d=  32 k=  4 n=  4800 B=  128 T=2: alpha*=1.0000 CENSORED-high
+  d=  32 k=  4 n=  4800 B=   32 T=4: alpha*=0.3677
+  d=  32 k=  4 n=  4800 B=  128 T=4: alpha*=0.4516
+  d=  32 k=  8 n=  4800 B=   32 T=2: alpha*=0.2717
+  d=  32 k=  8 n=  4800 B=  128 T=2: alpha*=0.5186
+  d=  32 k=  8 n=  4800 B=   32 T=4: alpha*=0.5583
+  d=  32 k=  8 n=  4800 B=  128 T=4: alpha*=0.3987
+  d=  32 k= 16 n=  4800 B=   32 T=2: alpha*=0.0654
+  d=  32 k= 16 n=  4800 B=  128 T=2: alpha*=0.0946
+  d=  32 k= 16 n=  4800 B=   32 T=4: alpha*=0.0183
+  d=  32 k= 16 n=  4800 B=  128 T=4: alpha*=0.5247
+  d=  64 k=  4 n=  1200 B=   32 T=2: alpha*=0.5044
+  d=  64 k=  4 n=  1200 B=  128 T=2: alpha*=0.5357
+  d=  64 k=  4 n=  1200 B=   32 T=4: alpha*=0.5105
+  d=  64 k=  4 n=  1200 B=  128 T=4: alpha*=1.0000 CENSORED-high
+  d=  64 k=  8 n=  1200 B=   32 T=2: alpha*=0.3373
+  d=  64 k=  8 n=  1200 B=  128 T=2: alpha*=0.5661
+  d=  64 k=  8 n=  1200 B=   32 T=4: alpha*=0.4600
+  d=  64 k=  8 n=  1200 B=  128 T=4: alpha*=0.7888
+  d=  64 k= 16 n=  1200 B=   32 T=2: alpha*=0.1112
+  d=  64 k= 16 n=  1200 B=  128 T=2: alpha*=0.3431
+  d=  64 k= 16 n=  1200 B=   32 T=4: alpha*=0.1556
+  d=  64 k= 16 n=  1200 B=  128 T=4: alpha*=0.3351
+  d=  64 k=  4 n=  4800 B=   32 T=2: alpha*=1.0000 CENSORED-high
+  d=  64 k=  4 n=  4800 B=  128 T=2: alpha*=0.6735
+  d=  64 k=  4 n=  4800 B=   32 T=4: alpha*=1.0000 CENSORED-high
+  d=  64 k=  4 n=  4800 B=  128 T=4: alpha*=0.7577
+  d=  64 k=  8 n=  4800 B=   32 T=2: alpha*=0.2036
+  d=  64 k=  8 n=  4800 B=  128 T=2: alpha*=1.0000 CENSORED-high
+  d=  64 k=  8 n=  4800 B=   32 T=4: alpha*=0.2787
+  d=  64 k=  8 n=  4800 B=  128 T=4: alpha*=0.7338
+  d=  64 k= 16 n=  4800 B=   32 T=2: alpha*=0.1572
+  d=  64 k= 16 n=  4800 B=  128 T=2: alpha*=0.1972
+  d=  64 k= 16 n=  4800 B=   32 T=4: alpha*=0.1734
+  d=  64 k= 16 n=  4800 B=  128 T=4: alpha*=0.4843
+  knee d=   8 k=  4 n=  1200 T=2: B_knee=128
+  knee d=   8 k=  4 n=  1200 T=4: B_knee=128
+  knee d=   8 k=  8 n=  1200 T=2: B_knee=128
+  knee d=   8 k=  8 n=  1200 T=4: B_knee=16
+  knee d=   8 k= 16 n=  1200 T=2: B_knee=32
+  knee d=   8 k= 16 n=  1200 T=4: B_knee=16
+  knee d=   8 k=  4 n=  4800 T=2: B_knee=64
+  knee d=   8 k=  4 n=  4800 T=4: B_knee=128
+  knee d=   8 k=  8 n=  4800 T=2: B_knee=32
+  knee d=   8 k=  8 n=  4800 T=4: B_knee=64
+  knee d=   8 k= 16 n=  4800 T=2: B_knee=128
+  knee d=   8 k= 16 n=  4800 T=4: B_knee=128
+  knee d=  16 k=  4 n=  1200 T=2: B_knee=32
+  knee d=  16 k=  4 n=  1200 T=4: B_knee=32
+  knee d=  16 k=  8 n=  1200 T=2: B_knee=16
+  knee d=  16 k=  8 n=  1200 T=4: B_knee=32
+  knee d=  16 k= 16 n=  1200 T=2: B_knee=16
+  knee d=  16 k= 16 n=  1200 T=4: B_knee=256 CENSORED
+  knee d=  16 k=  4 n=  4800 T=2: B_knee=64
+  knee d=  16 k=  4 n=  4800 T=4: B_knee=128
+  knee d=  16 k=  8 n=  4800 T=2: B_knee=64
+  knee d=  16 k=  8 n=  4800 T=4: B_knee=128
+  knee d=  16 k= 16 n=  4800 T=2: B_knee=32
+  knee d=  16 k= 16 n=  4800 T=4: B_knee=16
+  knee d=  32 k=  4 n=  1200 T=2: B_knee=128
+  knee d=  32 k=  4 n=  1200 T=4: B_knee=64
+  knee d=  32 k=  8 n=  1200 T=2: B_knee=16
+  knee d=  32 k=  8 n=  1200 T=4: B_knee=64
+  knee d=  32 k= 16 n=  1200 T=2: B_knee=16
+  knee d=  32 k= 16 n=  1200 T=4: B_knee=32
+  knee d=  32 k=  4 n=  4800 T=2: B_knee=32
+  knee d=  32 k=  4 n=  4800 T=4: B_knee=32
+  knee d=  32 k=  8 n=  4800 T=2: B_knee=16
+  knee d=  32 k=  8 n=  4800 T=4: B_knee=16
+  knee d=  32 k= 16 n=  4800 T=2: B_knee=64
+  knee d=  32 k= 16 n=  4800 T=4: B_knee=128
+  knee d=  64 k=  4 n=  1200 T=2: B_knee=16
+  knee d=  64 k=  4 n=  1200 T=4: B_knee=128
+  knee d=  64 k=  8 n=  1200 T=2: B_knee=16
+  knee d=  64 k=  8 n=  1200 T=4: B_knee=16
+  knee d=  64 k= 16 n=  1200 T=2: B_knee=32
+  knee d=  64 k= 16 n=  1200 T=4: B_knee=16
+  knee d=  64 k=  4 n=  4800 T=2: B_knee=16
+  knee d=  64 k=  4 n=  4800 T=4: B_knee=1024 CENSORED
+  knee d=  64 k=  8 n=  4800 T=2: B_knee=16
+  knee d=  64 k=  8 n=  4800 T=4: B_knee=32
+  knee d=  64 k= 16 n=  4800 T=2: B_knee=16
+  knee d=  64 k= 16 n=  4800 T=4: B_knee=16
+=== PoC 3 COMPLETE ===
+  censoring: {'alpha_censored': 16, 'alpha_total': 96, 'knee_censored': 2, 'knee_total': 48}  (397s)
+  alpha law no_d: {'a_k': -0.8996606028260116, 'a_b': 0.5207429614970245, 'a_n': -0.12904763271778696, 'a_t': 0.05133071170285375, 'a_d': None}
+  alpha law ambient_d: {'a_k': -0.9002272246153843, 'a_b': 0.5216128504693388, 'a_n': -0.12946662826711863, 'a_t': 0.05157027165429147, 'a_d': -0.009622310634017528}
+  alpha law intrinsic_d: {'a_k': -0.901254894479504, 'a_b': 0.5230027425846817, 'a_n': -0.12750837232775547, 'a_t': 0.052226874340945154, 'a_d': -0.05328218901964035}
+  LODO paired regret: {'ambient_d_vs_no_d': {'n': 80.0, 'method_mean': 0.0042388626385074235, 'reference_mean': 0.003498475591841607, 'mean_diff': 0.0007403870466658163, 'std_diff': 0.002245791194650693, 't_stat': 2.94872607916263, 'p_value': 0.0031, 'wins': 34.0, 'ties': 1.0}, 'intrinsic_d_vs_no_d': {'n': 80.0, 'method_mean': 0.004130616328895118, 'reference_mean': 0.003498475591841607, 'mean_diff': 0.0006321407370535103, 'std_diff': 0.0018731201092141087, 't_stat': 3.0185136605928067, 'p_value': 0.0023, 'wins': 34.0, 'ties': 1.0}}
+  OOD paired: {'ambient_d_vs_no_d': {'n': 3.0, 'method_mean': 0.004439023348065291, 'reference_mean': 0.0044239657318770765, 'mean_diff': 1.5057616188215124e-05, 'std_diff': 6.351765730594311e-05, 't_stat': 0.4106032461688404, 'p_value': 0.75, 'wins': 1.0, 'ties': 0.0}, 'intrinsic_d_vs_no_d': {'n': 3.0, 'method_mean': 0.004462365941687783, 'reference_mean': 0.0044239657318770765, 'mean_diff': 3.8400209810706066e-05, 'std_diff': 0.00014105951045553013, 't_stat': 0.4715110253726267, 'p_value': 0.75, 'wins': 1.0, 'ties': 0.0}, 'paper_prior_no_d_vs_no_d': {'n': 3.0, 'method_mean': 0.005281738582770788, 'reference_mean': 0.0044239657318770765, 'mean_diff': 0.000857772850893711, 'std_diff': 0.0037427830322492414, 't_stat': 0.39695225352356817, 'p_value': 0.75, 'wins': 1.0, 'ties': 0.0}}
+Saved JSON -> C:\Users\sgogo\OneDrive\Desktop\Research\e_means\e_GMM-scaling\poc\results\poc_03_results.json
+[Log Saved] C:\Users\sgogo\OneDrive\Desktop\Research\e_means\e_GMM-scaling\poc\logs\poc_03\run_20261125_003844_sweep.log
+
+real	6m39.007s
+user	0m0.015s
+sys	0m0.093s

@@ -1,0 +1,37 @@
+====================================================================================
+PRELIMINARY DIAGNOSTIC & BASELINE COMPARISON READINESS SUITE
+====================================================================================
+
+[DIAG 1] Robbins-Monro (beta, t0) Sensitivity vs. e-GMM Cosine Schedule
+------------------------------------------------------------------------------
+  Method                        Dead  SingEv    TestNLL
+  OnlineEM(beta=0.55, t0=1.0  )     4       0    17.6370
+  OnlineEM(beta=0.75, t0=10.0 )     2       0    16.4288
+  OnlineEM(beta=0.95, t0=1.0  )     3       0    17.6691
+  OnlineEM(beta=0.95, t0=100.0)     0       0    19.8740
+  e-GMM(cosine + spectral_v1)      0       0    16.3125
+
+[DIAG 2] (floor override is the point of this diagnostic) Covariance Floor lambda_0 Sensitivity on StretchedGaussian (d=24, exp=2.0)
+------------------------------------------------------------------------------
+  cov_floor (lambda_0)  FloorHit%      MaxCond   EffRank    TestNLL
+  1.0e-06                   0.00%        573.6      3.55    11.8031
+  1.0e-04                   0.00%        563.2      3.56    11.8013
+  1.0e-02                   0.00%        314.4      3.93    11.8709
+  1.0e-01                  47.92%        104.9      4.17    15.0104
+  1.0e+00                  86.98%         16.0      8.60    28.6816
+
+[DIAG 3] Baseline Comparison Matrix Across Synthetic Regimes (d=16, k=12)
+------------------------------------------------------------------------------
+  Zipf-Separated   | FullBatch=15.6835 | OnlineEM=15.6403 | e-means+PH=15.0922 | e-GMM=15.0268
+  Overlapping-Rot  | FullBatch=18.9407 | OnlineEM=19.4579 | e-means+PH=19.9349 | e-GMM=18.7493
+
+[Baseline Requirements Checklist]
+  1. Always share exact held-out NLL/BIC evaluator (`evaluate_gmm_nll`) across comparators.
+  2. Match epoch budget (T passes over n) and batch size B across mini-batch methods.
+  3. Include BOTH separated-cluster and overlapping-anisotropic regimes when benchmarking against e-means+PostHoc.
+  4. Log singular/floor-hit events alongside NLL so OnlineEM instability is visible, not hidden by silent jitter.
+[Log Saved] C:\Users\sgogo\OneDrive\Desktop\Research\e_means\e_GMM-scaling\poc\logs\preliminary_diagnostics\run_20261125_004238.log
+
+real	0m21.018s
+user	0m0.000s
+sys	0m0.093s

@@ -1,4 +1,10 @@
-"""Triton Flash-GMM diagonal log-density kernel with automatic PyTorch tiled fallback."""
+"""Diagonal-GMM log-densities on torch via the [x^2, x] GEMM expansion, tiled over k.
+
+Status (2026-11-25 review, see docs/review/): the Triton kernel _flash_gmm_diag_lse_kernel below is
+defined but NOT called anywhere; only the PyTorch tiled path in flash_gmm_diag_log_probs runs. It
+computes the log-sum-exp only. Without top_m the function still materializes the full B x k
+responsibility matrix. None of this file has been executed on the review machine (no torch).
+"""
 
 import math
 from typing import Optional, Tuple
@@ -92,6 +98,14 @@ def flash_gmm_diag_log_probs(
     mu_f32 = mu.float()
     pi_safe = pi.float().clamp_min(1e-30)
 
+    # Centering (2026-11-25): the [x^2, x] expansion cancels catastrophically when ||x||, ||mu|| are
+    # large relative to sigma, worst in bf16/fp32. Shifting x and every mu by the same vector leaves
+    # each log-density unchanged, so shift by the weighted mean of the components (as in the NumPy
+    # path, e_gmm.metrics.gaussian_log_prob_diag). Untested here: torch is not installed.
+    center = (pi_safe / pi_safe.sum()) @ mu_f32
+    x_f32 = x_f32 - center.unsqueeze(0)
+    mu_f32 = mu_f32 - center.unsqueeze(0)
+
     c_j = torch.sum((mu_f32 ** 2) * inv_var + torch.log(2.0 * math.pi * var_safe), dim=1)
     b_j = torch.log(pi_safe) - 0.5 * c_j  # (k,)
 
@@ -107,7 +121,8 @@ def flash_gmm_diag_log_probs(
     B, k = x_f32.shape[0], mu_f32.shape[0]
     device = x_f32.device
 
-    # Streaming tiled LSE + optional top-m selection (never materializes full B x k in HBM when chunked)
+    # Tiled LSE + optional top-m: this pass holds one B x chunk_k tile at a time. The dense-responsibility
+    # pass further down still writes the full B x k matrix.
     if chunk_k < k:
         m_run = torch.full((B,), float("-inf"), device=device, dtype=torch.float32)
         l_run = torch.zeros((B,), device=device, dtype=torch.float32)

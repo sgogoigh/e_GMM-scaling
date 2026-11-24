@@ -1,28 +1,30 @@
 """
-Experiment 03 (Phase C): Comprehensive Ablations (H5, H6, H7)
-==============================================================
+Experiment 03 (Phase C): paired ablations of e-GMM's components
+================================================================
 
-RESEARCH HYPOTHESES TESTED:
-  - H5: Spectral v1 donor splitting + variance_mass donor weighting outperforms
-        no-revival, batch resampling, Faiss alternating +/- delta, and random orthogonal splits.
-  - H6: Covariance floor lambda_0 balances conditioning vs. NLL bias; Low-Rank+Diag (Woodbury)
-        captures rotated subspace correlations across rank r in {2, 4, 8, 12} with top BIC;
-        Top-m sparse truncation preserves soft-EM NLL at m/k M-step cost.
-  - H7: `last_epoch` exact EM wins Train NLL while passive `slow_ema` wins Test NLL
-        across small-to-medium n/k regimes.
+Rewritten 2026-11-25 (docs/review/2026-11-25-REVIEW.md). Changes from the original:
+  - Revival is crossed with alpha_0. The 2026-11-25 re-check found that the "no revival collapses"
+    result came from alpha_0 = 0.35; at alpha_0 = 0.10 no-revival was within noise of spectral splitting.
+    Each strategy's alpha_0 is tuned on a validation split before the paired test comparison.
+  - Every comparison is paired by seed (default 10 seeds) with an exact sign-flip test; the report
+    compiler turns the numbers into verdicts. Nothing here states a conclusion.
+  - The floor-dominated rate uses the fixed metric (raw variance below 2 x lambda_0).
+  - Data are scale-normalized on the training split, so lambda_0 is comparable across regimes.
 
-COMPUTE & HARDWARE REQUIREMENTS:
-  - `--mode smoke` : Any CPU, ~10 seconds, $0.
-  - `--mode full`  : 1x A100/H100 (80GB), ~50 GPU-hours across 5 seeds.
+HYPOTHESES (experiments/HYPOTHESES-AND-RESEARCH-DESIGN.md):
+  H0: with alpha_0 tuned, e-GMM without revival matches e-GMM with spectral revival.
+  H5: spectral v1 revival beats the other revival strategies at tuned alpha_0.
+  H6: low-rank+diag gives the best BIC on rotated data; top-m keeps dense NLL; lambda_0 trade-off.
+  H7: slow-EMA finalization generalizes better than last-epoch finalization.
 
 HOW TO RUN:
   python experiments/exp_03_phase_c_ablations.py --dry-run
-  python experiments/exp_03_phase_c_ablations.py --mode smoke --seeds 3
-  python experiments/exp_03_phase_c_ablations.py --mode full --backend torch --seeds 5
+  python experiments/exp_03_phase_c_ablations.py --mode smoke --seeds 10
+  python experiments/exp_03_phase_c_ablations.py --mode smoke --seeds 10 --only revival
 
 SAVED ARTIFACTS:
-  - Telemetry : `experiments/results/exp_03_phase_c_ablations.json`
-  - Log       : `experiments/logs/exp_03_phase_c/latest.log`
+  - Results : experiments/results/exp_03_phase_c_ablations.json
+  - Log     : experiments/logs/exp_03_phase_c/latest.log
 """
 
 import argparse
@@ -30,6 +32,8 @@ import json
 import pathlib
 import sys
 import time
+from typing import Any, Callable, Dict, List, Tuple
+
 import numpy as np
 
 EXP_DIR = pathlib.Path(__file__).resolve().parent
@@ -38,255 +42,205 @@ sys.path.insert(0, str(ROOT / "src"))
 sys.path.insert(0, str(EXP_DIR))
 
 from e_gmm.config import EGMMConfig  # noqa: E402
-from e_gmm.datasets import generate_gaussian_mixture, generate_stretched_gaussian  # noqa: E402
-from e_gmm.metrics import compute_gmm_health, evaluate_gmm_nll  # noqa: E402
+from e_gmm.datasets import generate_gaussian_mixture, generate_stretched_gaussian, normalize_scale  # noqa: E402
+from e_gmm.metrics import evaluate_gmm_nll  # noqa: E402
 from e_gmm.numpy_egmm import NumPyEGMM  # noqa: E402
+from e_gmm.stats import paired_comparison  # noqa: E402
 from exp_logging import RESULTS_ROOT, tee_experiment_logs  # noqa: E402
+
+ALPHAS = (0.05, 0.10, 0.20, 0.35)
+ALPHA_LO = 1e-3            # lower bound when the alpha_0 grid is extended past its lower edge
+MAX_GRID_EXTENSIONS = 4
+REVIVAL = [
+    ("none", "count"), ("batch_resample", "count"), ("faiss_alt", "count"),
+    ("random_orth", "count"), ("spectral_v1", "count"), ("spectral_v1", "variance_mass"),
+]
+SplitFn = Callable[[int], Tuple[np.ndarray, np.ndarray, np.ndarray]]
 
 
 def parse_args():
-    p = argparse.ArgumentParser(description="Exp 03 (Phase C): Systematic Ablations")
-    p.add_argument("--mode", type=str, default="smoke", choices=["smoke", "full"])
-    p.add_argument("--backend", type=str, default="numpy", choices=["numpy", "torch"])
-    p.add_argument("--seeds", type=int, default=3)
+    p = argparse.ArgumentParser(description="Exp 03 (Phase C): paired ablations")
+    p.add_argument("--mode", choices=["smoke", "full"], default="smoke")
+    p.add_argument("--seeds", type=int, default=10)
+    p.add_argument("--only", type=str, default=None, help="Comma-separated subset: revival,floor,structure,topm,finalization")
+    p.add_argument("--backend", choices=["numpy"], default="numpy",
+                   help="Only numpy: the torch path has not been run on the review machine.")
+    p.add_argument("--out", type=str, default=str(RESULTS_ROOT / "exp_03_phase_c_ablations.json"))
     p.add_argument("--dry-run", action="store_true")
     return p.parse_args()
 
 
-def _run_egmm(cfg: EGMMConfig, X_tr: np.ndarray, batch_size: int, epochs: int, backend: str) -> dict:
-    if backend == "torch":
-        import torch
-        from e_gmm.torch_egmm import TorchEGMM
+def mixture_split(n_tr, n_val, n_te, d, G, **kw) -> SplitFn:
+    def make(seed):
+        X, _, _ = generate_gaussian_mixture(n=n_tr + n_val + n_te, d=d, num_true_clusters=G, seed=seed, **kw)
+        (tr, va, te), _ = normalize_scale(X[:n_tr], X[n_tr : n_tr + n_val], X[n_tr + n_val :])
+        return tr, va, te
 
-        dev = "cuda" if torch.cuda.is_available() else "cpu"
-        m = TorchEGMM(cfg).to(dev)
-        res = m.fit(torch.from_numpy(X_tr).to(dev), batch_size=batch_size, epochs=epochs)
-        health = compute_gmm_health(
-            res["pi"], res["cov"], cov_type=cfg.cov_type, U=res["U"], cov_floor=cfg.cov_floor
-        )
-        return {
-            "model": m,
-            "pi": res["pi"],
-            "mu": res["mu"],
-            "cov": res["cov"],
-            "U": res["U"],
-            "health": health,
-            "splits": res["splits"],
-        }
-    m = NumPyEGMM(cfg)
-    res = m.fit(X_tr, batch_size=batch_size, epochs=epochs)
-    return {
-        "model": m,
-        "pi": res["pi"],
-        "mu": res["mu"],
-        "cov": res["cov"],
-        "U": res["U"],
-        "health": res["health"],
-        "splits": res["splits"],
-    }
+    return make
+
+
+def stretched_split(n_tr, n_val, n_te, d, exponent) -> SplitFn:
+    def make(seed):
+        X, _ = generate_stretched_gaussian(n=n_tr + n_val + n_te, d=d, exponent=exponent, rotate=True, seed=seed)
+        (tr, va, te), _ = normalize_scale(X[:n_tr], X[n_tr : n_tr + n_val], X[n_tr + n_val :])
+        return tr, va, te
+
+    return make
+
+
+def fit_eval(X_tr, X_eval: Dict[str, np.ndarray], cfg: EGMMConfig, B: int, epochs: int) -> Dict[str, Any]:
+    res = NumPyEGMM(cfg).fit(X_tr, batch_size=B, epochs=epochs)
+    out: Dict[str, Any] = {"health": res["health"], "splits": res["splits"]}
+    for name, X in X_eval.items():
+        ev = evaluate_gmm_nll(X, res["pi"], res["mu"], res["cov"], cov_type=cfg.cov_type, U=res.get("U"))
+        out[f"{name}_nll_per_dim"] = ev["nll_per_dim"]
+        out[f"{name}_bic"] = ev["bic"]
+        out["n_params"] = ev["n_effective_params"]
+    return out
+
+
+def run_variants(variants: Dict[str, Dict[str, Any]], base: Dict[str, Any], split: SplitFn, seeds: List[int],
+                 B: int, epochs: int, reference: str, metric: str = "test_nll_per_dim",
+                 extra: Tuple[str, ...] = ()) -> Dict[str, Any]:
+    """Fit every variant on every seed's split; pair each variant with `reference` on `metric`."""
+    per: Dict[str, Dict[str, List[float]]] = {v: {} for v in variants}
+    for s in seeds:
+        tr, va, te = split(s)
+        for vname, over in variants.items():
+            cfg = EGMMConfig(**{**base, **over, "dim": tr.shape[1], "seed": s})
+            r = fit_eval(tr, {"train": tr, "test": te}, cfg, B, epochs)
+            row = {"test_nll_per_dim": r["test_nll_per_dim"], "train_nll_per_dim": r["train_nll_per_dim"],
+                   "train_bic": r["train_bic"], "test_bic": r["test_bic"], "dead_count": r["health"]["dead_count"],
+                   "floor_hit_rate": r["health"]["floor_hit_rate"], "n_params": r["n_params"], "splits": r["splits"]}
+            for key in extra:
+                row[key] = r["health"].get(key, float("nan"))
+            for key, val in row.items():
+                per[vname].setdefault(key, []).append(float(val))
+    summary = {v: {k: float(np.mean(vals)) for k, vals in rec.items()} for v, rec in per.items()}
+    paired = {v: paired_comparison(per[v][metric], per[reference][metric]) for v in variants if v != reference}
+    return {"variants": variants, "reference": reference, "metric": metric, "per_seed": per,
+            "summary": summary, "paired_vs_reference": paired}
+
+
+def tune_alpha(over: Dict[str, Any], base: Dict[str, Any], split: SplitFn, tuning_seeds: List[int], B: int, epochs: int):
+    """
+    alpha_0 with the lowest mean validation NLL over the tuning seeds (disjoint from evaluation seeds).
+    If the best value is on the edge of the grid, the grid is extended one factor-2 step past it (within
+    [ALPHA_LO, 1.0], at most MAX_GRID_EXTENSIONS times), as in e_gmm.benchmark.tune_method.
+    """
+    scores: Dict[float, float] = {}
+
+    def score(a: float) -> None:
+        vals = []
+        for s in tuning_seeds:
+            tr, va, _ = split(s)
+            cfg = EGMMConfig(**{**base, **over, "alpha_0": a, "dim": tr.shape[1], "seed": s})
+            vals.append(fit_eval(tr, {"val": va}, cfg, B, epochs)["val_nll_per_dim"])
+        scores[a] = float(np.mean(vals))
+
+    for a in ALPHAS:
+        score(a)
+    for _ in range(MAX_GRID_EXTENSIONS):
+        best, grid = min(scores, key=scores.get), sorted(scores)
+        nxt = max(best / 2, ALPHA_LO) if best == grid[0] else min(best * 2, 1.0) if best == grid[-1] else None
+        if nxt is None or nxt in scores:
+            break
+        score(nxt)
+    best = min(scores, key=scores.get)
+    return best, scores
 
 
 def main():
     args = parse_args()
-    tag = "dry_run" if args.dry_run else f"{args.mode}_{args.backend}"
-    is_full = args.mode == "full"
-    n_rev = 50_000 if is_full else 2400
-    d_rev = 64 if is_full else 16
-    k_rev = 64 if is_full else 16
-    B_rev = 1024 if is_full else 64
-    ep_rev = 6 if is_full else 5
-    with tee_experiment_logs("exp_03_phase_c", run_tag=tag):
-        if args.dry_run:
-            print("=== EXP 03 (PHASE C) DRY RUN ===")
-            print(
-                f"Mode: {args.mode} | Backend: {args.backend} | "
-                f"Ablations: Revival (6), CovFloor (4), LowRank r (5), Top-m (5), Finalization (3) x {args.seeds} seeds"
-            )
-            return
+    full = args.mode == "full"
+    seeds = list(range(1, args.seeds + 1))
+    tuning_seeds = [1001, 1002, 1003]
+    wanted = set(args.only.split(",")) if args.only else {"revival", "floor", "structure", "topm", "finalization"}
+    print(f"Exp 03 | mode={args.mode} seeds={seeds} ablations={sorted(wanted)}")
+    if args.dry_run:
+        print("Dry run: nothing fitted.")
+        return
 
+    base = dict(num_components=16, cov_type="full", cov_floor=1e-4, init_prior_mass=1.0, init_sigma0=1.0,
+                split_interval=5, split_tau=0.10, split_delta=0.50, donor_min_mult=1.25, cooldown_steps=15,
+                finalization="last_epoch", split_strategy="spectral_v1", donor_weight_by="variance_mass", alpha_0=0.10)
+    out: Dict[str, Any] = {"experiment_id": "exp_03_phase_c_ablations", "mode": args.mode, "backend": "numpy",
+                           "seeds": seeds, "tuning_seeds": tuning_seeds, "unit": "nats per dimension"}
+    with tee_experiment_logs("exp_03_phase_c", run_tag=args.mode):
         t_start = time.perf_counter()
 
-        # Ablation 1: Revival policy & donor weighting (H5) on Zipf-1.2 Rotated Full-Cov
-        rev_configs = [
-            ("none", "count"),
-            ("batch_resample", "count"),
-            ("faiss_alt", "count"),
-            ("random_orth", "count"),
-            ("spectral_v1", "count"),
-            ("spectral_v1", "variance_mass"),
-        ]
-        rev_rows = []
-        n_rev_tr = int(0.75 * n_rev)
-        for strat, dweight in rev_configs:
-            nlls, deads, splits_l = [], [], []
-            for s in range(1, args.seeds + 1):
-                X_all, _, _ = generate_gaussian_mixture(
-                    n=n_rev, d=d_rev, num_true_clusters=k_rev, zipf=True, zipf_power=1.2, anisotropic=True, rotated=True, seed=s
-                )
-                cfg = EGMMConfig(
-                    num_components=k_rev,
-                    dim=d_rev,
-                    cov_type="full",
-                    cov_floor=1e-4,
-                    alpha_0=0.35,
-                    split_strategy=strat,
-                    donor_weight_by=dweight,
-                    finalization="last_epoch",
-                    seed=s,
-                )
-                res = _run_egmm(cfg, X_all[:n_rev_tr], batch_size=B_rev, epochs=ep_rev, backend=args.backend)
-                nlls.append(evaluate_gmm_nll(X_all[n_rev_tr:], res["pi"], res["mu"], res["cov"], cov_type="full")["nll"])
-                deads.append(res["health"]["dead_count"])
-                splits_l.append(res["splits"])
-            rev_rows.append(
-                {
-                    "split_strategy": strat,
-                    "donor_weight_by": dweight,
-                    "test_nll_mean": round(float(np.mean(nlls)), 4),
-                    "test_nll_std": round(float(np.std(nlls)), 4),
-                    "dead_mean": round(float(np.mean(deads)), 2),
-                    "splits_mean": round(float(np.mean(splits_l)), 1),
-                }
-            )
+        if "revival" in wanted:
+            n = (40_000, 5000, 5000) if full else (2400, 800, 800)
+            k = 64 if full else 16
+            B, ep = (1024, 6) if full else (64, 5)
+            split = mixture_split(*n, d=64 if full else 16, G=k, zipf=True, zipf_power=1.2, anisotropic=True, rotated=True)
+            rb = {**base, "num_components": k}
+            grid_rows = {}
+            for a in ALPHAS:
+                variants = {f"{st}/{dw}": {"split_strategy": st, "donor_weight_by": dw, "alpha_0": a} for st, dw in REVIVAL}
+                grid_rows[str(a)] = run_variants(variants, rb, split, seeds, B, ep, reference="spectral_v1/variance_mass")
+                s = grid_rows[str(a)]["summary"]
+                print(f"  revival alpha_0={a}: " + ", ".join(f"{v}={s[v]['test_nll_per_dim']:.4f} (dead {s[v]['dead_count']:.1f})" for v in s))
+            tuned_alpha, tuning_scores = {}, {}
+            for st, dw in REVIVAL:
+                name = f"{st}/{dw}"
+                tuned_alpha[name], tuning_scores[name] = tune_alpha({"split_strategy": st, "donor_weight_by": dw}, rb, split, tuning_seeds, B, ep)
+            tuned = run_variants({f"{st}/{dw}": {"split_strategy": st, "donor_weight_by": dw, "alpha_0": tuned_alpha[f"{st}/{dw}"]}
+                                  for st, dw in REVIVAL}, rb, split, seeds, B, ep, reference="spectral_v1/variance_mass")
+            print(f"  revival tuned alphas: {tuned_alpha}")
+            out["revival"] = {"setup": {"n": n, "k": k, "B": B, "epochs": ep, "data": "Zipf-1.2 rotated anisotropic mixture"},
+                              "by_alpha": grid_rows, "tuned_alpha": tuned_alpha, "tuning_val_nll_per_dim": tuning_scores,
+                              "tuned": tuned}
 
-        # Ablation 2: Covariance floor lambda_0 sensitivity (H6)
-        floor_rows = []
-        n_fl = 20_000 if is_full else 1200
-        d_fl = 64 if is_full else 24
-        k_fl = 64 if is_full else 8
-        B_fl = 512 if is_full else 64
-        for fl in (1e-6, 1e-4, 1e-2, 1e-1):
-            nlls, conds, fhits = [], [], []
-            for s in range(1, args.seeds + 1):
-                X_tr, _ = generate_stretched_gaussian(n=n_fl, d=d_fl, exponent=2.0, seed=s + 10)
-                X_te, _ = generate_stretched_gaussian(n=min(4000, n_fl // 2), d=d_fl, exponent=2.0, seed=s + 910)
-                res = _run_egmm(
-                    EGMMConfig(num_components=k_fl, dim=d_fl, cov_type="diag", cov_floor=fl, alpha_0=0.3, seed=s),
-                    X_tr,
-                    batch_size=B_fl,
-                    epochs=4,
-                    backend=args.backend,
-                )
-                nlls.append(evaluate_gmm_nll(X_te, res["pi"], res["mu"], res["cov"])["nll"])
-                conds.append(res["health"]["max_condition_number"])
-                fhits.append(res["health"]["floor_hit_rate"])
-            floor_rows.append(
-                {
-                    "cov_floor": fl,
-                    "test_nll_mean": round(float(np.mean(nlls)), 4),
-                    "max_cond_mean": round(float(np.mean(conds)), 1),
-                    "floor_hit_pct": round(float(np.mean(fhits)) * 100.0, 2),
-                }
-            )
+        if "floor" in wanted:
+            n = (20_000, 2000, 4000) if full else (1200, 400, 800)
+            split = stretched_split(*n, d=64 if full else 24, exponent=2.0)
+            fb = {**base, "num_components": 64 if full else 8, "cov_type": "diag"}
+            variants = {f"{fl:g}": {"cov_floor": fl} for fl in (1e-6, 1e-4, 1e-2, 1e-1)}
+            out["floor"] = run_variants(variants, fb, split, seeds, 512 if full else 64, 4, reference="0.0001",
+                                        extra=("max_condition_number",))
+            print("  floor: " + ", ".join(f"{v}={r['test_nll_per_dim']:.4f} (floor-dominated {r['floor_hit_rate']:.2f})"
+                                          for v, r in out["floor"]["summary"].items()))
 
-        # Ablation 3: Covariance structure & rank r sweep (diag vs low_rank_diag r in {2,4,8} vs full) (H6)
-        cov_rows = []
-        n_cr = 30_000 if is_full else 2400
-        d_cr = 64 if is_full else 16
-        k_cr = 32 if is_full else 8
-        n_cr_tr = int(0.75 * n_cr)
-        ranks = [("diag", "diag", 0), ("low_rank_r2", "low_rank_diag", 2), ("low_rank_r4", "low_rank_diag", 4), ("low_rank_r8", "low_rank_diag", 8)]
-        if is_full:
-            ranks.append(("low_rank_r12", "low_rank_diag", 12))
-        ranks.append(("full", "full", d_cr))
-        for label, ctype, r_rank in ranks:
-            nlls, bics, params_l = [], [], []
-            for s in range(1, args.seeds + 1):
-                X_all, _, _ = generate_gaussian_mixture(
-                    n=n_cr, d=d_cr, num_true_clusters=k_cr, anisotropic=True, rotated=True, seed=s + 20
-                )
-                cfg = EGMMConfig(num_components=k_cr, dim=d_cr, cov_type=ctype, low_rank=max(r_rank, 1), alpha_0=0.35, seed=s)
-                res = _run_egmm(cfg, X_all[:n_cr_tr], batch_size=512 if is_full else 128, epochs=4, backend=args.backend)
-                ev = evaluate_gmm_nll(X_all[n_cr_tr:], res["pi"], res["mu"], res["cov"], cov_type=ctype, U=res["U"])
-                nlls.append(ev["nll"])
-                bics.append(ev["bic"])
-                params_l.append(ev["n_effective_params"])
-            cov_rows.append(
-                {
-                    "label": label,
-                    "cov_type": ctype,
-                    "rank": r_rank,
-                    "n_params": int(params_l[0]),
-                    "test_nll_mean": round(float(np.mean(nlls)), 4),
-                    "test_bic_mean": round(float(np.mean(bics)), 1),
-                }
-            )
+        if "structure" in wanted:
+            d = 64 if full else 16
+            n = (30_000, 3000, 7500) if full else (1800, 600, 600)
+            split = mixture_split(*n, d=d, G=32 if full else 8, anisotropic=True, rotated=True)
+            sb = {**base, "num_components": 32 if full else 8}
+            variants = {"diag": {"cov_type": "diag"}, "full": {"cov_type": "full"}}
+            for r in ((2, 4, 8, 12) if full else (2, 4, 8)):
+                variants[f"low_rank_r{r}"] = {"cov_type": "low_rank_diag", "low_rank": r}
+            out["structure"] = run_variants(variants, sb, split, seeds, 512 if full else 128, 4, reference="diag")
+            out["structure"]["note"] = ("low_rank_diag uses an Oja-style subspace heuristic, not a principled MFA M-step; "
+                                        "train_bic (used for H6a) is computed on the training split, test_bic on the test split")
+            print("  structure: " + ", ".join(f"{v}: NLL/d={r['test_nll_per_dim']:.4f} train BIC={r['train_bic']:.1f}"
+                                              for v, r in out["structure"]["summary"].items()))
 
-        # Ablation 4: Top-m sparse E-step truncation (H6)
-        topm_rows = []
-        n_tm = 30_000 if is_full else 2400
-        d_tm = 64 if is_full else 20
-        k_tm = 128 if is_full else 32
-        n_tm_tr = int(0.75 * n_tm)
-        for tm in (2, 4, 8, 16, None):
-            nlls = []
-            for s in range(1, args.seeds + 1):
-                X_all, _, _ = generate_gaussian_mixture(n=n_tm, d=d_tm, num_true_clusters=k_tm, anisotropic=True, seed=s + 30)
-                res = _run_egmm(
-                    EGMMConfig(num_components=k_tm, dim=d_tm, cov_type="diag", top_m=tm, alpha_0=0.4, seed=s),
-                    X_all[:n_tm_tr],
-                    batch_size=512 if is_full else 128,
-                    epochs=4,
-                    backend=args.backend,
-                )
-                nlls.append(evaluate_gmm_nll(X_all[n_tm_tr:], res["pi"], res["mu"], res["cov"])["nll"])
-            topm_rows.append(
-                {
-                    "top_m": "dense" if tm is None else tm,
-                    "m_step_work_ratio": 1.0 if tm is None else round(tm / float(k_tm), 4),
-                    "test_nll_mean": round(float(np.mean(nlls)), 4),
-                }
-            )
+        if "topm" in wanted:
+            n = (30_000, 3000, 7500) if full else (1800, 600, 600)
+            k = 128 if full else 32
+            split = mixture_split(*n, d=64 if full else 20, G=k, anisotropic=True)
+            tb = {**base, "num_components": k, "cov_type": "diag"}
+            variants = {"dense": {"top_m": None}, **{f"m{m}": {"top_m": m} for m in (2, 4, 8, 16)}}
+            out["topm"] = run_variants(variants, tb, split, seeds, 512 if full else 128, 4, reference="dense")
+            out["topm"]["m_step_work_ratio"] = {v: (1.0 if o["top_m"] is None else o["top_m"] / k) for v, o in variants.items()}
+            print("  top-m: " + ", ".join(f"{v}={r['test_nll_per_dim']:.4f}" for v, r in out["topm"]["summary"].items()))
 
-        # Ablation 5: Finalization strategy across n/k regimes (H7)
-        fin_rows = []
-        n_fn = 20_000 if is_full else 1000
-        d_fn = 64 if is_full else 20
-        k_fn = 256 if is_full else 24
-        for fin_mode in ("main_ema", "last_epoch", "slow_ema"):
-            tr_nlls, te_nlls = [], []
-            for s in range(1, args.seeds + 1):
-                X_tr, _ = generate_stretched_gaussian(n=n_fn, d=d_fn, exponent=1.0, seed=s + 40)
-                X_te, _ = generate_stretched_gaussian(n=min(4000, n_fn), d=d_fn, exponent=1.0, seed=s + 1040)
-                res = _run_egmm(
-                    EGMMConfig(num_components=k_fn, dim=d_fn, cov_type="diag", alpha_0=0.45, slow_ema_alpha=0.05, seed=s),
-                    X_tr,
-                    batch_size=512 if is_full else 64,
-                    epochs=4,
-                    backend=args.backend,
-                )
-                pi, mu, cov = res["model"].readout(fin_mode)[:3]
-                tr_nlls.append(evaluate_gmm_nll(X_tr, pi, mu, cov)["nll"])
-                te_nlls.append(evaluate_gmm_nll(X_te, pi, mu, cov)["nll"])
-            fin_rows.append(
-                {
-                    "finalizer": fin_mode,
-                    "train_nll_mean": round(float(np.mean(tr_nlls)), 4),
-                    "test_nll_mean": round(float(np.mean(te_nlls)), 4),
-                }
-            )
+        if "finalization" in wanted:
+            out["finalization"] = {}
+            for label, n_tr in (("small_n_over_k", 4000 if full else 800), ("medium_n_over_k", 40_000 if full else 3200)):
+                split = mixture_split(n_tr, max(400, n_tr // 4), max(400, n_tr // 4), d=16, G=16, zipf=True, anisotropic=True, rotated=True)
+                variants = {f: {"finalization": f} for f in ("last_epoch", "slow_ema", "main_ema")}
+                out["finalization"][label] = run_variants(variants, base, split, seeds, 64, 5, reference="last_epoch")
+                print(f"  finalization [{label}]: " + ", ".join(
+                    f"{v}: train {r['train_nll_per_dim']:.4f} test {r['test_nll_per_dim']:.4f}"
+                    for v, r in out["finalization"][label]["summary"].items()))
 
-        elapsed_s = round(time.perf_counter() - t_start, 2)
-        payload = {
-            "experiment_id": "exp_03_phase_c_ablations",
-            "mode": args.mode,
-            "seeds": args.seeds,
-            "elapsed_sec": elapsed_s,
-            "revival_ablation": rev_rows,
-            "cov_floor_ablation": floor_rows,
-            "cov_rank_ablation": cov_rows,
-            "top_m_ablation": topm_rows,
-            "finalization_ablation": fin_rows,
-        }
-        out_path = RESULTS_ROOT / "exp_03_phase_c_ablations.json"
-        out_path.write_text(json.dumps(payload, indent=2), encoding="utf-8")
-
-        print("=== EXP 03 (PHASE C) COMPLETE ===")
-        print("  Revival      :", [(f"{r['split_strategy']}:{r['donor_weight_by']}", r["test_nll_mean"], r["dead_mean"]) for r in rev_rows])
-        print("  Cov/Rank     :", [(r["label"], r["test_nll_mean"], r["test_bic_mean"]) for r in cov_rows])
-        print("  Top-m        :", [(r["top_m"], r["test_nll_mean"]) for r in topm_rows])
-        print("  Finalization :", [(r["finalizer"], r["train_nll_mean"], r["test_nll_mean"]) for r in fin_rows])
-        print(f"Saved telemetry -> {out_path} ({elapsed_s}s)")
+        out["elapsed_sec"] = round(time.perf_counter() - t_start, 2)
+        path = pathlib.Path(args.out)
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(json.dumps(out, indent=2, default=float), encoding="utf-8")
+        print(f"Saved -> {path} ({out['elapsed_sec']}s)")
 
 
 if __name__ == "__main__":

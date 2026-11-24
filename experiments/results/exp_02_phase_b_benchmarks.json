@@ -1,221 +1,3390 @@
 {
   "experiment_id": "exp_02_phase_b_billion_benchmarks",
   "mode": "smoke",
+  "data": "synthetic",
   "backend": "numpy",
-  "seeds": 3,
-  "elapsed_sec": 23.86,
-  "data_sources": {
-    "Zipf-Separated-Diag": "synthetic_gmm",
-    "Zipf-Rotated-Full": "synthetic_gmm",
-    "Overlapping-Rotated-Full": "synthetic_gmm",
-    "Stretched-PowerLaw-Diag": "synthetic_stretched"
-  },
+  "backend_tested_locally": true,
+  "seeds": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10
+  ],
+  "elapsed_sec": 304.9,
   "suites": {
-    "Zipf-Separated-Diag": [
-      {
-        "method": "FullBatchEM@25",
-        "test_nll_mean": 14.4372,
-        "test_nll_std": 0.5032,
-        "test_bic_mean": 26622.4,
-        "dead_mean": 0.0,
-        "singular_ev_mean": 0.0,
-        "time_sec_mean": 0.122
+    "Zipf-Separated-Diag": {
+      "setup": {
+        "k": 16,
+        "cov_type": "diag",
+        "cov_floor": 0.0001,
+        "batch_size": 64,
+        "epochs": 5,
+        "seeds": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10
+        ],
+        "tuning_seed": 10000,
+        "reference": "egmm_spectral",
+        "egmm_overrides": {},
+        "unit": "nats per dimension (test NLL / d)"
       },
-      {
-        "method": "OnlineEM_beta0.60",
-        "test_nll_mean": 14.9428,
-        "test_nll_std": 0.3824,
-        "test_bic_mean": 27431.2,
-        "dead_mean": 2.67,
-        "singular_ev_mean": 0.0,
-        "time_sec_mean": 0.043
+      "methods": {
+        "egmm_spectral": {
+          "description": "e-GMM, spectral v1 revival, alpha_0 tuned",
+          "grid_size": 4
+        },
+        "egmm_no_revive": {
+          "description": "e-GMM without revival, alpha_0 tuned (the H0 control)",
+          "grid_size": 4
+        },
+        "egmm_faiss_alt": {
+          "description": "e-GMM, Faiss-style +/-delta revival, alpha_0 tuned",
+          "grid_size": 4
+        },
+        "online_em": {
+          "description": "Cappe-Moulines online EM, (beta, t0) tuned, matched floor",
+          "grid_size": 15
+        },
+        "emeans_posthoc": {
+          "description": "e-means + per-cell covariance, alpha_0 tuned",
+          "grid_size": 3
+        },
+        "emeans_then_em3": {
+          "description": "e-means init + 3 full-batch EM iterations, alpha_0 tuned",
+          "grid_size": 3
+        },
+        "fullbatch_em_random": {
+          "description": "full-batch EM, random-point init, 25 iterations",
+          "grid_size": 1
+        },
+        "fullbatch_em_emeans": {
+          "description": "full-batch EM, e-means init, 25 iterations",
+          "grid_size": 1
+        }
       },
-      {
-        "method": "OnlineEM_beta0.85",
-        "test_nll_mean": 15.0139,
-        "test_nll_std": 0.2353,
-        "test_bic_mean": 27545.0,
-        "dead_mean": 3.0,
-        "singular_ev_mean": 0.0,
-        "time_sec_mean": 0.042
+      "skipped_methods": {
+        "sklearn_gmm": "scikit-learn is not installed"
       },
-      {
-        "method": "e-means+PostHoc",
-        "test_nll_mean": 14.5315,
-        "test_nll_std": 0.2878,
-        "test_bic_mean": 26773.2,
-        "dead_mean": 0.0,
-        "singular_ev_mean": 0.0,
-        "time_sec_mean": 0.016
+      "tuning": {
+        "egmm_spectral": {
+          "best_params": {
+            "alpha_0": 0.1
+          },
+          "table": [
+            {
+              "params": {
+                "alpha_0": 0.05
+              },
+              "val_nll_per_dim": 0.9473287365440981
+            },
+            {
+              "params": {
+                "alpha_0": 0.1
+              },
+              "val_nll_per_dim": 0.9341485407248109
+            },
+            {
+              "params": {
+                "alpha_0": 0.2
+              },
+              "val_nll_per_dim": 0.954075878033928
+            },
+            {
+              "params": {
+                "alpha_0": 0.35
+              },
+              "val_nll_per_dim": 0.9412973267484105
+            }
+          ],
+          "extensions": 0,
+          "at_grid_edge": [],
+          "seconds": 0.31336229998851195
+        },
+        "egmm_no_revive": {
+          "best_params": {
+            "alpha_0": 0.1
+          },
+          "table": [
+            {
+              "params": {
+                "alpha_0": 0.05
+              },
+              "val_nll_per_dim": 0.9627226072254905
+            },
+            {
+              "params": {
+                "alpha_0": 0.1
+              },
+              "val_nll_per_dim": 0.9455384928355203
+            },
+            {
+              "params": {
+                "alpha_0": 0.2
+              },
+              "val_nll_per_dim": 0.964383364639338
+            },
+            {
+              "params": {
+                "alpha_0": 0.35
+              },
+              "val_nll_per_dim": 0.968306951780149
+            }
+          ],
+          "extensions": 0,
+          "at_grid_edge": [],
+          "seconds": 0.26259649998974055
+        },
+        "egmm_faiss_alt": {
+          "best_params": {
+            "alpha_0": 0.1
+          },
+          "table": [
+            {
+              "params": {
+                "alpha_0": 0.05
+              },
+              "val_nll_per_dim": 0.9469415833945308
+            },
+            {
+              "params": {
+                "alpha_0": 0.1
+              },
+              "val_nll_per_dim": 0.9267724770027056
+            },
+            {
+              "params": {
+                "alpha_0": 0.2
+              },
+              "val_nll_per_dim": 0.9648754653032476
+            },
+            {
+              "params": {
+                "alpha_0": 0.35
+              },
+              "val_nll_per_dim": 0.9557898045889381
+            }
+          ],
+          "extensions": 0,
+          "at_grid_edge": [],
+          "seconds": 0.30626919999485835
+        },
+        "online_em": {
+          "best_params": {
+            "beta": 0.65,
+            "t0": 10.0
+          },
+          "table": [
+            {
+              "params": {
+                "beta": 0.55,
+                "t0": 1.0
+              },
+              "val_nll_per_dim": 0.969872341994838
+            },
+            {
+              "params": {
+                "beta": 0.55,
+                "t0": 10.0
+              },
+              "val_nll_per_dim": 0.9403448476871796
+            },
+            {
+              "params": {
+                "beta": 0.55,
+                "t0": 100.0
+              },
+              "val_nll_per_dim": 0.9636456025892959
+            },
+            {
+              "params": {
+                "beta": 0.65,
+                "t0": 1.0
+              },
+              "val_nll_per_dim": 0.973645573544236
+            },
+            {
+              "params": {
+                "beta": 0.65,
+                "t0": 10.0
+              },
+              "val_nll_per_dim": 0.9389151593954375
+            },
+            {
+              "params": {
+                "beta": 0.65,
+                "t0": 100.0
+              },
+              "val_nll_per_dim": 0.9624518977815163
+            },
+            {
+              "params": {
+                "beta": 0.75,
+                "t0": 1.0
+              },
+              "val_nll_per_dim": 0.9729375995808703
+            },
+            {
+              "params": {
+                "beta": 0.75,
+                "t0": 10.0
+              },
+              "val_nll_per_dim": 0.9624622043276675
+            },
+            {
+              "params": {
+                "beta": 0.75,
+                "t0": 100.0
+              },
+              "val_nll_per_dim": 0.9901174261136115
+            },
+            {
+              "params": {
+                "beta": 0.85,
+                "t0": 1.0
+              },
+              "val_nll_per_dim": 0.9709336016387832
+            },
+            {
+              "params": {
+                "beta": 0.85,
+                "t0": 10.0
+              },
+              "val_nll_per_dim": 0.9656250084534201
+            },
+            {
+              "params": {
+                "beta": 0.85,
+                "t0": 100.0
+              },
+              "val_nll_per_dim": 1.03363805194984
+            },
+            {
+              "params": {
+                "beta": 0.95,
+                "t0": 1.0
+              },
+              "val_nll_per_dim": 0.9775327218891029
+            },
+            {
+              "params": {
+                "beta": 0.95,
+                "t0": 10.0
+              },
+              "val_nll_per_dim": 0.9901726003926413
+            },
+            {
+              "params": {
+                "beta": 0.95,
+                "t0": 100.0
+              },
+              "val_nll_per_dim": 1.0921220320652105
+            }
+          ],
+          "extensions": 0,
+          "at_grid_edge": [],
+          "seconds": 1.5097933000070043
+        },
+        "emeans_posthoc": {
+          "best_params": {
+            "alpha_0": 0.2
+          },
+          "table": [
+            {
+              "params": {
+                "alpha_0": 0.1
+              },
+              "val_nll_per_dim": 0.9549483784457559
+            },
+            {
+              "params": {
+                "alpha_0": 0.2
+              },
+              "val_nll_per_dim": 0.9548204869449815
+            },
+            {
+              "params": {
+                "alpha_0": 0.35
+              },
+              "val_nll_per_dim": 0.9549604195975547
+            }
+          ],
+          "extensions": 0,
+          "at_grid_edge": [],
+          "seconds": 0.14674630004446954
+        },
+        "emeans_then_em3": {
+          "best_params": {
+            "alpha_0": 0.1,
+            "em_iters": 3
+          },
+          "table": [
+            {
+              "params": {
+                "alpha_0": 0.1,
+                "em_iters": 3
+              },
+              "val_nll_per_dim": 0.9467485795865355
+            },
+            {
+              "params": {
+                "alpha_0": 0.2,
+                "em_iters": 3
+              },
+              "val_nll_per_dim": 0.947009220721441
+            },
+            {
+              "params": {
+                "alpha_0": 0.35,
+                "em_iters": 3
+              },
+              "val_nll_per_dim": 0.946803236950489
+            },
+            {
+              "params": {
+                "alpha_0": 0.05,
+                "em_iters": 3
+              },
+              "val_nll_per_dim": 0.9654849733490086
+            }
+          ],
+          "extensions": 1,
+          "at_grid_edge": [],
+          "seconds": 0.2610726000275463
+        },
+        "fullbatch_em_random": {
+          "best_params": {
+            "max_iters": 25
+          },
+          "table": [
+            {
+              "params": {
+                "max_iters": 25
+              },
+              "val_nll_per_dim": 0.9692305588564927
+            }
+          ],
+          "extensions": 0,
+          "at_grid_edge": [],
+          "seconds": 0.1707211999455467
+        },
+        "fullbatch_em_emeans": {
+          "best_params": {
+            "max_iters": 25
+          },
+          "table": [
+            {
+              "params": {
+                "max_iters": 25
+              },
+              "val_nll_per_dim": 0.947600565732137
+            }
+          ],
+          "extensions": 0,
+          "at_grid_edge": [],
+          "seconds": 0.13828519999515265
+        }
       },
-      {
-        "method": "e-GMM(diag)",
-        "test_nll_mean": 14.2071,
-        "test_nll_std": 0.6956,
-        "test_bic_mean": 26254.1,
-        "dead_mean": 0.0,
-        "singular_ev_mean": 0.0,
-        "time_sec_mean": 0.045
-      }
-    ],
-    "Zipf-Rotated-Full": [
-      {
-        "method": "FullBatchEM@25",
-        "test_nll_mean": 14.5085,
-        "test_nll_std": 0.3643,
-        "test_bic_mean": 39570.8,
-        "dead_mean": 0.0,
-        "singular_ev_mean": 0.0,
-        "time_sec_mean": 1.201
+      "per_seed": {
+        "egmm_spectral": {
+          "test_nll_per_dim": [
+            1.0297008788309692,
+            1.0239258158700493,
+            0.9470350036003251,
+            0.9141124859769437,
+            1.0463793647261426,
+            0.9593405463756736,
+            1.0363455325443602,
+            0.8888111116217662,
+            0.9770870426600544,
+            1.051849979304807
+          ],
+          "dead_count": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "seconds": [
+            0.09110339998733252,
+            0.15212840004824102,
+            0.09615499997744337,
+            0.11624930001562461,
+            0.12037560000317171,
+            0.1503558999975212,
+            0.1633746000006795,
+            0.16356010001618415,
+            0.17848380003124475,
+            0.10337570001138374
+          ]
+        },
+        "egmm_no_revive": {
+          "test_nll_per_dim": [
+            1.0152029231303643,
+            1.0435062250189526,
+            0.9720022689201486,
+            0.913613466361311,
+            1.0453829781535091,
+            0.9456999128262567,
+            1.037341453301177,
+            0.9202338424969773,
+            1.0078244389491093,
+            1.0515524907350666
+          ],
+          "dead_count": [
+            2.0,
+            1.0,
+            4.0,
+            1.0,
+            3.0,
+            0.0,
+            2.0,
+            3.0,
+            3.0,
+            1.0
+          ],
+          "seconds": [
+            0.0821346000302583,
+            0.14612930000294,
+            0.09096200001658872,
+            0.12316489999648184,
+            0.10787200002232566,
+            0.15789800003403798,
+            0.1178891999879852,
+            0.15158110001357272,
+            0.12852079997537658,
+            0.10746079997625202
+          ]
+        },
+        "egmm_faiss_alt": {
+          "test_nll_per_dim": [
+            1.0291155066253688,
+            1.0238314457024427,
+            0.9465979023156621,
+            0.9139953982961072,
+            1.045385127450899,
+            0.9614660011759258,
+            1.024606596853482,
+            0.8886433963406839,
+            0.9721260501577816,
+            1.0513931801578116
+          ],
+          "dead_count": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "seconds": [
+            0.07919020002009347,
+            0.12803019996499643,
+            0.1499082000227645,
+            0.12783920002402738,
+            0.17964609997579828,
+            0.13590639998437837,
+            0.15344139997614548,
+            0.20416319998912513,
+            0.12895969999954104,
+            0.15303029998904094
+          ]
+        },
+        "online_em": {
+          "test_nll_per_dim": [
+            1.0292344044508672,
+            1.0435734776209427,
+            0.966874958258555,
+            0.9036141322748906,
+            1.0460372679028571,
+            0.945633298540185,
+            1.044675938803071,
+            0.9208870365296584,
+            0.9913990789364475,
+            1.046097654515161
+          ],
+          "dead_count": [
+            3.0,
+            2.0,
+            4.0,
+            0.0,
+            4.0,
+            1.0,
+            3.0,
+            3.0,
+            4.0,
+            1.0
+          ],
+          "seconds": [
+            0.08052600000519305,
+            0.1374115999788046,
+            0.2104405999998562,
+            0.16687110002385452,
+            0.13229579996550456,
+            0.17125899996608496,
+            0.1342315999791026,
+            0.21132659999420866,
+            0.15200959995854646,
+            0.15254380000988021
+          ]
+        },
+        "emeans_posthoc": {
+          "test_nll_per_dim": [
+            1.046314781797772,
+            1.0353375975167176,
+            0.9507293608213593,
+            0.9326958295939065,
+            1.0279094175255112,
+            0.9953823056840256,
+            1.051865720678115,
+            0.9227498418583591,
+            0.9955032091562714,
+            1.0619340382490008
+          ],
+          "dead_count": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "seconds": [
+            0.028139600006397814,
+            0.0499654000159353,
+            0.0513045999687165,
+            0.06479239999316633,
+            0.03507659997558221,
+            0.05326849996345118,
+            0.042159699951298535,
+            0.047801700013224036,
+            0.04384810000192374,
+            0.05185670003993437
+          ]
+        },
+        "emeans_then_em3": {
+          "test_nll_per_dim": [
+            1.0308321132010567,
+            1.0115325028443527,
+            0.9454500064067872,
+            0.9300496722160222,
+            1.0280346050499576,
+            0.9844119389718261,
+            1.035291754327052,
+            0.9122233920054887,
+            1.0020293095268407,
+            1.054902008870804
+          ],
+          "dead_count": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "seconds": [
+            0.0625428999774158,
+            0.07745399995474145,
+            0.07771950005553663,
+            0.08468800003174692,
+            0.04219409998040646,
+            0.08336240000789985,
+            0.05668799998238683,
+            0.07044420001329854,
+            0.05150609998963773,
+            0.06434039998566732
+          ]
+        },
+        "fullbatch_em_random": {
+          "test_nll_per_dim": [
+            1.0570073567656102,
+            1.0252074883827114,
+            0.972379476640268,
+            0.9254483922908944,
+            1.08478629513059,
+            0.9766913852946622,
+            1.043642326061086,
+            0.9551641533580748,
+            1.0200602834405808,
+            1.071188022054569
+          ],
+          "dead_count": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            2.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "seconds": [
+            0.14673929999116808,
+            0.1598873000475578,
+            0.15265599999111146,
+            0.19395530002657324,
+            0.12838060001377016,
+            0.18385810003383085,
+            0.0779583000112325,
+            0.14446029998362064,
+            0.1072713999892585,
+            0.1154569000354968
+          ]
+        },
+        "fullbatch_em_emeans": {
+          "test_nll_per_dim": [
+            1.0293191737446303,
+            1.0223795931739204,
+            0.9437379995819313,
+            0.9520987724718993,
+            1.0511931001985828,
+            0.959823059246445,
+            1.0319216456042164,
+            0.9117038558672885,
+            1.000446182033829,
+            1.0567307856540114
+          ],
+          "dead_count": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "seconds": [
+            0.16084279998904094,
+            0.1523161000222899,
+            0.19605530000990257,
+            0.20196159998886287,
+            0.1953027000417933,
+            0.26531280000926927,
+            0.16549120005220175,
+            0.17697959998622537,
+            0.13187889999244362,
+            0.15045089996419847
+          ]
+        }
       },
-      {
-        "method": "OnlineEM_beta0.60",
-        "test_nll_mean": 14.8743,
-        "test_nll_std": 0.5875,
-        "test_bic_mean": 40156.1,
-        "dead_mean": 4.0,
-        "singular_ev_mean": 0.0,
-        "time_sec_mean": 0.557
+      "summary": {
+        "egmm_spectral": {
+          "test_nll_per_dim_mean": 0.9874587761511091,
+          "test_nll_per_dim_std": 0.05846684441715537,
+          "n_finite": 10,
+          "dead_count_mean": 0.0,
+          "seconds_mean": 0.13351618000888266
+        },
+        "egmm_no_revive": {
+          "test_nll_per_dim_mean": 0.9952359999892872,
+          "test_nll_per_dim_std": 0.053361960028002586,
+          "n_finite": 10,
+          "dead_count_mean": 2.0,
+          "seconds_mean": 0.1213612700055819
+        },
+        "egmm_faiss_alt": {
+          "test_nll_per_dim_mean": 0.9857160605076165,
+          "test_nll_per_dim_std": 0.05734165588851143,
+          "n_finite": 10,
+          "dead_count_mean": 0.0,
+          "seconds_mean": 0.1440114899945911
+        },
+        "online_em": {
+          "test_nll_per_dim_mean": 0.9938027247832636,
+          "test_nll_per_dim_std": 0.0560611554935726,
+          "n_finite": 10,
+          "dead_count_mean": 2.5,
+          "seconds_mean": 0.15489156998810358
+        },
+        "emeans_posthoc": {
+          "test_nll_per_dim_mean": 1.0020422102881041,
+          "test_nll_per_dim_std": 0.05123311715986,
+          "n_finite": 10,
+          "dead_count_mean": 0.0,
+          "seconds_mean": 0.046821329992963
+        },
+        "emeans_then_em3": {
+          "test_nll_per_dim_mean": 0.9934757303420187,
+          "test_nll_per_dim_std": 0.0489037868055868,
+          "n_finite": 10,
+          "dead_count_mean": 0.0,
+          "seconds_mean": 0.06709395999787375
+        },
+        "fullbatch_em_random": {
+          "test_nll_per_dim_mean": 1.0131575179419046,
+          "test_nll_per_dim_std": 0.0533249488410033,
+          "n_finite": 10,
+          "dead_count_mean": 0.3,
+          "seconds_mean": 0.141062350012362
+        },
+        "fullbatch_em_emeans": {
+          "test_nll_per_dim_mean": 0.9959354167576755,
+          "test_nll_per_dim_std": 0.05046879540036269,
+          "n_finite": 10,
+          "dead_count_mean": 0.0,
+          "seconds_mean": 0.1796591900056228
+        }
       },
-      {
-        "method": "OnlineEM_beta0.85",
-        "test_nll_mean": 14.7841,
-        "test_nll_std": 0.4797,
-        "test_bic_mean": 40011.8,
-        "dead_mean": 0.67,
-        "singular_ev_mean": 0.0,
-        "time_sec_mean": 0.555
+      "paired_vs_reference": {
+        "egmm_no_revive": {
+          "n": 10.0,
+          "method_mean": 0.9952359999892872,
+          "reference_mean": 0.9874587761511091,
+          "mean_diff": 0.007777223838178138,
+          "std_diff": 0.017424950079609928,
+          "t_stat": 1.4114095644026232,
+          "p_value": 0.1796875,
+          "wins": 5.0,
+          "ties": 0.0
+        },
+        "egmm_faiss_alt": {
+          "n": 10.0,
+          "method_mean": 0.9857160605076165,
+          "reference_mean": 0.9874587761511091,
+          "mean_diff": -0.0017427156434926538,
+          "std_diff": 0.0039206387343946915,
+          "t_stat": -1.4056257464113482,
+          "p_value": 0.205078125,
+          "wins": 9.0,
+          "ties": 0.0
+        },
+        "online_em": {
+          "n": 10.0,
+          "method_mean": 0.9938027247832636,
+          "reference_mean": 0.9874587761511091,
+          "mean_diff": 0.006343948632154428,
+          "std_diff": 0.014951107439097713,
+          "t_stat": 1.3417953899693453,
+          "p_value": 0.21484375,
+          "wins": 5.0,
+          "ties": 0.0
+        },
+        "emeans_posthoc": {
+          "n": 10.0,
+          "method_mean": 1.0020422102881041,
+          "reference_mean": 0.9874587761511091,
+          "mean_diff": 0.014583434136994733,
+          "std_diff": 0.015319480705387585,
+          "t_stat": 3.0103414643641875,
+          "p_value": 0.01953125,
+          "wins": 1.0,
+          "ties": 0.0
+        },
+        "emeans_then_em3": {
+          "n": 10.0,
+          "method_mean": 0.9934757303420187,
+          "reference_mean": 0.9874587761511091,
+          "mean_diff": 0.006016954190909663,
+          "std_diff": 0.015617385111296539,
+          "t_stat": 1.2183396698341717,
+          "p_value": 0.25390625,
+          "wins": 4.0,
+          "ties": 0.0
+        },
+        "fullbatch_em_random": {
+          "n": 10.0,
+          "method_mean": 1.0131575179419046,
+          "reference_mean": 0.9874587761511091,
+          "mean_diff": 0.025698741790795555,
+          "std_diff": 0.019340949043414227,
+          "t_stat": 4.201787455054608,
+          "p_value": 0.001953125,
+          "wins": 0.0,
+          "ties": 0.0
+        },
+        "fullbatch_em_emeans": {
+          "n": 10.0,
+          "method_mean": 0.9959354167576755,
+          "reference_mean": 0.9874587761511091,
+          "mean_diff": 0.00847664060656631,
+          "std_diff": 0.014431275397418574,
+          "t_stat": 1.8574582277194762,
+          "p_value": 0.111328125,
+          "wins": 4.0,
+          "ties": 0.0
+        }
       },
-      {
-        "method": "e-means+PostHoc",
-        "test_nll_mean": 14.6346,
-        "test_nll_std": 0.3798,
-        "test_bic_mean": 39772.7,
-        "dead_mean": 0.0,
-        "singular_ev_mean": 0.0,
-        "time_sec_mean": 0.016
+      "failures": {},
+      "data": {
+        "source": "synthetic",
+        "generator": {
+          "kind": "gmm",
+          "zipf": true,
+          "zipf_power": 1.2,
+          "anisotropic": true,
+          "rotated": false,
+          "sigma_mu_sq": 0.6666666666666666,
+          "sigma_w_sq": 0.3333333333333333
+        }
       },
-      {
-        "method": "e-GMM(full)",
-        "test_nll_mean": 14.6624,
-        "test_nll_std": 0.2896,
-        "test_bic_mean": 39817.1,
-        "dead_mean": 0.0,
-        "singular_ev_mean": 0.0,
-        "time_sec_mean": 0.519
+      "dim": 16,
+      "seconds": 13.129413799964823
+    },
+    "Zipf-Rotated-Full": {
+      "setup": {
+        "k": 16,
+        "cov_type": "full",
+        "cov_floor": 0.0001,
+        "batch_size": 64,
+        "epochs": 6,
+        "seeds": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10
+        ],
+        "tuning_seed": 10000,
+        "reference": "egmm_spectral",
+        "egmm_overrides": {},
+        "unit": "nats per dimension (test NLL / d)"
       },
-      {
-        "method": "e-GMM(low_rank_diag)",
-        "test_nll_mean": 16.3403,
-        "test_nll_std": 0.3308,
-        "test_bic_mean": 35870.5,
-        "dead_mean": 0.0,
-        "singular_ev_mean": 0.0,
-        "time_sec_mean": 0.771
-      }
-    ],
-    "Overlapping-Rotated-Full": [
-      {
-        "method": "FullBatchEM@25",
-        "test_nll_mean": 19.2235,
-        "test_nll_std": 0.2425,
-        "test_bic_mean": 47114.8,
-        "dead_mean": 0.33,
-        "singular_ev_mean": 0.0,
-        "time_sec_mean": 1.151
+      "methods": {
+        "egmm_spectral": {
+          "description": "e-GMM, spectral v1 revival, alpha_0 tuned",
+          "grid_size": 4
+        },
+        "egmm_no_revive": {
+          "description": "e-GMM without revival, alpha_0 tuned (the H0 control)",
+          "grid_size": 4
+        },
+        "egmm_faiss_alt": {
+          "description": "e-GMM, Faiss-style +/-delta revival, alpha_0 tuned",
+          "grid_size": 4
+        },
+        "online_em": {
+          "description": "Cappe-Moulines online EM, (beta, t0) tuned, matched floor",
+          "grid_size": 15
+        },
+        "emeans_posthoc": {
+          "description": "e-means + per-cell covariance, alpha_0 tuned",
+          "grid_size": 3
+        },
+        "emeans_then_em3": {
+          "description": "e-means init + 3 full-batch EM iterations, alpha_0 tuned",
+          "grid_size": 3
+        },
+        "fullbatch_em_random": {
+          "description": "full-batch EM, random-point init, 25 iterations",
+          "grid_size": 1
+        },
+        "fullbatch_em_emeans": {
+          "description": "full-batch EM, e-means init, 25 iterations",
+          "grid_size": 1
+        }
       },
-      {
-        "method": "OnlineEM_beta0.60",
-        "test_nll_mean": 19.8211,
-        "test_nll_std": 0.4478,
-        "test_bic_mean": 48071.0,
-        "dead_mean": 9.0,
-        "singular_ev_mean": 0.0,
-        "time_sec_mean": 0.565
+      "skipped_methods": {
+        "sklearn_gmm": "scikit-learn is not installed"
       },
-      {
-        "method": "OnlineEM_beta0.85",
-        "test_nll_mean": 19.7397,
-        "test_nll_std": 0.5959,
-        "test_bic_mean": 47940.7,
-        "dead_mean": 3.67,
-        "singular_ev_mean": 0.0,
-        "time_sec_mean": 0.586
+      "tuning": {
+        "egmm_spectral": {
+          "best_params": {
+            "alpha_0": 0.1
+          },
+          "table": [
+            {
+              "params": {
+                "alpha_0": 0.05
+              },
+              "val_nll_per_dim": 0.9465714091957471
+            },
+            {
+              "params": {
+                "alpha_0": 0.1
+              },
+              "val_nll_per_dim": 0.9391230735851758
+            },
+            {
+              "params": {
+                "alpha_0": 0.2
+              },
+              "val_nll_per_dim": 0.969182200876603
+            },
+            {
+              "params": {
+                "alpha_0": 0.35
+              },
+              "val_nll_per_dim": 0.971350729647379
+            }
+          ],
+          "extensions": 0,
+          "at_grid_edge": [],
+          "seconds": 6.941239399951883
+        },
+        "egmm_no_revive": {
+          "best_params": {
+            "alpha_0": 0.1
+          },
+          "table": [
+            {
+              "params": {
+                "alpha_0": 0.05
+              },
+              "val_nll_per_dim": 0.949104368768775
+            },
+            {
+              "params": {
+                "alpha_0": 0.1
+              },
+              "val_nll_per_dim": 0.9484192039179064
+            },
+            {
+              "params": {
+                "alpha_0": 0.2
+              },
+              "val_nll_per_dim": 1.0138184613747634
+            },
+            {
+              "params": {
+                "alpha_0": 0.35
+              },
+              "val_nll_per_dim": 1.0880443026297042
+            }
+          ],
+          "extensions": 0,
+          "at_grid_edge": [],
+          "seconds": 6.187019500008319
+        },
+        "egmm_faiss_alt": {
+          "best_params": {
+            "alpha_0": 0.05
+          },
+          "table": [
+            {
+              "params": {
+                "alpha_0": 0.05
+              },
+              "val_nll_per_dim": 0.9405830361987497
+            },
+            {
+              "params": {
+                "alpha_0": 0.1
+              },
+              "val_nll_per_dim": 0.9490922735439935
+            },
+            {
+              "params": {
+                "alpha_0": 0.2
+              },
+              "val_nll_per_dim": 0.9641455529988119
+            },
+            {
+              "params": {
+                "alpha_0": 0.35
+              },
+              "val_nll_per_dim": 0.9588453468443963
+            },
+            {
+              "params": {
+                "alpha_0": 0.025
+              },
+              "val_nll_per_dim": 0.9516253658087734
+            }
+          ],
+          "extensions": 1,
+          "at_grid_edge": [],
+          "seconds": 7.8960858000209555
+        },
+        "online_em": {
+          "best_params": {
+            "beta": 0.85,
+            "t0": 10.0
+          },
+          "table": [
+            {
+              "params": {
+                "beta": 0.55,
+                "t0": 1.0
+              },
+              "val_nll_per_dim": 1.215587032710566
+            },
+            {
+              "params": {
+                "beta": 0.55,
+                "t0": 10.0
+              },
+              "val_nll_per_dim": 0.9605101175483459
+            },
+            {
+              "params": {
+                "beta": 0.55,
+                "t0": 100.0
+              },
+              "val_nll_per_dim": 0.9594552369909887
+            },
+            {
+              "params": {
+                "beta": 0.65,
+                "t0": 1.0
+              },
+              "val_nll_per_dim": 1.1248238405262396
+            },
+            {
+              "params": {
+                "beta": 0.65,
+                "t0": 10.0
+              },
+              "val_nll_per_dim": 0.9495156038168893
+            },
+            {
+              "params": {
+                "beta": 0.65,
+                "t0": 100.0
+              },
+              "val_nll_per_dim": 0.9555448350095475
+            },
+            {
+              "params": {
+                "beta": 0.75,
+                "t0": 1.0
+              },
+              "val_nll_per_dim": 1.0735298342721376
+            },
+            {
+              "params": {
+                "beta": 0.75,
+                "t0": 10.0
+              },
+              "val_nll_per_dim": 0.9459154104630804
+            },
+            {
+              "params": {
+                "beta": 0.75,
+                "t0": 100.0
+              },
+              "val_nll_per_dim": 0.9527098115839808
+            },
+            {
+              "params": {
+                "beta": 0.85,
+                "t0": 1.0
+              },
+              "val_nll_per_dim": 1.0723884967568835
+            },
+            {
+              "params": {
+                "beta": 0.85,
+                "t0": 10.0
+              },
+              "val_nll_per_dim": 0.9452753233973803
+            },
+            {
+              "params": {
+                "beta": 0.85,
+                "t0": 100.0
+              },
+              "val_nll_per_dim": 0.9697054368026156
+            },
+            {
+              "params": {
+                "beta": 0.95,
+                "t0": 1.0
+              },
+              "val_nll_per_dim": 1.076468859411431
+            },
+            {
+              "params": {
+                "beta": 0.95,
+                "t0": 10.0
+              },
+              "val_nll_per_dim": 0.9502583800012726
+            },
+            {
+              "params": {
+                "beta": 0.95,
+                "t0": 100.0
+              },
+              "val_nll_per_dim": 1.0147335077768596
+            }
+          ],
+          "extensions": 0,
+          "at_grid_edge": [],
+          "seconds": 21.7684076000005
+        },
+        "emeans_posthoc": {
+          "best_params": {
+            "alpha_0": 0.1
+          },
+          "table": [
+            {
+              "params": {
+                "alpha_0": 0.1
+              },
+              "val_nll_per_dim": 0.9458951172678794
+            },
+            {
+              "params": {
+                "alpha_0": 0.2
+              },
+              "val_nll_per_dim": 0.957493900111714
+            },
+            {
+              "params": {
+                "alpha_0": 0.35
+              },
+              "val_nll_per_dim": 0.9572348998111818
+            },
+            {
+              "params": {
+                "alpha_0": 0.05
+              },
+              "val_nll_per_dim": 0.9510065239391053
+            }
+          ],
+          "extensions": 1,
+          "at_grid_edge": [],
+          "seconds": 0.7642008000402711
+        },
+        "emeans_then_em3": {
+          "best_params": {
+            "alpha_0": 0.1,
+            "em_iters": 3
+          },
+          "table": [
+            {
+              "params": {
+                "alpha_0": 0.1,
+                "em_iters": 3
+              },
+              "val_nll_per_dim": 0.9465067819490727
+            },
+            {
+              "params": {
+                "alpha_0": 0.2,
+                "em_iters": 3
+              },
+              "val_nll_per_dim": 0.9574668178672257
+            },
+            {
+              "params": {
+                "alpha_0": 0.35,
+                "em_iters": 3
+              },
+              "val_nll_per_dim": 0.9577051390715041
+            },
+            {
+              "params": {
+                "alpha_0": 0.05,
+                "em_iters": 3
+              },
+              "val_nll_per_dim": 0.9526407871336434
+            }
+          ],
+          "extensions": 1,
+          "at_grid_edge": [],
+          "seconds": 2.2002720999880694
+        },
+        "fullbatch_em_random": {
+          "best_params": {
+            "max_iters": 25
+          },
+          "table": [
+            {
+              "params": {
+                "max_iters": 25
+              },
+              "val_nll_per_dim": 0.9604829145447286
+            }
+          ],
+          "extensions": 0,
+          "at_grid_edge": [],
+          "seconds": 2.24122929997975
+        },
+        "fullbatch_em_emeans": {
+          "best_params": {
+            "max_iters": 25
+          },
+          "table": [
+            {
+              "params": {
+                "max_iters": 25
+              },
+              "val_nll_per_dim": 0.9521304024994882
+            }
+          ],
+          "extensions": 0,
+          "at_grid_edge": [],
+          "seconds": 2.541913900000509
+        }
       },
-      {
-        "method": "e-means+PostHoc",
-        "test_nll_mean": 20.4754,
-        "test_nll_std": 0.248,
-        "test_bic_mean": 49117.9,
-        "dead_mean": 0.0,
-        "singular_ev_mean": 0.0,
-        "time_sec_mean": 0.016
+      "per_seed": {
+        "egmm_spectral": {
+          "test_nll_per_dim": [
+            1.0443530678508268,
+            1.0624517584608928,
+            0.9432401659727302,
+            0.9613056061866192,
+            1.0802974499671825,
+            0.9660118369648086,
+            1.0737352856978672,
+            0.9475050595150798,
+            0.9855127530717764,
+            1.0803115854811083
+          ],
+          "dead_count": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "seconds": [
+            1.082842499949038,
+            1.0947560000349768,
+            1.2258941000327468,
+            0.8586906000273302,
+            0.9238016000017524,
+            1.4398145000450313,
+            0.8769041000050493,
+            0.9643703999463469,
+            0.9793097000219859,
+            0.8975380000192672
+          ]
+        },
+        "egmm_no_revive": {
+          "test_nll_per_dim": [
+            1.048347006471594,
+            1.04796101768276,
+            0.9403607398795151,
+            0.9565383774089691,
+            1.073931259463549,
+            0.9859926637090349,
+            1.0977325760972712,
+            0.9395103052623494,
+            0.9996017377739919,
+            1.0731828108542851
+          ],
+          "dead_count": [
+            2.0,
+            3.0,
+            2.0,
+            3.0,
+            3.0,
+            4.0,
+            6.0,
+            3.0,
+            3.0,
+            2.0
+          ],
+          "seconds": [
+            1.1408588999765925,
+            0.9094789000228047,
+            1.2777408999972977,
+            0.7941929000080563,
+            0.8136151999933645,
+            1.176244799979031,
+            0.8455619000014849,
+            0.944135700003244,
+            0.8660400999942794,
+            0.8958968000370078
+          ]
+        },
+        "egmm_faiss_alt": {
+          "test_nll_per_dim": [
+            1.0724596583335295,
+            1.0444643351204215,
+            0.9359973916585475,
+            0.9577771267911718,
+            1.044745359864049,
+            0.9711638803391608,
+            1.0806938547469025,
+            0.9490400088193209,
+            0.9987211806575508,
+            1.0770348544037185
+          ],
+          "dead_count": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "seconds": [
+            1.1503879000083543,
+            0.9721906000049785,
+            0.9037319000344723,
+            0.9446905000368133,
+            1.0321092000231147,
+            1.1937829999951646,
+            1.0722100000130013,
+            0.8313476000330411,
+            0.9462421999778599,
+            0.8102628000197001
+          ]
+        },
+        "online_em": {
+          "test_nll_per_dim": [
+            1.0752103337152719,
+            1.0470273914314105,
+            0.9194743048755158,
+            0.9486359797508126,
+            1.0408984717174472,
+            0.982403299659666,
+            1.0855549231677188,
+            0.9513797459199143,
+            0.9859072751579144,
+            1.0703755186491333
+          ],
+          "dead_count": [
+            2.0,
+            3.0,
+            2.0,
+            2.0,
+            2.0,
+            4.0,
+            3.0,
+            3.0,
+            2.0,
+            1.0
+          ],
+          "seconds": [
+            1.3413864999893121,
+            1.0195825999835506,
+            0.9480405999929644,
+            0.9297440000227652,
+            1.4742319000069983,
+            1.064195200044196,
+            0.9980489000445232,
+            1.038979000004474,
+            0.9647300999495201,
+            0.9571821999852546
+          ]
+        },
+        "emeans_posthoc": {
+          "test_nll_per_dim": [
+            1.0530916792935494,
+            1.0628291934073344,
+            0.9318674073043425,
+            0.9502125173047462,
+            1.065514627589188,
+            0.9715069003979709,
+            1.0756555178619982,
+            0.9643804428598579,
+            0.9904542159206743,
+            1.079976460766089
+          ],
+          "dead_count": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "seconds": [
+            0.05447279999498278,
+            0.031174699950497597,
+            0.027219599985983223,
+            0.022937100031413138,
+            0.033157699974253774,
+            0.038968299981206656,
+            0.032004999986384064,
+            0.02755340002477169,
+            0.03094490000512451,
+            0.035781299986410886
+          ]
+        },
+        "emeans_then_em3": {
+          "test_nll_per_dim": [
+            1.0506458252094195,
+            1.0531575301776235,
+            0.9315425920270488,
+            0.9447040663453634,
+            1.0621050622298391,
+            0.9677201353298082,
+            1.0697672586670337,
+            0.9551677581411133,
+            0.9870744483339992,
+            1.073763604292774
+          ],
+          "dead_count": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "seconds": [
+            0.2910877999966033,
+            0.3034693999798037,
+            0.250320199993439,
+            0.2331906000035815,
+            0.3105570999905467,
+            0.2212574000004679,
+            0.3028921000077389,
+            0.22156929998891428,
+            0.243272399995476,
+            0.2534270000178367
+          ]
+        },
+        "fullbatch_em_random": {
+          "test_nll_per_dim": [
+            1.0703560310872324,
+            1.0568845719746023,
+            0.9569932622097201,
+            0.9751133334535099,
+            1.066888312595243,
+            0.9877867460199965,
+            1.09359409250539,
+            0.9584377090943519,
+            1.0107255989538912,
+            1.0824206109314807
+          ],
+          "dead_count": [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "seconds": [
+            2.253022799966857,
+            2.3117196999955922,
+            2.0000983999925666,
+            1.5790300000226125,
+            3.111363200005144,
+            1.8402249999926426,
+            2.6709504000027664,
+            2.0745809999643825,
+            2.1690034000203013,
+            1.9227494000224397
+          ]
+        },
+        "fullbatch_em_emeans": {
+          "test_nll_per_dim": [
+            1.0467382200327322,
+            1.0563887061628374,
+            0.937243960867196,
+            0.9478018859232722,
+            1.04574001343467,
+            0.967652531152934,
+            1.0708654091566436,
+            0.9489239182426814,
+            0.9926727244442725,
+            1.0944159140008127
+          ],
+          "dead_count": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "seconds": [
+            2.4354517000028864,
+            2.323983100010082,
+            1.835450500017032,
+            1.687251399969682,
+            2.129486200050451,
+            1.90643380000256,
+            2.50527989998227,
+            1.938372700009495,
+            1.932975700008683,
+            2.0080183999962173
+          ]
+        }
       },
-      {
-        "method": "e-GMM(full)",
-        "test_nll_mean": 19.0163,
-        "test_nll_std": 0.3646,
-        "test_bic_mean": 46783.4,
-        "dead_mean": 0.0,
-        "singular_ev_mean": 0.0,
-        "time_sec_mean": 0.543
+      "summary": {
+        "egmm_spectral": {
+          "test_nll_per_dim_mean": 1.0144724569168893,
+          "test_nll_per_dim_std": 0.05863933971430106,
+          "n_finite": 10,
+          "dead_count_mean": 0.0,
+          "seconds_mean": 1.0343921500083524
+        },
+        "egmm_no_revive": {
+          "test_nll_per_dim_mean": 1.016315849460332,
+          "test_nll_per_dim_std": 0.05930144781350892,
+          "n_finite": 10,
+          "dead_count_mean": 3.1,
+          "seconds_mean": 0.9663766100013162
+        },
+        "egmm_faiss_alt": {
+          "test_nll_per_dim_mean": 1.0132097650734373,
+          "test_nll_per_dim_std": 0.05699873023975223,
+          "n_finite": 10,
+          "dead_count_mean": 0.0,
+          "seconds_mean": 0.98569557001465
+        },
+        "online_em": {
+          "test_nll_per_dim_mean": 1.0106867244044806,
+          "test_nll_per_dim_std": 0.060245774922597715,
+          "n_finite": 10,
+          "dead_count_mean": 2.4,
+          "seconds_mean": 1.073612100002356
+        },
+        "emeans_posthoc": {
+          "test_nll_per_dim_mean": 1.014548896270575,
+          "test_nll_per_dim_std": 0.05807491656409119,
+          "n_finite": 10,
+          "dead_count_mean": 0.0,
+          "seconds_mean": 0.033421479992102834
+        },
+        "emeans_then_em3": {
+          "test_nll_per_dim_mean": 1.0095648280754022,
+          "test_nll_per_dim_std": 0.0573531827689498,
+          "n_finite": 10,
+          "dead_count_mean": 0.0,
+          "seconds_mean": 0.2631043299974408
+        },
+        "fullbatch_em_random": {
+          "test_nll_per_dim_mean": 1.0259200268825417,
+          "test_nll_per_dim_std": 0.053701807399144146,
+          "n_finite": 10,
+          "dead_count_mean": 0.1,
+          "seconds_mean": 2.1932743299985304
+        },
+        "fullbatch_em_emeans": {
+          "test_nll_per_dim_mean": 1.0108443283418052,
+          "test_nll_per_dim_std": 0.058298418198110616,
+          "n_finite": 10,
+          "dead_count_mean": 0.0,
+          "seconds_mean": 2.070270340004936
+        }
       },
-      {
-        "method": "e-GMM(low_rank_diag)",
-        "test_nll_mean": 20.7888,
-        "test_nll_std": 0.4009,
-        "test_bic_mean": 42988.3,
-        "dead_mean": 0.67,
-        "singular_ev_mean": 0.0,
-        "time_sec_mean": 0.808
-      }
-    ],
-    "Stretched-PowerLaw-Diag": [
-      {
-        "method": "FullBatchEM@25",
-        "test_nll_mean": 21.5892,
-        "test_nll_std": 0.0435,
-        "test_bic_mean": 39776.8,
-        "dead_mean": 0.33,
-        "singular_ev_mean": 0.0,
-        "time_sec_mean": 0.145
+      "paired_vs_reference": {
+        "egmm_no_revive": {
+          "n": 10.0,
+          "method_mean": 1.016315849460332,
+          "reference_mean": 1.0144724569168893,
+          "mean_diff": 0.00184339254344279,
+          "std_diff": 0.013131118665908548,
+          "t_stat": 0.4439316411163337,
+          "p_value": 0.662109375,
+          "wins": 6.0,
+          "ties": 0.0
+        },
+        "egmm_faiss_alt": {
+          "n": 10.0,
+          "method_mean": 1.0132097650734373,
+          "reference_mean": 1.0144724569168893,
+          "mean_diff": -0.001262691843451913,
+          "std_diff": 0.017285073222415057,
+          "t_stat": -0.23100753794012086,
+          "p_value": 0.826171875,
+          "wins": 5.0,
+          "ties": 0.0
+        },
+        "online_em": {
+          "n": 10.0,
+          "method_mean": 1.0106867244044806,
+          "reference_mean": 1.0144724569168893,
+          "mean_diff": -0.0037857325124087014,
+          "std_diff": 0.02067380916594602,
+          "t_stat": -0.5790678077401775,
+          "p_value": 0.572265625,
+          "wins": 5.0,
+          "ties": 0.0
+        },
+        "emeans_posthoc": {
+          "n": 10.0,
+          "method_mean": 1.014548896270575,
+          "reference_mean": 1.0144724569168893,
+          "mean_diff": 7.64393536859087e-05,
+          "std_diff": 0.009947458613809768,
+          "t_stat": 0.02429992120631518,
+          "p_value": 0.9921875,
+          "wins": 4.0,
+          "ties": 0.0
+        },
+        "emeans_then_em3": {
+          "n": 10.0,
+          "method_mean": 1.0095648280754022,
+          "reference_mean": 1.0144724569168893,
+          "mean_diff": -0.00490762884148691,
+          "std_diff": 0.009136228378083965,
+          "t_stat": -1.6986533619343218,
+          "p_value": 0.12109375,
+          "wins": 6.0,
+          "ties": 0.0
+        },
+        "fullbatch_em_random": {
+          "n": 10.0,
+          "method_mean": 1.0259200268825417,
+          "reference_mean": 1.0144724569168893,
+          "mean_diff": 0.011447569965652627,
+          "std_diff": 0.013268435056056604,
+          "t_stat": 2.7283093004305368,
+          "p_value": 0.029296875,
+          "wins": 2.0,
+          "ties": 0.0
+        },
+        "fullbatch_em_emeans": {
+          "n": 10.0,
+          "method_mean": 1.0108443283418052,
+          "reference_mean": 1.0144724569168893,
+          "mean_diff": -0.0036281285750839887,
+          "std_diff": 0.01327686476862752,
+          "t_stat": -0.864146027028688,
+          "p_value": 0.474609375,
+          "wins": 5.0,
+          "ties": 0.0
+        }
       },
-      {
-        "method": "OnlineEM_beta0.60",
-        "test_nll_mean": 21.4809,
-        "test_nll_std": 0.0366,
-        "test_bic_mean": 39603.5,
-        "dead_mean": 10.67,
-        "singular_ev_mean": 0.0,
-        "time_sec_mean": 0.055
+      "failures": {},
+      "data": {
+        "source": "synthetic",
+        "generator": {
+          "kind": "gmm",
+          "zipf": true,
+          "zipf_power": 1.2,
+          "anisotropic": true,
+          "rotated": true,
+          "sigma_mu_sq": 0.6666666666666666,
+          "sigma_w_sq": 0.3333333333333333
+        }
       },
-      {
-        "method": "OnlineEM_beta0.85",
-        "test_nll_mean": 21.4799,
-        "test_nll_std": 0.0332,
-        "test_bic_mean": 39601.9,
-        "dead_mean": 10.0,
-        "singular_ev_mean": 0.0,
-        "time_sec_mean": 0.052
+      "dim": 16,
+      "seconds": 136.86678500002017
+    },
+    "Overlapping-Rotated-Full": {
+      "setup": {
+        "k": 16,
+        "cov_type": "full",
+        "cov_floor": 0.0001,
+        "batch_size": 64,
+        "epochs": 6,
+        "seeds": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10
+        ],
+        "tuning_seed": 10000,
+        "reference": "egmm_spectral",
+        "egmm_overrides": {},
+        "unit": "nats per dimension (test NLL / d)"
       },
-      {
-        "method": "e-means+PostHoc",
-        "test_nll_mean": 21.6767,
-        "test_nll_std": 0.0356,
-        "test_bic_mean": 39916.7,
-        "dead_mean": 0.0,
-        "singular_ev_mean": 0.0,
-        "time_sec_mean": 0.021
+      "methods": {
+        "egmm_spectral": {
+          "description": "e-GMM, spectral v1 revival, alpha_0 tuned",
+          "grid_size": 4
+        },
+        "egmm_no_revive": {
+          "description": "e-GMM without revival, alpha_0 tuned (the H0 control)",
+          "grid_size": 4
+        },
+        "egmm_faiss_alt": {
+          "description": "e-GMM, Faiss-style +/-delta revival, alpha_0 tuned",
+          "grid_size": 4
+        },
+        "online_em": {
+          "description": "Cappe-Moulines online EM, (beta, t0) tuned, matched floor",
+          "grid_size": 15
+        },
+        "emeans_posthoc": {
+          "description": "e-means + per-cell covariance, alpha_0 tuned",
+          "grid_size": 3
+        },
+        "emeans_then_em3": {
+          "description": "e-means init + 3 full-batch EM iterations, alpha_0 tuned",
+          "grid_size": 3
+        },
+        "fullbatch_em_random": {
+          "description": "full-batch EM, random-point init, 25 iterations",
+          "grid_size": 1
+        },
+        "fullbatch_em_emeans": {
+          "description": "full-batch EM, e-means init, 25 iterations",
+          "grid_size": 1
+        }
       },
-      {
-        "method": "e-GMM(diag)",
-        "test_nll_mean": 21.5017,
-        "test_nll_std": 0.0347,
-        "test_bic_mean": 39636.7,
-        "dead_mean": 0.0,
-        "singular_ev_mean": 0.0,
-        "time_sec_mean": 0.058
-      }
-    ]
+      "skipped_methods": {
+        "sklearn_gmm": "scikit-learn is not installed"
+      },
+      "tuning": {
+        "egmm_spectral": {
+          "best_params": {
+            "alpha_0": 0.1
+          },
+          "table": [
+            {
+              "params": {
+                "alpha_0": 0.05
+              },
+              "val_nll_per_dim": 1.2453488324448587
+            },
+            {
+              "params": {
+                "alpha_0": 0.1
+              },
+              "val_nll_per_dim": 1.2103918568210255
+            },
+            {
+              "params": {
+                "alpha_0": 0.2
+              },
+              "val_nll_per_dim": 1.2230301406575075
+            },
+            {
+              "params": {
+                "alpha_0": 0.35
+              },
+              "val_nll_per_dim": 1.2114681067510702
+            }
+          ],
+          "extensions": 0,
+          "at_grid_edge": [],
+          "seconds": 5.490258799982257
+        },
+        "egmm_no_revive": {
+          "best_params": {
+            "alpha_0": 0.1
+          },
+          "table": [
+            {
+              "params": {
+                "alpha_0": 0.05
+              },
+              "val_nll_per_dim": 1.2453488324448587
+            },
+            {
+              "params": {
+                "alpha_0": 0.1
+              },
+              "val_nll_per_dim": 1.2291452648633512
+            },
+            {
+              "params": {
+                "alpha_0": 0.2
+              },
+              "val_nll_per_dim": 1.3234043296236115
+            },
+            {
+              "params": {
+                "alpha_0": 0.35
+              },
+              "val_nll_per_dim": 1.4019545647193314
+            }
+          ],
+          "extensions": 0,
+          "at_grid_edge": [],
+          "seconds": 4.62314509996213
+        },
+        "egmm_faiss_alt": {
+          "best_params": {
+            "alpha_0": 0.2
+          },
+          "table": [
+            {
+              "params": {
+                "alpha_0": 0.05
+              },
+              "val_nll_per_dim": 1.2453488324448587
+            },
+            {
+              "params": {
+                "alpha_0": 0.1
+              },
+              "val_nll_per_dim": 1.2186783557144756
+            },
+            {
+              "params": {
+                "alpha_0": 0.2
+              },
+              "val_nll_per_dim": 1.2087164747290349
+            },
+            {
+              "params": {
+                "alpha_0": 0.35
+              },
+              "val_nll_per_dim": 1.2422547771060044
+            }
+          ],
+          "extensions": 0,
+          "at_grid_edge": [],
+          "seconds": 3.5172250000177883
+        },
+        "online_em": {
+          "best_params": {
+            "beta": 0.65,
+            "t0": 10.0
+          },
+          "table": [
+            {
+              "params": {
+                "beta": 0.55,
+                "t0": 1.0
+              },
+              "val_nll_per_dim": 1.3677880548480985
+            },
+            {
+              "params": {
+                "beta": 0.55,
+                "t0": 10.0
+              },
+              "val_nll_per_dim": 1.241956762004449
+            },
+            {
+              "params": {
+                "beta": 0.55,
+                "t0": 100.0
+              },
+              "val_nll_per_dim": 1.2557602573530193
+            },
+            {
+              "params": {
+                "beta": 0.65,
+                "t0": 1.0
+              },
+              "val_nll_per_dim": 1.366410228415709
+            },
+            {
+              "params": {
+                "beta": 0.65,
+                "t0": 10.0
+              },
+              "val_nll_per_dim": 1.225605408443653
+            },
+            {
+              "params": {
+                "beta": 0.65,
+                "t0": 100.0
+              },
+              "val_nll_per_dim": 1.2559293928009994
+            },
+            {
+              "params": {
+                "beta": 0.75,
+                "t0": 1.0
+              },
+              "val_nll_per_dim": 1.3354849848877381
+            },
+            {
+              "params": {
+                "beta": 0.75,
+                "t0": 10.0
+              },
+              "val_nll_per_dim": 1.2358653795199888
+            },
+            {
+              "params": {
+                "beta": 0.75,
+                "t0": 100.0
+              },
+              "val_nll_per_dim": 1.2783518430782592
+            },
+            {
+              "params": {
+                "beta": 0.85,
+                "t0": 1.0
+              },
+              "val_nll_per_dim": 1.3230273565468986
+            },
+            {
+              "params": {
+                "beta": 0.85,
+                "t0": 10.0
+              },
+              "val_nll_per_dim": 1.2702979427107337
+            },
+            {
+              "params": {
+                "beta": 0.85,
+                "t0": 100.0
+              },
+              "val_nll_per_dim": 1.303013193141106
+            },
+            {
+              "params": {
+                "beta": 0.95,
+                "t0": 1.0
+              },
+              "val_nll_per_dim": 1.321644088493145
+            },
+            {
+              "params": {
+                "beta": 0.95,
+                "t0": 10.0
+              },
+              "val_nll_per_dim": 1.2858082672562665
+            },
+            {
+              "params": {
+                "beta": 0.95,
+                "t0": 100.0
+              },
+              "val_nll_per_dim": 1.3322107639817604
+            }
+          ],
+          "extensions": 0,
+          "at_grid_edge": [],
+          "seconds": 17.937588599976152
+        },
+        "emeans_posthoc": {
+          "best_params": {
+            "alpha_0": 0.2
+          },
+          "table": [
+            {
+              "params": {
+                "alpha_0": 0.1
+              },
+              "val_nll_per_dim": 1.3132186212760542
+            },
+            {
+              "params": {
+                "alpha_0": 0.2
+              },
+              "val_nll_per_dim": 1.3103313870103839
+            },
+            {
+              "params": {
+                "alpha_0": 0.35
+              },
+              "val_nll_per_dim": 1.3138639242006815
+            }
+          ],
+          "extensions": 0,
+          "at_grid_edge": [],
+          "seconds": 0.24335820000851527
+        },
+        "emeans_then_em3": {
+          "best_params": {
+            "alpha_0": 0.35,
+            "em_iters": 3
+          },
+          "table": [
+            {
+              "params": {
+                "alpha_0": 0.1,
+                "em_iters": 3
+              },
+              "val_nll_per_dim": 1.2806701003848473
+            },
+            {
+              "params": {
+                "alpha_0": 0.2,
+                "em_iters": 3
+              },
+              "val_nll_per_dim": 1.2824222912953382
+            },
+            {
+              "params": {
+                "alpha_0": 0.35,
+                "em_iters": 3
+              },
+              "val_nll_per_dim": 1.2762994177317393
+            },
+            {
+              "params": {
+                "alpha_0": 0.7,
+                "em_iters": 3
+              },
+              "val_nll_per_dim": 1.2828175219384483
+            }
+          ],
+          "extensions": 1,
+          "at_grid_edge": [],
+          "seconds": 1.9249049000209197
+        },
+        "fullbatch_em_random": {
+          "best_params": {
+            "max_iters": 25
+          },
+          "table": [
+            {
+              "params": {
+                "max_iters": 25
+              },
+              "val_nll_per_dim": 1.2591356857366967
+            }
+          ],
+          "extensions": 0,
+          "at_grid_edge": [],
+          "seconds": 2.470759999996517
+        },
+        "fullbatch_em_emeans": {
+          "best_params": {
+            "max_iters": 25
+          },
+          "table": [
+            {
+              "params": {
+                "max_iters": 25
+              },
+              "val_nll_per_dim": 1.1966962083494077
+            }
+          ],
+          "extensions": 0,
+          "at_grid_edge": [],
+          "seconds": 2.1025193999521434
+        }
+      },
+      "per_seed": {
+        "egmm_spectral": {
+          "test_nll_per_dim": [
+            1.195340605376184,
+            1.2075140284841372,
+            1.17311607958061,
+            1.2073278400271161,
+            1.1964868672912232,
+            1.1875281805518803,
+            1.2182275508653118,
+            1.189951687068723,
+            1.1934527836476037,
+            1.1764948828396546
+          ],
+          "dead_count": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "seconds": [
+            1.1489694999763742,
+            1.0419133999967016,
+            1.1059178999857977,
+            0.9835571000003256,
+            0.9879462999524549,
+            1.4709642000379972,
+            1.067362800007686,
+            0.9243446000036784,
+            1.1769755999557674,
+            1.1553458999842405
+          ]
+        },
+        "egmm_no_revive": {
+          "test_nll_per_dim": [
+            1.229478540856096,
+            1.2134785487625859,
+            1.1979998518009065,
+            1.2133658852803142,
+            1.2071244251801254,
+            1.1900937674557068,
+            1.2260191694546314,
+            1.2048408982112226,
+            1.2064355700506157,
+            1.1822336245141365
+          ],
+          "dead_count": [
+            3.0,
+            3.0,
+            3.0,
+            4.0,
+            3.0,
+            3.0,
+            1.0,
+            5.0,
+            2.0,
+            2.0
+          ],
+          "seconds": [
+            1.0307407999644056,
+            1.1859600000316277,
+            0.942172999959439,
+            1.7982694000238553,
+            0.9133892000536434,
+            1.5634713000035845,
+            1.0969509999849834,
+            1.0918521999847144,
+            1.0417825999902561,
+            1.3610811000107788
+          ]
+        },
+        "egmm_faiss_alt": {
+          "test_nll_per_dim": [
+            1.191225566802277,
+            1.1963490087778184,
+            1.1950665268956735,
+            1.2126466415229233,
+            1.2039880491401582,
+            1.1786969201325752,
+            1.208102136065078,
+            1.17762177362607,
+            1.2088508580743456,
+            1.1831116988884758
+          ],
+          "dead_count": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "seconds": [
+            1.126581599994097,
+            1.5874336999841034,
+            1.4096844000159763,
+            1.803586499998346,
+            0.9975188000244088,
+            1.66592329996638,
+            1.0842703999951482,
+            1.4063886000076309,
+            1.0917455000453629,
+            1.0593405999825336
+          ]
+        },
+        "online_em": {
+          "test_nll_per_dim": [
+            1.2186213701042299,
+            1.2023388524072265,
+            1.2034366452297924,
+            1.234018217812214,
+            1.2233352125691654,
+            1.1852778100155605,
+            1.2185112091099517,
+            1.2299834493294315,
+            1.2016093800742085,
+            1.1934800352763761
+          ],
+          "dead_count": [
+            2.0,
+            2.0,
+            2.0,
+            4.0,
+            1.0,
+            3.0,
+            0.0,
+            3.0,
+            2.0,
+            1.0
+          ],
+          "seconds": [
+            1.3684749999665655,
+            1.249652899976354,
+            1.1383145999861881,
+            1.3915842999704182,
+            1.1192319999681786,
+            1.9076213999651372,
+            1.4164536999887787,
+            1.0197103000245988,
+            1.2722807999816723,
+            1.329716800013557
+          ]
+        },
+        "emeans_posthoc": {
+          "test_nll_per_dim": [
+            1.2853571964783044,
+            1.2956700734868187,
+            1.2694705077717623,
+            1.3040883120619975,
+            1.2929706258900222,
+            1.2894446859031126,
+            1.2973581662482077,
+            1.2889253825265223,
+            1.3090980673208963,
+            1.2741464323068548
+          ],
+          "dead_count": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "seconds": [
+            0.06300239998381585,
+            0.04553230002056807,
+            0.04255319997901097,
+            0.07390730001498014,
+            0.029453499999362975,
+            0.0501528000459075,
+            0.041421999980229884,
+            0.0646460999851115,
+            0.07785179995698854,
+            0.039701700035948306
+          ]
+        },
+        "emeans_then_em3": {
+          "test_nll_per_dim": [
+            1.2439833245014442,
+            1.2389845556731456,
+            1.2467332203144323,
+            1.247828685387168,
+            1.2569907813491006,
+            1.2356053222287904,
+            1.2588739564429121,
+            1.248741472966793,
+            1.2811356375371465,
+            1.2129301512561501
+          ],
+          "dead_count": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "seconds": [
+            0.35706449998542666,
+            0.32827900000847876,
+            0.31025290000252426,
+            0.34759780002059415,
+            0.23165480000898242,
+            0.3438839999726042,
+            0.3191520000109449,
+            0.28764070000033826,
+            0.5813866999815218,
+            0.28967699996428564
+          ]
+        },
+        "fullbatch_em_random": {
+          "test_nll_per_dim": [
+            1.2287306782676086,
+            1.2131570440059734,
+            1.1869688878819258,
+            1.2222474647770796,
+            1.2152383831828157,
+            1.1994239013298502,
+            1.2159311587479502,
+            1.1925047058608835,
+            1.2504154183800826,
+            1.191401095634577
+          ],
+          "dead_count": [
+            1.0,
+            1.0,
+            2.0,
+            1.0,
+            1.0,
+            0.0,
+            0.0,
+            1.0,
+            2.0,
+            0.0
+          ],
+          "seconds": [
+            2.0288415999966674,
+            2.2618578000110574,
+            2.3132021999917924,
+            2.2311065000249073,
+            3.175324300013017,
+            2.5643601000192575,
+            2.050261099997442,
+            2.0327511999639682,
+            2.907420600007754,
+            2.034967399958987
+          ]
+        },
+        "fullbatch_em_emeans": {
+          "test_nll_per_dim": [
+            1.1981170213884804,
+            1.1908045009247408,
+            1.1994403407013254,
+            1.1937173359572626,
+            1.1945399154900427,
+            1.1655549431740808,
+            1.2064711612713754,
+            1.1757934478841374,
+            1.199938446834431,
+            1.1789326723463363
+          ],
+          "dead_count": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "seconds": [
+            2.0407866000314243,
+            2.1984374999883585,
+            1.9476654999889433,
+            2.1864871000288986,
+            2.1162601999822073,
+            2.338519599987194,
+            1.8377658000099473,
+            1.8872272999724373,
+            2.7695132000371814,
+            2.165048900002148
+          ]
+        }
+      },
+      "summary": {
+        "egmm_spectral": {
+          "test_nll_per_dim_mean": 1.1945440505732445,
+          "test_nll_per_dim_std": 0.013957858468347756,
+          "n_finite": 10,
+          "dead_count_mean": 0.0,
+          "seconds_mean": 1.1063297299901023
+        },
+        "egmm_no_revive": {
+          "test_nll_per_dim_mean": 1.2071070281566343,
+          "test_nll_per_dim_std": 0.014661315877933923,
+          "n_finite": 10,
+          "dead_count_mean": 2.9,
+          "seconds_mean": 1.2025670600007288
+        },
+        "egmm_faiss_alt": {
+          "test_nll_per_dim_mean": 1.1955659179925395,
+          "test_nll_per_dim_std": 0.012813595455024222,
+          "n_finite": 10,
+          "dead_count_mean": 0.0,
+          "seconds_mean": 1.3232473400013987
+        },
+        "online_em": {
+          "test_nll_per_dim_mean": 1.2110612181928155,
+          "test_nll_per_dim_std": 0.016144545049902554,
+          "n_finite": 10,
+          "dead_count_mean": 2.0,
+          "seconds_mean": 1.321304179984145
+        },
+        "emeans_posthoc": {
+          "test_nll_per_dim_mean": 1.29065294499945,
+          "test_nll_per_dim_std": 0.012246925978198629,
+          "n_finite": 10,
+          "dead_count_mean": 0.0,
+          "seconds_mean": 0.05282231000019237
+        },
+        "emeans_then_em3": {
+          "test_nll_per_dim_mean": 1.2471807107657082,
+          "test_nll_per_dim_std": 0.017554528736854126,
+          "n_finite": 10,
+          "dead_count_mean": 0.0,
+          "seconds_mean": 0.3396589399955701
+        },
+        "fullbatch_em_random": {
+          "test_nll_per_dim_mean": 1.2116018738068746,
+          "test_nll_per_dim_std": 0.01965101503213716,
+          "n_finite": 10,
+          "dead_count_mean": 0.9,
+          "seconds_mean": 2.360009279998485
+        },
+        "fullbatch_em_emeans": {
+          "test_nll_per_dim_mean": 1.1903309785972211,
+          "test_nll_per_dim_std": 0.01282762551950939,
+          "n_finite": 10,
+          "dead_count_mean": 0.0,
+          "seconds_mean": 2.148771170002874
+        }
+      },
+      "paired_vs_reference": {
+        "egmm_no_revive": {
+          "n": 10.0,
+          "method_mean": 1.2071070281566343,
+          "reference_mean": 1.1945440505732445,
+          "mean_diff": 0.012562977583389734,
+          "std_diff": 0.009899348436736602,
+          "t_stat": 4.013155371894962,
+          "p_value": 0.001953125,
+          "wins": 0.0,
+          "ties": 0.0
+        },
+        "egmm_faiss_alt": {
+          "n": 10.0,
+          "method_mean": 1.1955659179925395,
+          "reference_mean": 1.1945440505732445,
+          "mean_diff": 0.0010218674192951304,
+          "std_diff": 0.01206903059139451,
+          "t_stat": 0.267745490180047,
+          "p_value": 0.794921875,
+          "wins": 5.0,
+          "ties": 0.0
+        },
+        "online_em": {
+          "n": 10.0,
+          "method_mean": 1.2110612181928155,
+          "reference_mean": 1.1945440505732445,
+          "mean_diff": 0.016517167619571293,
+          "std_diff": 0.015477104565541303,
+          "t_stat": 3.3747830514059753,
+          "p_value": 0.013671875,
+          "wins": 2.0,
+          "ties": 0.0
+        },
+        "emeans_posthoc": {
+          "n": 10.0,
+          "method_mean": 1.29065294499945,
+          "reference_mean": 1.1945440505732445,
+          "mean_diff": 0.09610889442620549,
+          "std_diff": 0.009517451896224117,
+          "t_stat": 31.933233086058156,
+          "p_value": 0.001953125,
+          "wins": 0.0,
+          "ties": 0.0
+        },
+        "emeans_then_em3": {
+          "n": 10.0,
+          "method_mean": 1.2471807107657082,
+          "reference_mean": 1.1945440505732445,
+          "mean_diff": 0.052636660192463915,
+          "std_diff": 0.017658633894713005,
+          "t_stat": 9.426082200069764,
+          "p_value": 0.001953125,
+          "wins": 0.0,
+          "ties": 0.0
+        },
+        "fullbatch_em_random": {
+          "n": 10.0,
+          "method_mean": 1.2116018738068746,
+          "reference_mean": 1.1945440505732445,
+          "mean_diff": 0.0170578232336303,
+          "std_diff": 0.017073040919051614,
+          "t_stat": 3.159459032433844,
+          "p_value": 0.00390625,
+          "wins": 1.0,
+          "ties": 0.0
+        },
+        "fullbatch_em_emeans": {
+          "n": 10.0,
+          "method_mean": 1.1903309785972211,
+          "reference_mean": 1.1945440505732445,
+          "mean_diff": -0.004213071976023097,
+          "std_diff": 0.014379454660068203,
+          "t_stat": -0.9265235508170585,
+          "p_value": 0.37109375,
+          "wins": 6.0,
+          "ties": 0.0
+        }
+      },
+      "failures": {},
+      "data": {
+        "source": "synthetic",
+        "generator": {
+          "kind": "gmm",
+          "zipf": false,
+          "anisotropic": true,
+          "rotated": true,
+          "sigma_mu_sq": 0.2,
+          "sigma_w_sq": 0.8
+        }
+      },
+      "dim": 16,
+      "seconds": 137.0034544999944
+    },
+    "Stretched-PowerLaw-Diag": {
+      "setup": {
+        "k": 16,
+        "cov_type": "diag",
+        "cov_floor": 0.0001,
+        "batch_size": 64,
+        "epochs": 5,
+        "seeds": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10
+        ],
+        "tuning_seed": 10000,
+        "reference": "egmm_spectral",
+        "egmm_overrides": {},
+        "unit": "nats per dimension (test NLL / d)"
+      },
+      "methods": {
+        "egmm_spectral": {
+          "description": "e-GMM, spectral v1 revival, alpha_0 tuned",
+          "grid_size": 4
+        },
+        "egmm_no_revive": {
+          "description": "e-GMM without revival, alpha_0 tuned (the H0 control)",
+          "grid_size": 4
+        },
+        "egmm_faiss_alt": {
+          "description": "e-GMM, Faiss-style +/-delta revival, alpha_0 tuned",
+          "grid_size": 4
+        },
+        "online_em": {
+          "description": "Cappe-Moulines online EM, (beta, t0) tuned, matched floor",
+          "grid_size": 15
+        },
+        "emeans_posthoc": {
+          "description": "e-means + per-cell covariance, alpha_0 tuned",
+          "grid_size": 3
+        },
+        "emeans_then_em3": {
+          "description": "e-means init + 3 full-batch EM iterations, alpha_0 tuned",
+          "grid_size": 3
+        },
+        "fullbatch_em_random": {
+          "description": "full-batch EM, random-point init, 25 iterations",
+          "grid_size": 1
+        },
+        "fullbatch_em_emeans": {
+          "description": "full-batch EM, e-means init, 25 iterations",
+          "grid_size": 1
+        }
+      },
+      "skipped_methods": {
+        "sklearn_gmm": "scikit-learn is not installed"
+      },
+      "tuning": {
+        "egmm_spectral": {
+          "best_params": {
+            "alpha_0": 0.1
+          },
+          "table": [
+            {
+              "params": {
+                "alpha_0": 0.05
+              },
+              "val_nll_per_dim": 1.1005112148562202
+            },
+            {
+              "params": {
+                "alpha_0": 0.1
+              },
+              "val_nll_per_dim": 1.0976930357498553
+            },
+            {
+              "params": {
+                "alpha_0": 0.2
+              },
+              "val_nll_per_dim": 1.0978050231961656
+            },
+            {
+              "params": {
+                "alpha_0": 0.35
+              },
+              "val_nll_per_dim": 1.1016042103314219
+            }
+          ],
+          "extensions": 0,
+          "at_grid_edge": [],
+          "seconds": 0.37541160004911944
+        },
+        "egmm_no_revive": {
+          "best_params": {
+            "alpha_0": 0.1
+          },
+          "table": [
+            {
+              "params": {
+                "alpha_0": 0.05
+              },
+              "val_nll_per_dim": 1.1052810922613083
+            },
+            {
+              "params": {
+                "alpha_0": 0.1
+              },
+              "val_nll_per_dim": 1.1011491512970188
+            },
+            {
+              "params": {
+                "alpha_0": 0.2
+              },
+              "val_nll_per_dim": 1.1034565622150334
+            },
+            {
+              "params": {
+                "alpha_0": 0.35
+              },
+              "val_nll_per_dim": 1.1285949859654776
+            }
+          ],
+          "extensions": 0,
+          "at_grid_edge": [],
+          "seconds": 0.5391511000343598
+        },
+        "egmm_faiss_alt": {
+          "best_params": {
+            "alpha_0": 0.1
+          },
+          "table": [
+            {
+              "params": {
+                "alpha_0": 0.05
+              },
+              "val_nll_per_dim": 1.0999908938547824
+            },
+            {
+              "params": {
+                "alpha_0": 0.1
+              },
+              "val_nll_per_dim": 1.0965673313094286
+            },
+            {
+              "params": {
+                "alpha_0": 0.2
+              },
+              "val_nll_per_dim": 1.0987247945814582
+            },
+            {
+              "params": {
+                "alpha_0": 0.35
+              },
+              "val_nll_per_dim": 1.0997513882552539
+            }
+          ],
+          "extensions": 0,
+          "at_grid_edge": [],
+          "seconds": 0.40530550002586097
+        },
+        "online_em": {
+          "best_params": {
+            "beta": 0.65,
+            "t0": 10.0
+          },
+          "table": [
+            {
+              "params": {
+                "beta": 0.55,
+                "t0": 1.0
+              },
+              "val_nll_per_dim": 1.1309429209635191
+            },
+            {
+              "params": {
+                "beta": 0.55,
+                "t0": 10.0
+              },
+              "val_nll_per_dim": 1.1038378145383476
+            },
+            {
+              "params": {
+                "beta": 0.55,
+                "t0": 100.0
+              },
+              "val_nll_per_dim": 1.100477791988783
+            },
+            {
+              "params": {
+                "beta": 0.65,
+                "t0": 1.0
+              },
+              "val_nll_per_dim": 1.1252518477742266
+            },
+            {
+              "params": {
+                "beta": 0.65,
+                "t0": 10.0
+              },
+              "val_nll_per_dim": 1.100070476653325
+            },
+            {
+              "params": {
+                "beta": 0.65,
+                "t0": 100.0
+              },
+              "val_nll_per_dim": 1.1035414306180782
+            },
+            {
+              "params": {
+                "beta": 0.75,
+                "t0": 1.0
+              },
+              "val_nll_per_dim": 1.1219567028702533
+            },
+            {
+              "params": {
+                "beta": 0.75,
+                "t0": 10.0
+              },
+              "val_nll_per_dim": 1.1022399730129413
+            },
+            {
+              "params": {
+                "beta": 0.75,
+                "t0": 100.0
+              },
+              "val_nll_per_dim": 1.112111923568805
+            },
+            {
+              "params": {
+                "beta": 0.85,
+                "t0": 1.0
+              },
+              "val_nll_per_dim": 1.115107470154884
+            },
+            {
+              "params": {
+                "beta": 0.85,
+                "t0": 10.0
+              },
+              "val_nll_per_dim": 1.1081575643928077
+            },
+            {
+              "params": {
+                "beta": 0.85,
+                "t0": 100.0
+              },
+              "val_nll_per_dim": 1.136670558560614
+            },
+            {
+              "params": {
+                "beta": 0.95,
+                "t0": 1.0
+              },
+              "val_nll_per_dim": 1.1144055602909813
+            },
+            {
+              "params": {
+                "beta": 0.95,
+                "t0": 10.0
+              },
+              "val_nll_per_dim": 1.1136136707889788
+            },
+            {
+              "params": {
+                "beta": 0.95,
+                "t0": 100.0
+              },
+              "val_nll_per_dim": 1.1640029752838101
+            }
+          ],
+          "extensions": 0,
+          "at_grid_edge": [],
+          "seconds": 2.1199564999551512
+        },
+        "emeans_posthoc": {
+          "best_params": {
+            "alpha_0": 0.35
+          },
+          "table": [
+            {
+              "params": {
+                "alpha_0": 0.1
+              },
+              "val_nll_per_dim": 1.0996243138108017
+            },
+            {
+              "params": {
+                "alpha_0": 0.2
+              },
+              "val_nll_per_dim": 1.0989618012328488
+            },
+            {
+              "params": {
+                "alpha_0": 0.35
+              },
+              "val_nll_per_dim": 1.094906123817857
+            },
+            {
+              "params": {
+                "alpha_0": 0.7
+              },
+              "val_nll_per_dim": 1.0979231333652175
+            }
+          ],
+          "extensions": 1,
+          "at_grid_edge": [],
+          "seconds": 0.16557620000094175
+        },
+        "emeans_then_em3": {
+          "best_params": {
+            "alpha_0": 0.35,
+            "em_iters": 3
+          },
+          "table": [
+            {
+              "params": {
+                "alpha_0": 0.1,
+                "em_iters": 3
+              },
+              "val_nll_per_dim": 1.0992098636295613
+            },
+            {
+              "params": {
+                "alpha_0": 0.2,
+                "em_iters": 3
+              },
+              "val_nll_per_dim": 1.0980022592342473
+            },
+            {
+              "params": {
+                "alpha_0": 0.35,
+                "em_iters": 3
+              },
+              "val_nll_per_dim": 1.0950014298445911
+            },
+            {
+              "params": {
+                "alpha_0": 0.7,
+                "em_iters": 3
+              },
+              "val_nll_per_dim": 1.09758552963672
+            }
+          ],
+          "extensions": 1,
+          "at_grid_edge": [],
+          "seconds": 0.30535320000490174
+        },
+        "fullbatch_em_random": {
+          "best_params": {
+            "max_iters": 25
+          },
+          "table": [
+            {
+              "params": {
+                "max_iters": 25
+              },
+              "val_nll_per_dim": 1.0980287290985538
+            }
+          ],
+          "extensions": 0,
+          "at_grid_edge": [],
+          "seconds": 0.16692559997318313
+        },
+        "fullbatch_em_emeans": {
+          "best_params": {
+            "max_iters": 25
+          },
+          "table": [
+            {
+              "params": {
+                "max_iters": 25
+              },
+              "val_nll_per_dim": 1.0999392571804945
+            }
+          ],
+          "extensions": 0,
+          "at_grid_edge": [],
+          "seconds": 0.2636363999918103
+        }
+      },
+      "per_seed": {
+        "egmm_spectral": {
+          "test_nll_per_dim": [
+            1.108915043480885,
+            1.0983828597097054,
+            1.1004874886638525,
+            1.0686027538997807,
+            1.113319493415545,
+            1.088007307219858,
+            1.0917040034515226,
+            1.096788846516987,
+            1.1030415157893299,
+            1.0918207163668308
+          ],
+          "dead_count": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "seconds": [
+            0.2837129000108689,
+            0.2880639999639243,
+            0.2680163999903016,
+            0.20192150003276765,
+            0.22533509996719658,
+            0.17822409997461364,
+            0.19973200000822544,
+            0.2151758999680169,
+            0.1432234999956563,
+            0.16804830002365634
+          ]
+        },
+        "egmm_no_revive": {
+          "test_nll_per_dim": [
+            1.1135812409975425,
+            1.0992035917487082,
+            1.1030907700862012,
+            1.0736847803199532,
+            1.1142474315556339,
+            1.0849699764325436,
+            1.100887112392305,
+            1.096788846516987,
+            1.1030293422749575,
+            1.093552505718812
+          ],
+          "dead_count": [
+            0.0,
+            0.0,
+            1.0,
+            1.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "seconds": [
+            0.2643672000267543,
+            0.24067810003180057,
+            0.24974430003203452,
+            0.1488522000145167,
+            0.18722469999920577,
+            0.20131740003125742,
+            0.25537500000791624,
+            0.16128849994856864,
+            0.13843310001539066,
+            0.14559139998164028
+          ]
+        },
+        "egmm_faiss_alt": {
+          "test_nll_per_dim": [
+            1.1093708084980765,
+            1.097906466084426,
+            1.102959171667767,
+            1.070752131225359,
+            1.1116096521209882,
+            1.087816797582198,
+            1.0938407549118823,
+            1.096788846516987,
+            1.1015607437081192,
+            1.092698896241122
+          ],
+          "dead_count": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "seconds": [
+            0.30395859997952357,
+            0.2369362999452278,
+            0.2336498000076972,
+            0.15322480001486838,
+            0.15381369995884597,
+            0.13726549997227266,
+            0.16224139998666942,
+            0.135945999994874,
+            0.13530239998362958,
+            0.1449480999726802
+          ]
+        },
+        "online_em": {
+          "test_nll_per_dim": [
+            1.1127477128439687,
+            1.0989579766378845,
+            1.103723228200333,
+            1.0750530759246597,
+            1.1149596005595532,
+            1.0857022272872003,
+            1.1039732693452868,
+            1.0985672820357715,
+            1.1025999828109885,
+            1.0934537721678828
+          ],
+          "dead_count": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          "seconds": [
+            0.26932829996803775,
+            0.19077440002001822,
+            0.21987249999074265,
+            0.23420920001808554,
+            0.11920620000455528,
+            0.12642419995972887,
+            0.11555069999303669,
+            0.12031259998911992,
+            0.12559589999727905,
+            0.14852139999857172
+          ]
+        },
+        "emeans_posthoc": {
+          "test_nll_per_dim": [
+            1.110007537308739,
+            1.0948387964907933,
+            1.1015269278935784,
+            1.0661665233348783,
+            1.1128805373240547,
+            1.0841630288105046,
+            1.0964570281447887,
+            1.0878359055282252,
+            1.0967812575153597,
+            1.091144060519359
+          ],
+          "dead_count": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "seconds": [
+            0.06973210000433028,
+            0.06641169998329133,
+            0.07244640000863001,
+            0.0736936999601312,
+            0.03493319998960942,
+            0.0425367999705486,
+            0.036876500002108514,
+            0.03893530002096668,
+            0.04806190001545474,
+            0.0503315000096336
+          ]
+        },
+        "emeans_then_em3": {
+          "test_nll_per_dim": [
+            1.1095484667343278,
+            1.0942785160546937,
+            1.0991300705945786,
+            1.0666260296980727,
+            1.1115250056084331,
+            1.0835386155078515,
+            1.0950074017264757,
+            1.0881938612959663,
+            1.095590533610834,
+            1.0891797088331856
+          ],
+          "dead_count": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "seconds": [
+            0.18869979999726638,
+            0.11340540001401678,
+            0.09459890000289306,
+            0.08834809996187687,
+            0.06221379997441545,
+            0.07942690001800656,
+            0.058040999982040375,
+            0.06251700001303107,
+            0.06776389997685328,
+            0.11459429998649284
+          ]
+        },
+        "fullbatch_em_random": {
+          "test_nll_per_dim": [
+            1.1043772960404683,
+            1.0977758771409807,
+            1.1007495122936313,
+            1.0649512067006495,
+            1.1142152790136066,
+            1.0834563043361658,
+            1.0958589308828397,
+            1.0915653921302535,
+            1.0983135542738747,
+            1.0909832550396061
+          ],
+          "dead_count": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "seconds": [
+            0.4663568999967538,
+            0.2482678000233136,
+            0.20497720001731068,
+            0.15389300003880635,
+            0.16102979995775968,
+            0.14837959996657446,
+            0.15205259999493137,
+            0.14016809995518997,
+            0.15949920000275597,
+            0.17731469997670501
+          ]
+        },
+        "fullbatch_em_emeans": {
+          "test_nll_per_dim": [
+            1.103296331645213,
+            1.0967583734419422,
+            1.0973550483194827,
+            1.065180253290553,
+            1.1105776864079007,
+            1.0813710411504232,
+            1.0913516245620467,
+            1.0903102574642178,
+            1.098146529766266,
+            1.0922699090612786
+          ],
+          "dead_count": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "seconds": [
+            0.36416299996199086,
+            0.26437649998115376,
+            0.21634599997196347,
+            0.20611869997810572,
+            0.18941489997087047,
+            0.17193299997597933,
+            0.26836940000066534,
+            0.18153359997086227,
+            0.20015159994363785,
+            0.19357120001222938
+          ]
+        }
+      },
+      "summary": {
+        "egmm_spectral": {
+          "test_nll_per_dim_mean": 1.0961070028514297,
+          "test_nll_per_dim_std": 0.012441345641359288,
+          "n_finite": 10,
+          "dead_count_mean": 0.0,
+          "seconds_mean": 0.21714536999352277
+        },
+        "egmm_no_revive": {
+          "test_nll_per_dim_mean": 1.0983035598043644,
+          "test_nll_per_dim_std": 0.0122432993596083,
+          "n_finite": 10,
+          "dead_count_mean": 0.3,
+          "seconds_mean": 0.19928719000890852
+        },
+        "egmm_faiss_alt": {
+          "test_nll_per_dim_mean": 1.0965304268556926,
+          "test_nll_per_dim_std": 0.011658160566911569,
+          "n_finite": 10,
+          "dead_count_mean": 0.0,
+          "seconds_mean": 0.17972865998162887
+        },
+        "online_em": {
+          "test_nll_per_dim_mean": 1.0989738127813529,
+          "test_nll_per_dim_std": 0.011948683587955925,
+          "n_finite": 10,
+          "dead_count_mean": 0.2,
+          "seconds_mean": 0.16697953999391757
+        },
+        "emeans_posthoc": {
+          "test_nll_per_dim_mean": 1.0941801602870282,
+          "test_nll_per_dim_std": 0.013338094330023663,
+          "n_finite": 10,
+          "dead_count_mean": 0.0,
+          "seconds_mean": 0.05339590999647044
+        },
+        "emeans_then_em3": {
+          "test_nll_per_dim_mean": 1.093261820966442,
+          "test_nll_per_dim_std": 0.012862921201736556,
+          "n_finite": 10,
+          "dead_count_mean": 0.0,
+          "seconds_mean": 0.09296090999268927
+        },
+        "fullbatch_em_random": {
+          "test_nll_per_dim_mean": 1.0942246607852075,
+          "test_nll_per_dim_std": 0.01319825985561616,
+          "n_finite": 10,
+          "dead_count_mean": 0.0,
+          "seconds_mean": 0.20119388999301008
+        },
+        "fullbatch_em_emeans": {
+          "test_nll_per_dim_mean": 1.0926617055109324,
+          "test_nll_per_dim_std": 0.012441326915627016,
+          "n_finite": 10,
+          "dead_count_mean": 0.0,
+          "seconds_mean": 0.22559778997674584
+        }
+      },
+      "paired_vs_reference": {
+        "egmm_no_revive": {
+          "n": 10.0,
+          "method_mean": 1.0983035598043644,
+          "reference_mean": 1.0961070028514297,
+          "mean_diff": 0.002196556952934725,
+          "std_diff": 0.0034029010898298847,
+          "t_stat": 2.0412356392939572,
+          "p_value": 0.0703125,
+          "wins": 2.0,
+          "ties": 1.0
+        },
+        "egmm_faiss_alt": {
+          "n": 10.0,
+          "method_mean": 1.0965304268556926,
+          "reference_mean": 1.0961070028514297,
+          "mean_diff": 0.0004234240042628068,
+          "std_diff": 0.0014854957028569338,
+          "t_stat": 0.9013720247619393,
+          "p_value": 0.38671875,
+          "wins": 4.0,
+          "ties": 1.0
+        },
+        "online_em": {
+          "n": 10.0,
+          "method_mean": 1.0989738127813529,
+          "reference_mean": 1.0961070028514297,
+          "mean_diff": 0.002866809929923231,
+          "std_diff": 0.004075314204434048,
+          "t_stat": 2.2245276173997697,
+          "p_value": 0.033203125,
+          "wins": 2.0,
+          "ties": 0.0
+        },
+        "emeans_posthoc": {
+          "n": 10.0,
+          "method_mean": 1.0941801602870282,
+          "reference_mean": 1.0961070028514297,
+          "mean_diff": -0.0019268425644015873,
+          "std_diff": 0.003958234865806297,
+          "t_stat": -1.5393758588469957,
+          "p_value": 0.158203125,
+          "wins": 7.0,
+          "ties": 0.0
+        },
+        "emeans_then_em3": {
+          "n": 10.0,
+          "method_mean": 1.093261820966442,
+          "reference_mean": 1.0961070028514297,
+          "mean_diff": -0.0028451818849877684,
+          "std_diff": 0.0035357530093886786,
+          "t_stat": -2.544650344671043,
+          "p_value": 0.03125,
+          "wins": 8.0,
+          "ties": 0.0
+        },
+        "fullbatch_em_random": {
+          "n": 10.0,
+          "method_mean": 1.0942246607852075,
+          "reference_mean": 1.0961070028514297,
+          "mean_diff": -0.0018823420662220647,
+          "std_diff": 0.003127775830277012,
+          "t_stat": -1.9031057811716772,
+          "p_value": 0.083984375,
+          "wins": 7.0,
+          "ties": 0.0
+        },
+        "fullbatch_em_emeans": {
+          "n": 10.0,
+          "method_mean": 1.0926617055109324,
+          "reference_mean": 1.0961070028514297,
+          "mean_diff": -0.0034452973404972996,
+          "std_diff": 0.00246869996970827,
+          "t_stat": -4.413248651588723,
+          "p_value": 0.005859375,
+          "wins": 9.0,
+          "ties": 0.0
+        }
+      },
+      "failures": {},
+      "data": {
+        "source": "synthetic",
+        "generator": {
+          "kind": "stretched",
+          "exponent": 1.5
+        }
+      },
+      "dim": 24,
+      "seconds": 17.85198560002027
+    }
   }
 }

@@ -1,10 +1,53 @@
 # `e-GMM`: Systems Architecture & Full Implementation Plan
 
 **Target Paper Title**: *"e-GMM: Scaling Expectation-Maximization to Billion-Scale Datasets via Exponential Moving Averages"*  
-**Track Status**: **Tier 1 (Highest Novelty — Cleanest Theory & Best Compute ROI)**  
+**Track Status**: Tier 1 in the novelty report; novelty not yet established here (see Section 0)  
 **Target Compute Budget**: **200–300 GPU-hours** on **1× to 2× NVIDIA A100 / H100 (80 GB)** (~1.5–2 weeks on 1 GPU)
 
-> **Safe Offline Execution**: Nothing in this repo downloads `SIFT`, `DEEP1B`, `DINOv2-100M`, or `ImageNet-1k` automatically. All memory/FLOP audits, math proofs, synthetic benchmarks, and scaling-law tests run offline immediately via `numpy`, and PyTorch/Triton kernels run cleanly when a GPU environment is attached.
+> **Safe Offline Execution**: Nothing in this repo downloads `SIFT`, `DEEP1B`, `DINOv2-100M`, or `ImageNet-1k` automatically. All memory/FLOP audits, float64 identity checks, synthetic benchmarks, and scaling-law tests run offline via `numpy`. The PyTorch/Triton path has **not** been executed yet (see Section 0).
+
+---
+
+## 0. Status and caveats (2026-11-25)
+
+This plan was written before the [2026-11-25 review](../review/2026-11-25-REVIEW.md). Read it with the following corrections. The fixes are tracked in the [fix plan](../review/2026-11-25-FIX-PLAN.md).
+
+**Novelty.**
+- The update rule is Cappé–Moulines online EM with e-means' cosine schedule. The e-means paper credits EMA-statistics EM to Nowlan (1991) and Neal & Hinton (1998).
+- The defensible contribution is empirical: fitted step and batch laws for soft mini-batch EM, and evidence that revival helps against tuned baselines.
+- The "Tier 1 / highest novelty" rating below comes from the novelty report. This repository has not confirmed it.
+
+**What has run.**
+- The NumPy CPU path only, on synthetic data. The PoCs and smoke experiments use n ≤ 4 800, d ≤ 64 and k ≤ 32.
+- `torch` was never installed, so `torch_egmm.py`, the torch tests and PoC-4's torch parity check have not executed.
+- No real dataset has been loaded.
+
+**Systems claims in this plan that are not implemented:**
+- **The "Flash-GMM tiled" kernel is not wired in.** `triton_kernels.py` defines a log-sum-exp kernel, but nothing calls it, and it does not produce responsibilities or M-step statistics.
+- **The dense path materializes the full B × k matrix.** So the "Flash-GMM Tiled HBM" column in Section 3 is a target, not a measurement.
+- **The torch `low_rank_diag` and `full` paths loop over all k components in Python.** At k = 16 384 (the DINOv2 preset) this is likely to dominate the runtime.
+- **The low-rank factor U is updated by an Oja-style heuristic,** not kept as an EMA sufficient statistic. The moment-preserving split and the "three-statistic" description therefore do not hold in `low_rank_diag` mode.
+- **The 456× speedup in Exp-04** compares a NumPy GEMM with a CPU broadcast. It says nothing about GPU performance.
+- **Precision risk.** The [x², x] expansion can cancel catastrophically in low precision. The fixes compute the diagonal log-density after centering.
+- **Every GPU-hour figure in Section 4 is an unmeasured estimate.**
+
+**Experimental-design corrections.** The hypotheses and pass/fail rule are now in [HYPOTHESES-AND-RESEARCH-DESIGN.md](../../experiments/HYPOTHESES-AND-RESEARCH-DESIGN.md).
+- **Phase A:**
+  - T must vary, or a_T is not identifiable.
+  - Knees at the top of the batch grid are censored and must be excluded.
+  - Do not confound d with the data source. Earlier, d ∈ {256, 768} silently fell back to synthetic data because DEEP is 96-d.
+  - Judge the d term by leave-one-d-out (LODO) NLL regret, not R². In the smoke runs, adding d raised R² from about 0.3 to 0.7, yet changed out-of-distribution NLL regret by only about 0.001 nats.
+- **Phase B:**
+  - Use the strict loader: no synthetic fallback, no silent truncation to 128 dims, random row sampling.
+  - Tune every method on validation data.
+  - Match the floor and initialization across methods.
+  - Add e-means → EM and full-batch EM from an e-means initialization.
+  - Compare wall-clock only on the same backend.
+  - FAISS has no GMM trainer, so the full-batch EM baseline is this repo's chunked NumPy/torch implementation (plus scikit-learn where n allows).
+- **Phase C:**
+  - Compare revival policies at a tuned α₀. The no-revival collapse in PoC-2 came from the hand-set α₀ = 0.35. At α₀ = 0.10 it disappears.
+  - The `last_epoch` readout is an average of statistics collected under moving parameters, not exact EM.
+  - `floor_hit_rate` was ~0 by construction and is replaced by the floor-dominated rate (raw variance ≤ λ₀).
 
 ---
 
@@ -70,14 +113,14 @@ Run `python scripts/explore_egmm_memory_and_flops.py` to audit exact FP32 accumu
 - **Controlled Baselines**:
   1. **Full-Batch EM** (`scikit-learn` up to 1M / custom GPU full-batch EM).
   2. **Online / Stochastic EM (Cappé & Moulines, 2009)** with swept Robbins-Monro $(\beta, t_0)$.
-  3. **`e-means` + Post-Hoc Covariance Fit** (critical baseline proving joint soft EM in `e-GMM` beats hard `e-means` + 1 post-hoc M-step!).
+  3. **`e-means` + Post-Hoc Covariance Fit**, and **`e-means` → a few full-batch EM iterations** (the standard pipeline; in the 10-seed re-check it was ahead of e-GMM on the Zipf regime, though not significantly).
 - **Metrics**: Held-out Test NLL, Train NLL, BIC/AIC, epochs & wall-clock seconds to target NLL, collapsed-Gaussian rate ($N_j < \tau\bar{N}$), and covariance floor-hit / Cholesky failure rate.
 
 ### Phase C: Systematic Ablations *(~50 GPU-hours)*
 1. **Revival Policy**: Spectral splitting along $\mathbf{v}_1$ vs. random orthogonal split vs. Faiss alternating $\pm \delta$ split vs. batch resampling vs. no revival.
 2. **Covariance Structure & Floor**: $\lambda_0 \in \{10^{-6}, 10^{-4}, 10^{-2}\}$ sensitivity + Diagonal vs. Low-Rank+Diag ($r \in \{4, 8, 16, 32\}$) vs. Full covariance.
 3. **E-Step Sparsity**: Top-$m$ sparse truncation ($m \in \{4, 8, 16, 32\}$) vs. exact dense softmax responsibilities.
-4. **Finalization**: Last-Epoch Exact EM (optimizes Train NLL) vs. Slow-EMA Shadow (optimizes Test NLL / OOD).
+4. **Finalization**: Last-epoch average of statistics (not exact EM) vs. Slow-EMA shadow, compared on test NLL.
 
 ---
 

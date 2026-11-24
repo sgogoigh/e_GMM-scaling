@@ -2,6 +2,14 @@
 
 > **Goal**: Explain why `e-GMM` adds $d^{a_d}$ back into the `e-means` power law, define NLL regret and LOSO/LODO/OOD validation, and provide an A–Z reference for every symbol in `e_GMM-scaling`.
 
+> **Status (2026-11-25 review).** The d term is a hypothesis (H1), not an established result. The e-means authors tried a
+> d exponent and dropped it as unstable (paper App. B.1). Section 1 below gives the motivation; it is not evidence.
+> An exponent can only be estimated when its regressor varies in the sweep: the earlier sweeps fixed T, so a_T was not
+> identifiable, and every batch knee sat at the top of the grid (censored). `e_gmm.sweep` fixes both. The d term is
+> judged by held-out NLL regret (paired LODO and OOD), never by R². For current numbers see
+> [experiments/results/FINAL-EXPERIMENT-REPORT.md](../../experiments/results/FINAL-EXPERIMENT-REPORT.md); the
+> defaults in `e_gmm.schedule` keep a_d = b_d = 0 until a fit supports something else.
+
 ---
 
 ## 1. Why Dimension $d$ Drops Out in `e-means`—But Matters in `e-GMM`
@@ -18,7 +26,7 @@ In **`e-GMM`**, two mathematical terms introduce **explicit $O(d)$ degrees of fr
    $$
    In higher $d$, small covariance estimation noise across $d$ coordinates compounds inside the softmax logits $r_{ij} = \text{softmax}_j(\ln \pi_j + \ln \mathcal{N})$, sharpening or destabilizing responsibilities unless $\alpha_0$ adapts to $d$!
 
-Therefore, `e-GMM` fits **dimension-aware log-linear power laws**:
+The hypothesis is therefore that a **dimension-aware log-linear power law** predicts α₀ better than the same law without d:
 
 $$
 \alpha_0 = \min\Big( C_\alpha \cdot k^{a_k} \cdot B^{a_B} \cdot n^{a_n} \cdot T^{a_T} \cdot d^{a_d},\; 1 \Big)
@@ -32,7 +40,7 @@ $$
 \ln \alpha_0 = \ln C_\alpha + a_k \ln k + a_B \ln B + a_n \ln n + a_T \ln T + a_d \ln d
 $$
 
-### Expected Exponent Signs
+### Expected Exponent Signs (prior expectations, to be checked against the fit)
 - **$a_B > 0$**: Larger batches carry lower E-step variance and visit more components per step $\implies$ larger step $\alpha_0$.
 - **$a_k < 0$, $a_n < 0$**: More clusters or larger datasets reduce per-component batch hit fraction / increase total updates $\implies$ gentler $\alpha_0$.
 - **$a_d < 0$**: Higher dimension $d$ increases covariance estimation variance per component ($d$ or $d^2$ parameters) $\implies$ requires longer EMA smoothing window (smaller $\alpha_0$) to avoid variance collapse!

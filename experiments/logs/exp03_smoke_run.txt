@@ -1,0 +1,13 @@
+Exp 03 | mode=smoke seeds=[1, 2, 3, 4, 5, 6, 7, 8, 9, 10] ablations=['finalization', 'floor', 'revival', 'structure', 'topm']
+  revival alpha_0=0.05: none/count=1.0188 (dead 2.1), batch_resample/count=1.0164 (dead 0.6), faiss_alt/count=1.0136 (dead 0.0), random_orth/count=1.0193 (dead 0.0), spectral_v1/count=1.0140 (dead 0.0), spectral_v1/variance_mass=1.0125 (dead 0.0)
+  revival alpha_0=0.1: none/count=1.0170 (dead 2.7), batch_resample/count=1.0173 (dead 0.6), faiss_alt/count=1.0156 (dead 0.0), random_orth/count=1.0172 (dead 0.0), spectral_v1/count=1.0141 (dead 0.0), spectral_v1/variance_mass=1.0135 (dead 0.0)
+  revival alpha_0=0.2: none/count=1.0546 (dead 8.1), batch_resample/count=1.0179 (dead 2.1), faiss_alt/count=1.0237 (dead 0.0), random_orth/count=1.0247 (dead 0.0), spectral_v1/count=1.0204 (dead 0.0), spectral_v1/variance_mass=1.0197 (dead 0.0)
+  revival alpha_0=0.35: none/count=1.1622 (dead 13.3), batch_resample/count=1.0410 (dead 1.5), faiss_alt/count=1.0302 (dead 0.0), random_orth/count=1.0447 (dead 0.0), spectral_v1/count=1.0257 (dead 0.1), spectral_v1/variance_mass=1.0191 (dead 0.1)
+  revival tuned alphas: {'none/count': 0.1, 'batch_resample/count': 0.1, 'faiss_alt/count': 0.1, 'random_orth/count': 0.025, 'spectral_v1/count': 0.025, 'spectral_v1/variance_mass': 0.05}
+  floor: 1e-06=0.9351 (floor-dominated 0.00), 0.0001=0.9351 (floor-dominated 0.00), 0.01=0.9345 (floor-dominated 0.00), 0.1=0.9524 (floor-dominated 0.01)
+  structure: diag: NLL/d=1.0457 train BIC=61615.3, full: NLL/d=0.7549 train BIC=49958.4, low_rank_r2: NLL/d=0.9662 train BIC=58736.6, low_rank_r4: NLL/d=1.0341 train BIC=64051.6, low_rank_r8: NLL/d=1.0170 train BIC=65504.9
+  top-m: dense=0.7413, m2=0.7445, m4=0.7535, m8=0.7395, m16=0.7382
+  finalization [small_n_over_k]: last_epoch: train 0.8264 test 1.1718, slow_ema: train 0.9952 test 1.0593, main_ema: train 0.8633 test 1.0698
+  finalization [medium_n_over_k]: last_epoch: train 0.8900 test 0.9512, slow_ema: train 0.9116 test 0.9530, main_ema: train 0.8914 test 0.9513
+Saved -> C:\Users\sgogo\OneDrive\Desktop\Research\e_means\e_GMM-scaling\experiments\results\exp_03_phase_c_ablations.json (595.97s)
+[Experiment Log Saved] C:\Users\sgogo\OneDrive\Desktop\Research\e_means\e_GMM-scaling\experiments\logs\exp_03_phase_c\run_20261125_005958_smoke.log

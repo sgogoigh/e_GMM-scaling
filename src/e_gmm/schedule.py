@@ -51,13 +51,16 @@ def predict_d_aware_alpha0(
     a_b: float = 0.90,
     a_n: float = -0.45,
     a_t: float = -0.11,
-    a_d: float = -0.25,
+    a_d: float = 0.0,
 ) -> float:
     """
-    Dimension-aware power law for peak step size alpha_0:
+    Peak step size from a power law:
         alpha_0 = min(C_alpha * k^a_k * B^a_B * n^a_n * T^a_T * d^a_d, 1.0)
-    Defaults extrapolate from e-means Eq. 6 with negative dimension exponent a_d < 0
-    prior to dataset-specific Phase-A OLS fitting.
+
+    Defaults are the e-means k-means coefficients (Bessa et al. 2026, Table 2), fitted on DEEP with
+    hard assignments. They are a starting prior for e-GMM, not an e-GMM law. The d exponent defaults
+    to 0.0 because it has not been fitted: the e-means authors tried a d term and dropped it as
+    unstable (App. B.1). Pass coefficients from `fit_dimension_aware_alpha0` once a sweep exists.
     """
     val = (
         c_alpha
@@ -79,10 +82,19 @@ def predict_d_aware_batch_knee(
     b_k: float = 0.13,
     b_n: float = 0.88,
     b_t: float = 0.81,
-    b_d: float = 0.05,
+    b_d: float = 0.0,
     round_pow2: bool = True,
+    large_n_threshold: float = 2_000_000,
+    large_n_divisor: float = 8.0,
+    min_batch: int = 1,
 ) -> int:
-    """Dimension-aware power law for knee batch size B."""
+    """
+    Knee batch size from a power law: B = C_B * k^b_k * n^b_n * T^b_T * d^b_d.
+
+    Follows the e-means rule (Sec. 3.3): divide by 8 when n > 2M, round to the nearest power of
+    two, and cap at n. `b_d` defaults to 0.0 (not fitted). `min_batch` replaces the earlier
+    undocumented clamp B >= k, which the paper does not use.
+    """
     val = (
         c_b
         * (num_components ** b_k)
@@ -90,8 +102,10 @@ def predict_d_aware_batch_knee(
         * (epochs ** b_t)
         * (dim ** b_d)
     )
-    val = min(max(val, float(num_components)), float(num_train))
+    if num_train > large_n_threshold:
+        val /= large_n_divisor
+    val = min(max(val, float(min_batch), 1.0), float(num_train))
     if round_pow2:
         pow2 = 2 ** round(math.log2(max(val, 1.0)))
-        return int(min(max(pow2, 1), int(num_train)))
+        return int(min(max(pow2, min_batch, 1), int(num_train)))
     return int(round(val))

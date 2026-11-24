@@ -2,7 +2,7 @@
   "poc_id": "poc_01",
   "title": "Offline Mathematical Identities, PSD Floor Proof & Memory/HBM Scale Audit",
   "identities": {
-    "flash_gemm_max_log_diff": 2.842170943040401e-14,
+    "flash_gemm_max_log_diff": 4.263256414560601e-14,
     "woodbury_max_log_diff": 1.4210854715202004e-14,
     "woodbury_chol_fallbacks": 0,
     "rank1_batch_min_eig": 0.0010000000026259563,

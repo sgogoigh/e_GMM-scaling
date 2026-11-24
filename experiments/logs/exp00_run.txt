@@ -1,0 +1,16 @@
+=== EXP 00 PREFLIGHT & RESOURCE AUDIT ===
+  CPUs: 16 | Disk Free: 99.74 GiB | CUDA: False | Triton: False
+
+[Preset Memory & HBM Audit]
+  Preset          Mode                k     d  StateGiB  FullEqGiB  TiledHBM
+  tiny-debug      full               16    32    0.0001       0.00   0.0000G
+  sift-1m         diag             4096   128    0.0039       0.25   0.1250G
+  deep-1m         diag            16384    96    0.0118       0.57   0.2500G
+  deep-1b         diag            65536    96    0.0471       2.27   2.0000G
+  spacev-100m     diag            65536   100    0.0491       2.47   1.0000G
+  dinov2-100m     low_rank_diag   16384  1024    1.1251      64.06   0.5000G
+  imagenet-1k     full             1024   768    2.2529       2.25   0.0625G
+  stretched-d768  diag             2048   768    0.0117       4.51   0.0625G
+
+Saved telemetry -> C:\Users\sgogo\OneDrive\Desktop\Research\e_means\e_GMM-scaling\experiments\results\exp_00_preflight.json
+[Experiment Log Saved] C:\Users\sgogo\OneDrive\Desktop\Research\e_means\e_GMM-scaling\experiments\logs\exp_00_preflight\run_20261125_005119.log

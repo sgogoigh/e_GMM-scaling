@@ -1,0 +1,49 @@
+Exp 02 | mode=smoke data=synthetic backend=numpy seeds=[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+  suites: ['Zipf-Separated-Diag', 'Zipf-Rotated-Full', 'Overlapping-Rotated-Full', 'Stretched-PowerLaw-Diag']; skipped methods: []
+
+[Zipf-Separated-Diag] cov=diag n_train=2400 d=16 k=16 B=64 epochs=5
+  method                  NLL/d mean  diff vs ref       p  wins  dead  tuned
+  egmm_spectral              0.98746          ref                 0.0  {'alpha_0': 0.1}
+  egmm_no_revive             0.99524     +0.00778  0.1797  5/10   2.0  {'alpha_0': 0.1}
+  egmm_faiss_alt             0.98572     -0.00174  0.2051  9/10   0.0  {'alpha_0': 0.1}
+  online_em                  0.99380     +0.00634  0.2148  5/10   2.5  {'beta': 0.65, 't0': 10.0}
+  emeans_posthoc             1.00204     +0.01458  0.0195  1/10   0.0  {'alpha_0': 0.2}
+  emeans_then_em3            0.99348     +0.00602  0.2539  4/10   0.0  {'alpha_0': 0.1, 'em_iters': 3}
+  fullbatch_em_random        1.01316     +0.02570  0.0020  0/10   0.3  {'max_iters': 25}
+  fullbatch_em_emeans        0.99594     +0.00848  0.1113  4/10   0.0  {'max_iters': 25}
+
+[Zipf-Rotated-Full] cov=full n_train=2400 d=16 k=16 B=64 epochs=6
+  method                  NLL/d mean  diff vs ref       p  wins  dead  tuned
+  egmm_spectral              1.01447          ref                 0.0  {'alpha_0': 0.1}
+  egmm_no_revive             1.01632     +0.00184  0.6621  6/10   3.1  {'alpha_0': 0.1}
+  egmm_faiss_alt             1.01321     -0.00126  0.8262  5/10   0.0  {'alpha_0': 0.05}
+  online_em                  1.01069     -0.00379  0.5723  5/10   2.4  {'beta': 0.85, 't0': 10.0}
+  emeans_posthoc             1.01455     +0.00008  0.9922  4/10   0.0  {'alpha_0': 0.1}
+  emeans_then_em3            1.00956     -0.00491  0.1211  6/10   0.0  {'alpha_0': 0.1, 'em_iters': 3}
+  fullbatch_em_random        1.02592     +0.01145  0.0293  2/10   0.1  {'max_iters': 25}
+  fullbatch_em_emeans        1.01084     -0.00363  0.4746  5/10   0.0  {'max_iters': 25}
+
+[Overlapping-Rotated-Full] cov=full n_train=2400 d=16 k=16 B=64 epochs=6
+  method                  NLL/d mean  diff vs ref       p  wins  dead  tuned
+  egmm_spectral              1.19454          ref                 0.0  {'alpha_0': 0.1}
+  egmm_no_revive             1.20711     +0.01256  0.0020  0/10   2.9  {'alpha_0': 0.1}
+  egmm_faiss_alt             1.19557     +0.00102  0.7949  5/10   0.0  {'alpha_0': 0.2}
+  online_em                  1.21106     +0.01652  0.0137  2/10   2.0  {'beta': 0.65, 't0': 10.0}
+  emeans_posthoc             1.29065     +0.09611  0.0020  0/10   0.0  {'alpha_0': 0.2}
+  emeans_then_em3            1.24718     +0.05264  0.0020  0/10   0.0  {'alpha_0': 0.35, 'em_iters': 3}
+  fullbatch_em_random        1.21160     +0.01706  0.0039  1/10   0.9  {'max_iters': 25}
+  fullbatch_em_emeans        1.19033     -0.00421  0.3711  6/10   0.0  {'max_iters': 25}
+
+[Stretched-PowerLaw-Diag] cov=diag n_train=2400 d=24 k=16 B=64 epochs=5
+  method                  NLL/d mean  diff vs ref       p  wins  dead  tuned
+  egmm_spectral              1.09611          ref                 0.0  {'alpha_0': 0.1}
+  egmm_no_revive             1.09830     +0.00220  0.0703  2/10   0.3  {'alpha_0': 0.1}
+  egmm_faiss_alt             1.09653     +0.00042  0.3867  4/10   0.0  {'alpha_0': 0.1}
+  online_em                  1.09897     +0.00287  0.0332  2/10   0.2  {'beta': 0.65, 't0': 10.0}
+  emeans_posthoc             1.09418     -0.00193  0.1582  7/10   0.0  {'alpha_0': 0.35}
+  emeans_then_em3            1.09326     -0.00285  0.0312  8/10   0.0  {'alpha_0': 0.35, 'em_iters': 3}
+  fullbatch_em_random        1.09422     -0.00188  0.0840  7/10   0.0  {'max_iters': 25}
+  fullbatch_em_emeans        1.09266     -0.00345  0.0059  9/10   0.0  {'max_iters': 25}
+
+Saved -> C:\Users\sgogo\OneDrive\Desktop\Research\e_means\e_GMM-scaling\experiments\results\exp_02_phase_b_benchmarks.json (304.9s)
+[Experiment Log Saved] C:\Users\sgogo\OneDrive\Desktop\Research\e_means\e_GMM-scaling\experiments\logs\exp_02_phase_b\run_20261125_005958_smoke_synthetic_numpy.log

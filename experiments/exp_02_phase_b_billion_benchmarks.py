@@ -1,29 +1,35 @@
 """
-Experiment 02 (Phase B): Controlled Multi-Seed Benchmarks Across Regimes & Scales
-===================================================================================
+Experiment 02 (Phase B): tuned, matched, multi-seed benchmark of e-GMM against its baselines
+=============================================================================================
 
-RESEARCH HYPOTHESES TESTED:
-  - H3: At matched epoch budgets, `e-GMM` produces 0 Cholesky/singularity failures,
-        eliminates dead-component collapse, and beats swept Cappé & Moulines Online EM
-        and Full-Batch EM on NLL vs. wall-clock budget.
-  - H4: On cleanly separated clusters (`Zipf-Separated`), `e-means + PostHoc` is a
-        strong near-tie baseline; on overlapping or rotated correlated mixtures
-        (`Overlapping-Anisotropic`, `Rotated-Correlated`, `DINOv2`, `ImageNet-1k`),
-        joint soft `e-GMM` achieves statistically significantly lower Test NLL.
+Rewritten 2026-11-25 (docs/review/2026-11-25-REVIEW.md). Every method gets the same split, covariance
+type, additive covariance floor (1e-4 after scale normalization), batch size and epoch budget, and
+its own step/decay hyper-parameters are tuned on a validation split (e_gmm.benchmark). Results are
+paired by seed against tuned e-GMM with spectral revival and tested with an exact sign-flip test.
 
-COMPUTE & HARDWARE REQUIREMENTS:
-  - `--mode smoke` : Any CPU, ~10-20 seconds, $0 (multi-seed 4-regime suite).
-  - `--mode full`  : 1-2x NVIDIA A100/H100 (80GB), ~120 GPU-hours across SIFT1M, DEEP1B,
-                     DINOv2-100M, ImageNet-1k (`--data-dir`), 5 seeds.
+Real data never falls back to synthetic data and is never truncated: a missing file raises, rows are
+sampled at random (held-out rows that duplicate a training row are replaced), and a lower dimension
+is only used when --project-dim asks for a PCA projection fitted on the training split.
+
+HYPOTHESES (experiments/HYPOTHESES-AND-RESEARCH-DESIGN.md):
+  H0: tuned e-GMM without revival is as good as tuned e-GMM with revival.
+  H3: tuned e-GMM beats tuned online EM, e-means->EM and full-batch EM at a matched budget.
+  H4: e-GMM's advantage over e-means+post-hoc covariance is larger on overlapping/rotated regimes.
 
 HOW TO RUN:
   python experiments/exp_02_phase_b_billion_benchmarks.py --dry-run
-  python experiments/exp_02_phase_b_billion_benchmarks.py --mode smoke --seeds 3
-  python experiments/exp_02_phase_b_billion_benchmarks.py --mode full --backend torch --data-dir /data/egmm --seeds 5
+  python experiments/exp_02_phase_b_billion_benchmarks.py --mode smoke --seeds 10
+  python experiments/exp_02_phase_b_billion_benchmarks.py --mode smoke --data real --data-dir /data/egmm --project-dim 64
+  python experiments/exp_02_phase_b_billion_benchmarks.py --mode full --data real --data-dir /data/egmm --backend torch
+
+  Real files are looked up by stem in --data-dir with any of .npy/.fvecs/.bvecs/.fbin/.u8bin/.i8bin:
+  sift_train, deep_train, dinov2_100m_train, imagenet1k_train (the names exp_00 audits). Only the
+  *_train file is read; validation and test rows are drawn from it, disjoint and deduplicated.
+  --backend torch is NOT tested locally.
 
 SAVED ARTIFACTS:
-  - Telemetry : `experiments/results/exp_02_phase_b_benchmarks.json`
-  - Log       : `experiments/logs/exp_02_phase_b/latest.log`
+  - Results : experiments/results/exp_02_phase_b_benchmarks.json
+  - Log     : experiments/logs/exp_02_phase_b/latest.log
 """
 
 import argparse
@@ -31,6 +37,7 @@ import json
 import pathlib
 import sys
 import time
+
 import numpy as np
 
 EXP_DIR = pathlib.Path(__file__).resolve().parent
@@ -38,282 +45,189 @@ ROOT = EXP_DIR.parent
 sys.path.insert(0, str(ROOT / "src"))
 sys.path.insert(0, str(EXP_DIR))
 
-from e_gmm.config import EGMMConfig  # noqa: E402
+from e_gmm.benchmark import default_methods, run_benchmark  # noqa: E402
 from e_gmm.datasets import (  # noqa: E402
+    find_vector_file,
     generate_gaussian_mixture,
     generate_stretched_gaussian,
-    load_vector_memmap,
-)
-from e_gmm.metrics import compute_gmm_health, evaluate_gmm_nll  # noqa: E402
-from e_gmm.numpy_egmm import (  # noqa: E402
-    NumPyEGMM,
-    NumPyEMeansPostHocGMM,
-    NumPyFullBatchEM,
-    NumPyOnlineEMCappeMoulines,
+    load_vectors,
+    normalize_scale,
+    pca_project,
+    random_splits,
 )
 from exp_logging import RESULTS_ROOT, tee_experiment_logs  # noqa: E402
 
+# name, cov_type, n_train, n_val, n_test, d, k, B, epochs, generator kwargs
+SYNTHETIC_SUITES = {
+    "smoke": [
+        ("Zipf-Separated-Diag", "diag", 2400, 800, 800, 16, 16, 64, 5,
+         dict(kind="gmm", zipf=True, zipf_power=1.2, anisotropic=True, rotated=False, sigma_mu_sq=2 / 3, sigma_w_sq=1 / 3)),
+        ("Zipf-Rotated-Full", "full", 2400, 800, 800, 16, 16, 64, 6,
+         dict(kind="gmm", zipf=True, zipf_power=1.2, anisotropic=True, rotated=True, sigma_mu_sq=2 / 3, sigma_w_sq=1 / 3)),
+        ("Overlapping-Rotated-Full", "full", 2400, 800, 800, 16, 16, 64, 6,
+         dict(kind="gmm", zipf=False, anisotropic=True, rotated=True, sigma_mu_sq=0.20, sigma_w_sq=0.80)),
+        ("Stretched-PowerLaw-Diag", "diag", 2400, 800, 800, 24, 16, 64, 5, dict(kind="stretched", exponent=1.5)),
+    ],
+    "full": [
+        ("Zipf-Rotated-Full-L", "full", 200_000, 20_000, 20_000, 64, 256, 2048, 6,
+         dict(kind="gmm", zipf=True, zipf_power=1.2, anisotropic=True, rotated=True, sigma_mu_sq=2 / 3, sigma_w_sq=1 / 3)),
+        ("Overlapping-Rotated-Full-L", "full", 200_000, 20_000, 20_000, 64, 256, 2048, 6,
+         dict(kind="gmm", zipf=False, anisotropic=True, rotated=True, sigma_mu_sq=0.20, sigma_w_sq=0.80)),
+    ],
+}
+# name, file stem, cov_type, n_train, n_val, n_test, k, B, epochs
+REAL_SUITES = {
+    "smoke": [
+        ("SIFT-Diag", "sift_train", "diag", 5000, 1000, 1000, 32, 256, 4),
+        ("DEEP-Diag", "deep_train", "diag", 5000, 1000, 1000, 32, 256, 4),
+        ("DINOv2-Full", "dinov2_100m_train", "full", 5000, 1000, 1000, 16, 256, 4),
+        ("ImageNet1k-Full", "imagenet1k_train", "full", 5000, 1000, 1000, 16, 256, 4),
+    ],
+    "full": [
+        ("SIFT-1M-Diag", "sift_train", "diag", 900_000, 50_000, 50_000, 1024, 4096, 8),
+        ("DEEP-1M-Diag", "deep_train", "diag", 900_000, 50_000, 50_000, 1024, 4096, 5),
+        ("DINOv2-Full", "dinov2_100m_train", "full", 250_000, 20_000, 20_000, 512, 2048, 8),
+        ("ImageNet1k-Full", "imagenet1k_train", "full", 250_000, 20_000, 20_000, 1000, 2048, 8),
+    ],
+}
+EGMM_STRATEGIES = {"egmm_spectral": "spectral_v1", "egmm_no_revive": "none", "egmm_faiss_alt": "faiss_alt"}
+
 
 def parse_args():
-    p = argparse.ArgumentParser(description="Exp 02 (Phase B): Controlled Multi-Seed Benchmarks")
-    p.add_argument("--mode", type=str, default="smoke", choices=["smoke", "full"])
-    p.add_argument("--backend", type=str, default="numpy", choices=["numpy", "torch"])
-    p.add_argument("--data-dir", type=str, default=None)
-    p.add_argument("--seeds", type=int, default=3)
+    p = argparse.ArgumentParser(description="Exp 02 (Phase B): tuned, matched, paired benchmark")
+    p.add_argument("--mode", choices=["smoke", "full"], default="smoke")
+    p.add_argument("--data", choices=["synthetic", "real"], default="synthetic")
+    p.add_argument("--data-dir", type=str, default=None, help="Directory with the real embedding files (required with --data real).")
+    p.add_argument("--project-dim", type=int, default=None, help="Real data: PCA-project to this d (fitted on train). Default: native d.")
+    p.add_argument("--seeds", type=int, default=10, help="Evaluation seeds (paired); the verdict rule needs >= 10.")
+    p.add_argument("--epochs", type=int, default=None, help="Override every suite's epoch budget (H3 is stated for T in {1,2,3}).")
+    p.add_argument("--suites", type=str, default=None, help="Comma-separated subset of suite names.")
+    p.add_argument("--skip-methods", type=str, default="", help="Comma-separated method names to leave out.")
+    p.add_argument("--backend", choices=["numpy", "torch"], default="numpy")
+    p.add_argument("--out", type=str, default=str(RESULTS_ROOT / "exp_02_phase_b_benchmarks.json"))
     p.add_argument("--dry-run", action="store_true")
     return p.parse_args()
 
 
-def _fit_egmm(cfg: EGMMConfig, X_tr: np.ndarray, B: int, epochs: int, backend: str) -> dict:
-    if backend == "torch":
-        import torch
-        from e_gmm.torch_egmm import TorchEGMM
+def synthetic_split_fn(n_tr, n_val, n_te, d, k, spec):
+    def make(seed):
+        n = n_tr + n_val + n_te
+        if spec["kind"] == "gmm":
+            kw = {key: v for key, v in spec.items() if key != "kind"}
+            X, _, _ = generate_gaussian_mixture(n=n, d=d, num_true_clusters=k, seed=seed, **kw)
+        else:
+            X, _ = generate_stretched_gaussian(n=n, d=d, exponent=spec["exponent"], rotate=True, seed=seed)
+        (tr, va, te), _ = normalize_scale(X[:n_tr], X[n_tr : n_tr + n_val], X[n_tr + n_val :])
+        return tr, va, te
 
-        dev = "cuda" if torch.cuda.is_available() else "cpu"
-        m = TorchEGMM(cfg).to(dev)
-        res = m.fit(torch.from_numpy(X_tr).to(dev), batch_size=B, epochs=epochs)
-        health = compute_gmm_health(
-            res["pi"], res["cov"], cov_type=cfg.cov_type, U=res["U"], cov_floor=cfg.cov_floor
-        )
-        return {
-            "pi": res["pi"],
-            "mu": res["mu"],
-            "cov": res["cov"],
-            "U": res["U"],
-            "health": health,
-            "chol_fallbacks": res["chol_fallbacks"],
-        }
-    return NumPyEGMM(cfg).fit(X_tr, batch_size=B, epochs=epochs)
+    return make
 
 
-def _load_real_or_synthetic(
-    data_dir: str | None,
-    filename: str,
-    n_tr: int,
-    n_te: int,
-    d: int,
-    k: int,
-    spec_kw: dict,
-    seed: int,
-) -> tuple[np.ndarray, np.ndarray, str]:
-    if data_dir is not None and filename:
-        p = pathlib.Path(data_dir) / filename
-        if p.exists():
-            arr = np.asarray(load_vector_memmap(str(p), max_rows=n_tr + n_te), dtype=np.float32)
-            if arr.shape[0] >= n_tr + min(n_te, 1000) and arr.shape[1] >= d:
-                return arr[:n_tr, :d], arr[n_tr : n_tr + n_te, :d], f"memmap:{p.name}"
-    if spec_kw["kind"] == "gmm":
-        kw = {kk: vv for kk, vv in spec_kw.items() if kk != "kind"}
-        X_all, _, _ = generate_gaussian_mixture(n=n_tr + n_te, d=d, num_true_clusters=k, seed=seed, **kw)
-        return X_all[:n_tr], X_all[n_tr:], "synthetic_gmm"
-    X_tr, _ = generate_stretched_gaussian(n=n_tr, d=d, exponent=spec_kw["exponent"], seed=seed)
-    X_te, _ = generate_stretched_gaussian(n=n_te, d=d, exponent=spec_kw["exponent"], seed=seed + 999)
-    return X_tr, X_te, "synthetic_stretched"
+def real_split_fn(arr, n_tr, n_val, n_te, project_dim, info):
+    def make(seed):
+        (tr, va, te), split_info = random_splits(arr, [n_tr, n_val, n_te], seed=seed)
+        info.setdefault("dups_replaced", {})[str(seed)] = split_info["dups_replaced"]
+        if project_dim is not None:
+            (tr, va, te), pinfo = pca_project(tr, project_dim, va, te)
+            info.setdefault("pca_explained_variance", {})[str(seed)] = pinfo["explained_variance_ratio"]
+        (tr, va, te), _ = normalize_scale(tr, va, te)
+        return tr, va, te
 
-
-def _run_suite_on_dataset(
-    suite_name: str,
-    cov_type: str,
-    X_tr: np.ndarray,
-    X_te: np.ndarray,
-    k: int,
-    B: int,
-    epochs: int,
-    seed: int,
-    backend: str,
-) -> list:
-    d = X_tr.shape[1]
-    results = []
-
-    # 1. FullBatchEM@25 (only when tractable)
-    if X_tr.shape[0] <= 10_000 and k <= 64:
-        t0 = time.perf_counter()
-        fb = NumPyFullBatchEM(k, d, cov_type=cov_type, cov_floor=1e-4, seed=seed).fit(X_tr, max_iters=25)
-        dt = time.perf_counter() - t0
-        ev = evaluate_gmm_nll(X_te, fb["pi"], fb["mu"], fb["cov"], cov_type=cov_type)
-        results.append(
-            {
-                "method": "FullBatchEM@25",
-                "test_nll": float(ev["nll"]),
-                "test_bic": float(ev["bic"]),
-                "dead": int(fb["health"]["dead_count"]),
-                "singular_ev": 0,
-                "time_sec": dt,
-            }
-        )
-
-    # 2. Swept Cappé & Moulines Online EM (pick best beta in {0.60, 0.75, 0.85} or log all)
-    for beta in (0.60, 0.85):
-        t0 = time.perf_counter()
-        oem = NumPyOnlineEMCappeMoulines(k, d, cov_type=cov_type, beta=beta, t0=10.0, cov_floor=1e-8, init_sigma0=0.5, seed=seed).fit(
-            X_tr, batch_size=B, epochs=epochs
-        )
-        dt = time.perf_counter() - t0
-        ev = evaluate_gmm_nll(X_te, oem["pi"], oem["mu"], oem["cov"], cov_type=cov_type)
-        results.append(
-            {
-                "method": f"OnlineEM_beta{beta:.2f}",
-                "test_nll": float(ev["nll"]),
-                "test_bic": float(ev["bic"]),
-                "dead": int(oem["health"]["dead_count"]),
-                "singular_ev": int(oem["singular_events"]),
-                "time_sec": dt,
-            }
-        )
-
-    # 3. e-means + PostHoc Covariance Fit
-    t0 = time.perf_counter()
-    epost = NumPyEMeansPostHocGMM(k, d, cov_type=cov_type, cov_floor=1e-4, alpha_0=0.35, seed=seed).fit(
-        X_tr, batch_size=B, epochs=epochs
-    )
-    dt = time.perf_counter() - t0
-    ev_ep = evaluate_gmm_nll(X_te, epost["pi"], epost["mu"], epost["cov"], cov_type=cov_type)
-    results.append(
-        {
-            "method": "e-means+PostHoc",
-            "test_nll": float(ev_ep["nll"]),
-            "test_bic": float(ev_ep["bic"]),
-            "dead": int(epost["health"]["dead_count"]),
-            "singular_ev": 0,
-            "time_sec": dt,
-        }
-    )
-
-    # 4. e-GMM (Spectral v1 + Variance-Mass Donor Selection)
-    t0 = time.perf_counter()
-    cfg_eg = EGMMConfig(
-        num_components=k,
-        dim=d,
-        cov_type=cov_type,
-        cov_floor=1e-4,
-        init_prior_mass=1.0,
-        alpha_0=0.35,
-        split_strategy="spectral_v1",
-        donor_weight_by="variance_mass",
-        donor_min_mult=1.25,
-        cooldown_steps=15,
-        finalization="last_epoch",
-        seed=seed,
-    )
-    eg = _fit_egmm(cfg_eg, X_tr, B, epochs, backend=backend)
-    dt = time.perf_counter() - t0
-    ev_eg = evaluate_gmm_nll(X_te, eg["pi"], eg["mu"], eg["cov"], cov_type=cov_type)
-    results.append(
-        {
-            "method": f"e-GMM({cov_type})",
-            "test_nll": float(ev_eg["nll"]),
-            "test_bic": float(ev_eg["bic"]),
-            "dead": int(eg["health"]["dead_count"]),
-            "singular_ev": int(eg["chol_fallbacks"]),
-            "time_sec": dt,
-        }
-    )
-
-    # 5. Also evaluate low_rank_diag on rotated/correlated suites
-    if cov_type == "full":
-        t0 = time.perf_counter()
-        cfg_lr = EGMMConfig(
-            num_components=k,
-            dim=d,
-            cov_type="low_rank_diag",
-            low_rank=min(4, d),
-            cov_floor=1e-4,
-            init_prior_mass=1.0,
-            alpha_0=0.35,
-            split_strategy="spectral_v1",
-            donor_weight_by="variance_mass",
-            finalization="last_epoch",
-            seed=seed,
-        )
-        lr = _fit_egmm(cfg_lr, X_tr, B, epochs, backend=backend)
-        dt = time.perf_counter() - t0
-        ev_lr = evaluate_gmm_nll(X_te, lr["pi"], lr["mu"], lr["cov"], cov_type="low_rank_diag", U=lr["U"])
-        results.append(
-            {
-                "method": "e-GMM(low_rank_diag)",
-                "test_nll": float(ev_lr["nll"]),
-                "test_bic": float(ev_lr["bic"]),
-                "dead": int(lr["health"]["dead_count"]),
-                "singular_ev": int(lr["chol_fallbacks"]),
-                "time_sec": dt,
-            }
-        )
-
-    return results
+    return make
 
 
 def main():
     args = parse_args()
-    tag = "dry_run" if args.dry_run else f"{args.mode}_{args.backend}"
-    with tee_experiment_logs("exp_02_phase_b", run_tag=tag):
-        if args.mode == "smoke":
-            suites = [
-                ("Zipf-Separated-Diag", "", "diag", 3000, 800, 16, 16, 64, 5, dict(kind="gmm", zipf=True, anisotropic=True, rotated=False, sigma_mu_sq=2.0 / 3.0, sigma_w_sq=1.0 / 3.0)),
-                ("Zipf-Rotated-Full", "", "full", 2400, 800, 16, 16, 64, 6, dict(kind="gmm", zipf=True, anisotropic=True, rotated=True, sigma_mu_sq=2.0 / 3.0, sigma_w_sq=1.0 / 3.0)),
-                ("Overlapping-Rotated-Full", "", "full", 2400, 800, 16, 16, 64, 6, dict(kind="gmm", zipf=False, anisotropic=True, rotated=True, sigma_mu_sq=0.20, sigma_w_sq=0.80)),
-                ("Stretched-PowerLaw-Diag", "", "diag", 3000, 800, 24, 16, 64, 5, dict(kind="stretched", exponent=1.5)),
-            ]
-        else:
-            suites = [
-                ("SIFT-1M-Diag", "sift_train.fvecs", "diag", 900_000, 50_000, 128, 1024, 4096, 8, dict(kind="gmm", zipf=True, anisotropic=True, rotated=False)),
-                ("DEEP-10M-Diag", "deep_train.fvecs", "diag", 1_000_000, 50_000, 96, 4096, 4096, 5, dict(kind="stretched", exponent=1.2)),
-                ("DINOv2-Rotated-LowRank", "dinov2_100m_train.npy", "full", 250_000, 20_000, 128, 512, 2048, 8, dict(kind="gmm", zipf=False, anisotropic=True, rotated=True, sigma_mu_sq=0.20, sigma_w_sq=0.80)),
-                ("ImageNet-1k-Rotated", "imagenet1k_train.npy", "full", 250_000, 20_000, 128, 1000, 2048, 8, dict(kind="gmm", zipf=True, anisotropic=True, rotated=True, sigma_mu_sq=0.25, sigma_w_sq=0.75)),
-            ]
-        if args.dry_run:
-            print("=== EXP 02 (PHASE B) DRY RUN ===")
-            print(f"Mode: {args.mode} | Backend: {args.backend} | DataDir: {args.data_dir} | Seeds: {args.seeds}")
-            print(f"Suites: {[s[0] for s in suites]}")
-            return
+    if args.data == "real":
+        if not args.data_dir:
+            raise SystemExit("--data real needs --data-dir (no synthetic fallback).")
+        suites = [("real",) + s for s in REAL_SUITES[args.mode]]
+    else:
+        suites = [("synthetic",) + s for s in SYNTHETIC_SUITES[args.mode]]
+    if args.suites:
+        wanted = set(args.suites.split(","))
+        suites = [s for s in suites if s[1] in wanted]
+        if not suites:
+            raise SystemExit(f"No suite matches {sorted(wanted)}.")
+    seeds = list(range(1, args.seeds + 1))
+    skip = {m for m in args.skip_methods.split(",") if m}
 
+    print(f"Exp 02 | mode={args.mode} data={args.data} backend={args.backend} seeds={seeds}")
+    print(f"  suites: {[s[1] for s in suites]}; skipped methods: {sorted(skip)}")
+    if args.dry_run:
+        if args.data == "real":
+            for s in suites:
+                print(f"  {s[1]}: {find_vector_file(args.data_dir, s[2])}")
+        print("Dry run: nothing fitted.")
+        return
+
+    with tee_experiment_logs("exp_02_phase_b", run_tag=f"{args.mode}_{args.data}_{args.backend}"):
         t_start = time.perf_counter()
-        summary = {}
-        data_sources = {}
-        for sname, fname, ctype, n_tr, n_te, d, k, B, ep, spec_kw in suites:
-            per_method = {}
-            for s in range(1, args.seeds + 1):
-                X_tr, X_te, src_tag = _load_real_or_synthetic(args.data_dir, fname, n_tr, n_te, d, k, spec_kw, seed=s)
-                data_sources[sname] = src_tag
-                rows = _run_suite_on_dataset(sname, ctype, X_tr, X_te, k, B, ep, seed=s, backend=args.backend)
-                for r in rows:
-                    per_method.setdefault(r["method"], []).append(r)
+        results = {}
+        for suite in suites:
+            if suite[0] == "real":
+                _, name, stem, cov_type, n_tr, n_val, n_te, k, B, epochs = suite
+                path = find_vector_file(args.data_dir, stem)
+                arr = load_vectors(str(path))
+                info = {"source": str(path), "native_dim": int(arr.shape[1]), "rows_in_file": int(arr.shape[0]),
+                        "project_dim": args.project_dim}
+                if args.project_dim is not None and args.project_dim > arr.shape[1]:
+                    raise SystemExit(f"{path} has d={arr.shape[1]} < --project-dim {args.project_dim}.")
+                make_split = real_split_fn(arr, n_tr, n_val, n_te, args.project_dim, info)
+                d = args.project_dim or int(arr.shape[1])
+            else:
+                _, name, cov_type, n_tr, n_val, n_te, d, k, B, epochs, spec = suite
+                info = {"source": "synthetic", "generator": spec}
+                make_split = synthetic_split_fn(n_tr, n_val, n_te, d, k, spec)
 
-            agg = []
-            for mname, recs in per_method.items():
-                agg.append(
-                    {
-                        "method": mname,
-                        "test_nll_mean": round(float(np.mean([x["test_nll"] for x in recs])), 4),
-                        "test_nll_std": round(float(np.std([x["test_nll"] for x in recs])), 4),
-                        "test_bic_mean": round(float(np.mean([x["test_bic"] for x in recs])), 1),
-                        "dead_mean": round(float(np.mean([x["dead"] for x in recs])), 2),
-                        "singular_ev_mean": round(float(np.mean([x["singular_ev"] for x in recs])), 2),
-                        "time_sec_mean": round(float(np.mean([x["time_sec"] for x in recs])), 3),
-                    }
-                )
-            summary[sname] = agg
+            methods, skipped = default_methods()
+            methods = [m for m in methods if m.name not in skip]
+            skipped.update({m: "skipped by --skip-methods" for m in skip})
+            if args.backend == "torch":
+                from e_gmm.benchmark import torch_egmm_runner
 
-        elapsed_s = round(time.perf_counter() - t_start, 2)
+                for m in methods:
+                    if m.name in EGMM_STRATEGIES:
+                        m.run = torch_egmm_runner(EGMM_STRATEGIES[m.name])
+
+            if args.epochs is not None:
+                epochs = args.epochs
+            print(f"\n[{name}] cov={cov_type} n_train={n_tr} d={d} k={k} B={B} epochs={epochs}")
+            t0 = time.perf_counter()
+            res = run_benchmark(make_split, k=k, cov_type=cov_type, batch_size=B, epochs=epochs, seeds=seeds,
+                                methods=methods, skipped=skipped, verbose=False)
+            res["data"] = info
+            res["dim"] = d
+            res["seconds"] = time.perf_counter() - t0
+            results[name] = res
+
+            print(f"  {'method':22s} {'NLL/d mean':>11s} {'diff vs ref':>12s} {'p':>7s} {'wins':>5s} {'dead':>5s}  tuned")
+            for mname, summ in res["summary"].items():
+                cmp = res["paired_vs_reference"].get(mname, {})
+                diff = f"{cmp['mean_diff']:+.5f}" if "mean_diff" in cmp else "ref"
+                pval = f"{cmp['p_value']:.4f}" if "p_value" in cmp else ""
+                wins = f"{int(cmp['wins'])}/{int(cmp['n'])}" if "wins" in cmp else ""
+                dead = f"{summ['dead_count_mean']:.1f}" if summ["dead_count_mean"] is not None else "-"
+                mean = f"{summ['test_nll_per_dim_mean']:.5f}" if summ["test_nll_per_dim_mean"] is not None else "nan"
+                edge = res["tuning"][mname]["at_grid_edge"]
+                print(f"  {mname:22s} {mean:>11s} {diff:>12s} {pval:>7s} {wins:>5s} {dead:>5s}  "
+                      f"{res['tuning'][mname]['best_params']}{' (grid edge: ' + ','.join(edge) + ')' if edge else ''}")
+
         payload = {
             "experiment_id": "exp_02_phase_b_billion_benchmarks",
             "mode": args.mode,
+            "data": args.data,
             "backend": args.backend,
-            "seeds": args.seeds,
-            "elapsed_sec": elapsed_s,
-            "data_sources": data_sources,
-            "suites": summary,
+            "backend_tested_locally": args.backend == "numpy",
+            "seeds": seeds,
+            "elapsed_sec": round(time.perf_counter() - t_start, 2),
+            "suites": results,
         }
-        out_path = RESULTS_ROOT / "exp_02_phase_b_benchmarks.json"
-        out_path.write_text(json.dumps(payload, indent=2), encoding="utf-8")
-
-        print("=== EXP 02 (PHASE B) COMPLETE ===")
-        for sname, rows in summary.items():
-            print(f"\n[{sname}]")
-            print(f"  {'Method':<22} {'TestNLL (mean+-std)':>22} {'BIC':>10} {'Dead':>6} {'Sing':>6}")
-            for r in rows:
-                nll_str = f"{r['test_nll_mean']:.4f} +- {r['test_nll_std']:.4f}"
-                print(f"  {r['method']:<22} {nll_str:>22} {r['test_bic_mean']:>10.1f} {r['dead_mean']:>6.2f} {r['singular_ev_mean']:>6.2f}")
-        print(f"\nSaved telemetry -> {out_path} ({elapsed_s}s)")
+        out = pathlib.Path(args.out)
+        out.parent.mkdir(parents=True, exist_ok=True)
+        out.write_text(json.dumps(payload, indent=2, default=lambda o: o.tolist() if isinstance(o, np.ndarray) else float(o)),
+                       encoding="utf-8")
+        print(f"\nSaved -> {out} ({payload['elapsed_sec']}s)")
 
 
 if __name__ == "__main__":
