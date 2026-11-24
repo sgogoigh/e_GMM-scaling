@@ -1,0 +1,8 @@
+=== PoC 1 COMPLETE ===
+  Flash-GMM 2d-GEMM max |delta log p| : 4.263e-14
+  Woodbury Det Lemma max |delta log p|: 1.421e-14
+  Rank-1 collapsed batch min_eig      : 1.000000e-03 (floor=1.0e-03)
+  Spectral split mean symmetry diff   : 4.441e-16
+  Full-Cov Memory Wall (k=65k,d=1024) : 256.0 GiB (274.88 GB)
+Saved JSON telemetry -> C:\Users\sgogo\OneDrive\Desktop\Research\e_means\e_GMM-scaling\poc\results\poc_01_results.json
+[Log Saved] C:\Users\sgogo\OneDrive\Desktop\Research\e_means\e_GMM-scaling\poc\logs\poc_01\run_20261125_004315.log

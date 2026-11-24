@@ -1,0 +1,6 @@
+=== PoC 4 COMPLETE ===
+  Top-m Sparsity: [(2, 14.7435), (4, 14.1575), (8, 14.4512), ('dense', 14.451)]
+  Cov Modes     : [('diag', 14.5308), ('low_rank_diag', 11.8136), ('full', 10.2735)]
+  Finalization  : [('main_ema', 23.9068, 24.6154), ('last_epoch', 23.8808, 24.6447), ('slow_ema', 23.9421, 24.5874)]
+Saved JSON telemetry -> C:\Users\sgogo\OneDrive\Desktop\Research\e_means\e_GMM-scaling\poc\results\poc_04_results.json
+[Log Saved] C:\Users\sgogo\OneDrive\Desktop\Research\e_means\e_GMM-scaling\poc\logs\poc_04\run_20261125_004318_numpy.log

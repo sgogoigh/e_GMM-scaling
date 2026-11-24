@@ -26,26 +26,36 @@ def gaussian_log_prob_diag(
     pi: np.ndarray,
     mu: np.ndarray,
     var: np.ndarray,
+    center: bool = True,
+    compute_dtype=np.float64,
 ) -> Tuple[np.ndarray, np.ndarray]:
     """
-    Compute log joint probabilities log(pi_j * N(x_i | mu_j, diag(var_j))) via
-    the Flash-GMM 2d-augmented GEMM expansion.
+    Log joint probabilities log(pi_j * N(x_i | mu_j, diag(var_j))) via the [x^2, x] GEMM expansion:
+        logit_ij = [x_i^2, x_i] . [-0.5/var_j, mu_j/var_j] + b_j
+
+    The expansion subtracts large terms (x^2/var and mu^2/var) that cancel. In low precision this
+    loses accuracy when ||x|| is large relative to the spread, so by default both x and mu are
+    shifted by the pi-weighted mean of mu first. The density is translation-invariant, so the
+    result is unchanged in exact arithmetic. `compute_dtype=np.float32` exists to measure the
+    effect (tests/test_review_fixes.py).
     """
     X64 = np.asarray(X, dtype=np.float64)
     mu64 = np.asarray(mu, dtype=np.float64)
     var64 = np.maximum(np.asarray(var, dtype=np.float64), 1e-12)
     pi64 = np.maximum(np.asarray(pi, dtype=np.float64), 1e-30)
-    d = X64.shape[1]
+    if center:
+        c = (pi64 / pi64.sum()) @ mu64
+        X64 = X64 - c[None, :]
+        mu64 = mu64 - c[None, :]
 
     inv_var = 1.0 / var64  # (k, d)
     # b_j = log(pi_j) - 0.5 * sum_m (mu_jm^2 / var_jm + log(2*pi*var_jm))
     c_j = np.sum((mu64 ** 2) * inv_var + np.log(2.0 * math.pi * var64), axis=1)
     b_j = np.log(pi64) - 0.5 * c_j  # (k,)
 
-    # Augmented GEMM: [x^2, x] @ [-0.5 / var, mu / var]^T + b_j
-    X_aug = np.concatenate([X64 ** 2, X64], axis=1)             # (B, 2d)
-    W_aug = np.concatenate([-0.5 * inv_var, mu64 * inv_var], axis=1)  # (k, 2d)
-    log_joint = X_aug @ W_aug.T + b_j[None, :]
+    X_aug = np.concatenate([X64 ** 2, X64], axis=1).astype(compute_dtype)             # (B, 2d)
+    W_aug = np.concatenate([-0.5 * inv_var, mu64 * inv_var], axis=1).astype(compute_dtype)  # (k, 2d)
+    log_joint = (X_aug @ W_aug.T).astype(np.float64) + b_j[None, :]
     lse = logsumexp_1d(log_joint, axis=1, keepdims=False)
     return log_joint, lse
 
@@ -224,8 +234,17 @@ def compute_gmm_health(
     U=None,
 ) -> Dict[str, float]:
     """
-    Compute mixture utilization, dead-component rate, entropy/Gini balance,
+    Compute mixture utilization, starved-component rate, entropy/Gini balance,
     and covariance conditioning diagnostics.
+
+    `dead_count` counts components whose weight is below `dead_tau` x the mean weight. For a GMM
+    this is a starvation diagnostic, not a quality metric: a correct mixture can contain components
+    with small weights.
+
+    `floor_hit_rate` is the fraction of variances (diag / low-rank residual) or components (full:
+    smallest eigenvalue) where the covariance floor is at least as large as the estimated variance.
+    The readout adds the floor (Sigma = S_raw + lambda_0 I), so this is `cov <= 2 * lambda_0`.
+    Before 2026-11-25 it tested `cov <= 1.05 * lambda_0`, which is ~0 by construction.
     """
     counts = np.maximum(_to_numpy(weights_or_N).ravel(), 0.0)
     k = counts.size
@@ -257,7 +276,7 @@ def compute_gmm_health(
     if cov_or_var is not None:
         cov_np = _to_numpy(cov_or_var)
         if cov_type == "diag":
-            floor_hit_rate = float(np.mean(cov_np <= cov_floor * 1.05))
+            floor_hit_rate = float(np.mean(cov_np <= cov_floor * 2.0))
             mean_trace = float(np.mean(np.sum(cov_np, axis=1)))
             conds = np.max(cov_np, axis=1) / np.maximum(np.min(cov_np, axis=1), 1e-12)
             max_cond = float(np.max(conds))
@@ -267,14 +286,14 @@ def compute_gmm_health(
         elif cov_type == "low_rank_diag":
             U_np = _to_numpy(U) if U is not None else np.zeros((k, cov_np.shape[1], 1))
             diag_full = cov_np + np.sum(U_np ** 2, axis=2)
-            floor_hit_rate = float(np.mean(cov_np <= cov_floor * 1.05))
+            floor_hit_rate = float(np.mean(cov_np <= cov_floor * 2.0))
             mean_trace = float(np.mean(np.sum(diag_full, axis=1)))
             max_cond = float(np.max(np.max(diag_full, axis=1) / np.maximum(np.min(cov_np, axis=1), 1e-12)))
             mean_eff_rank = float(cov_np.shape[1])
         else:
             evals = np.linalg.eigvalsh(0.5 * (cov_np + np.swapaxes(cov_np, -1, -2)))
             evals = np.maximum(evals, 1e-12)
-            floor_hit_rate = float(np.mean(np.min(evals, axis=1) <= cov_floor * 1.05))
+            floor_hit_rate = float(np.mean(np.min(evals, axis=1) <= cov_floor * 2.0))
             mean_trace = float(np.mean(np.sum(evals, axis=1)))
             max_cond = float(np.max(np.max(evals, axis=1) / np.min(evals, axis=1)))
             s_norm = evals / np.maximum(np.sum(evals, axis=1, keepdims=True), 1e-12)

@@ -1,6 +1,7 @@
 {
   "experiment_id": "exp_04_kernel_and_memory_bench",
   "mode": "smoke",
+  "platform": "CPU / NumPy",
   "shapes": {
     "B": 2048,
     "d": 64,
@@ -8,19 +9,47 @@
     "r": 8,
     "k_lr": 64
   },
-  "numpy_flash_gmm": {
-    "flash_2d_gemm_ms": 27.72,
-    "naive_broadcast_ms": 12645.05,
-    "speedup_vs_naive": 456.14,
+  "numpy_gemm_expansion_vs_naive": {
+    "gemm_expansion_ms_median": 106.066,
+    "naive_broadcast_ms_median": 4397.757,
+    "speedup_vs_naive": 41.46,
     "max_abs_log_diff": 1.9895196601282805e-13
   },
+  "float32_precision_vs_mean_offset": [
+    {
+      "mean_offset": 0.0,
+      "float32_centered_max_abs_err": 0.00015993101658295927,
+      "float32_uncentered_max_abs_err": 0.00013747167037081454
+    },
+    {
+      "mean_offset": 10.0,
+      "float32_centered_max_abs_err": 0.00015993101655453756,
+      "float32_uncentered_max_abs_err": 0.0035631178122343954
+    },
+    {
+      "mean_offset": 100.0,
+      "float32_centered_max_abs_err": 0.0001599310157871514,
+      "float32_uncentered_max_abs_err": 0.334420813645238
+    },
+    {
+      "mean_offset": 1000.0,
+      "float32_centered_max_abs_err": 0.00015993101405342713,
+      "float32_uncentered_max_abs_err": 35.680447034180474
+    }
+  ],
   "numpy_woodbury_vs_cholesky": {
-    "woodbury_ms": 100.69,
-    "cholesky_ms": 156.75,
-    "speedup_vs_cholesky": 1.56,
+    "woodbury_ms_median": 124.599,
+    "cholesky_ms_median": 272.28,
+    "speedup_vs_cholesky": 2.19,
     "max_abs_log_diff": 1.1368683772161603e-13
   },
   "torch_bench": {
-    "status": "skipped (torch not installed)"
-  }
+    "status": "skipped: torch is not installed (torch path untested on this machine)"
+  },
+  "not_measured": [
+    "GPU throughput",
+    "GPU memory",
+    "fused/Triton kernel",
+    "bf16 E-step on GPU"
+  ]
 }

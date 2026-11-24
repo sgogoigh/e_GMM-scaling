@@ -1,41 +1,5152 @@
 {
   "experiment_id": "exp_01_phase_a_scaling_laws",
   "mode": "smoke",
+  "data": "synthetic",
+  "data_file": null,
   "backend": "numpy",
-  "elapsed_sec": 51.69,
-  "num_alpha_observations": 72,
-  "fit_with_d": {
-    "c_alpha": 1.6243,
-    "a_k": 0.1527,
-    "a_b": 0.9918,
-    "a_n": -0.4944,
-    "a_t": 0.5329,
-    "a_d": -1.1755,
-    "r2_log": 0.7382,
-    "lodo_mean_rel_err_pct": 84.17,
-    "loso_mean_rel_err_pct": 69.76
+  "backend_tested_locally": true,
+  "primary_d_law": "ambient_d",
+  "elapsed_sec": 146.62,
+  "source": "synthetic: 32-cluster anisotropic rotated Zipf mixture, scale-normalized",
+  "grid": {
+    "dims": [
+      8,
+      16,
+      32,
+      64
+    ],
+    "ks": [
+      4,
+      8,
+      16
+    ],
+    "ns": [
+      1200,
+      4800
+    ],
+    "batch_sizes": [
+      32,
+      128
+    ],
+    "epochs": [
+      2,
+      4
+    ],
+    "seeds": [
+      0,
+      1
+    ],
+    "n_val": 1000,
+    "cov_type": "diag",
+    "cov_floor": 0.0001,
+    "knee_b_min": 16,
+    "knee_tol_nats_per_dim": 0.002,
+    "ood": [
+      {
+        "d": 128,
+        "k": 8,
+        "n": 4800,
+        "B": 64,
+        "T": 3
+      },
+      {
+        "d": 24,
+        "k": 12,
+        "n": 2400,
+        "B": 64,
+        "T": 3
+      }
+    ],
+    "alpha_ladder": [
+      0.02,
+      0.04,
+      0.08,
+      0.16,
+      0.32,
+      0.64
+    ]
   },
-  "fit_no_d": {
-    "r2_log": 0.2969,
-    "lodo_mean_rel_err_pct": 179.74
+  "egmm_overrides": {},
+  "observations": [
+    {
+      "num_train": 1200,
+      "num_components": 4,
+      "dim": 8,
+      "batch_size": 32,
+      "epochs": 2,
+      "alpha_0_opt": 0.5478807500172637,
+      "nll_opt": 10.519594981449146,
+      "b_knee_opt": null,
+      "alpha_censored": false,
+      "knee_censored": false,
+      "dim_intrinsic": 6.648718801846778,
+      "alpha_curve": [
+        [
+          0.02,
+          0.04,
+          0.08,
+          0.16,
+          0.32,
+          0.64,
+          1.0
+        ],
+        [
+          10.824215351481605,
+          10.76851777162415,
+          10.715848733003899,
+          10.656006966018293,
+          10.599470363463691,
+          10.519594981449146,
+          10.62143670868279
+        ]
+      ],
+      "source": "synthetic: 32-cluster anisotropic rotated Zipf mixture, scale-normalized"
+    },
+    {
+      "num_train": 1200,
+      "num_components": 4,
+      "dim": 8,
+      "batch_size": 128,
+      "epochs": 2,
+      "alpha_0_opt": 1.0,
+      "nll_opt": 10.602498470334751,
+      "b_knee_opt": null,
+      "alpha_censored": true,
+      "knee_censored": false,
+      "dim_intrinsic": 6.648718801846778,
+      "alpha_curve": [
+        [
+          0.02,
+          0.04,
+          0.08,
+          0.16,
+          0.32,
+          0.64,
+          1.0
+        ],
+        [
+          10.845515019086895,
+          10.804006083431915,
+          10.76665116419349,
+          10.73352788190787,
+          10.695962235733283,
+          10.64110517962726,
+          10.602498470334751
+        ]
+      ],
+      "source": "synthetic: 32-cluster anisotropic rotated Zipf mixture, scale-normalized"
+    },
+    {
+      "num_train": 1200,
+      "num_components": 4,
+      "dim": 8,
+      "batch_size": 32,
+      "epochs": 4,
+      "alpha_0_opt": 0.5467816586884467,
+      "nll_opt": 10.496081413060928,
+      "b_knee_opt": null,
+      "alpha_censored": false,
+      "knee_censored": false,
+      "dim_intrinsic": 6.648718801846778,
+      "alpha_curve": [
+        [
+          0.02,
+          0.04,
+          0.08,
+          0.16,
+          0.32,
+          0.64,
+          1.0
+        ],
+        [
+          10.73936613216371,
+          10.692074672799857,
+          10.640796764425843,
+          10.570880942481761,
+          10.551479108479917,
+          10.496081413060928,
+          10.567842402032067
+        ]
+      ],
+      "source": "synthetic: 32-cluster anisotropic rotated Zipf mixture, scale-normalized"
+    },
+    {
+      "num_train": 1200,
+      "num_components": 4,
+      "dim": 8,
+      "batch_size": 128,
+      "epochs": 4,
+      "alpha_0_opt": 1.0,
+      "nll_opt": 10.5627653594562,
+      "b_knee_opt": null,
+      "alpha_censored": true,
+      "knee_censored": false,
+      "dim_intrinsic": 6.648718801846778,
+      "alpha_curve": [
+        [
+          0.02,
+          0.04,
+          0.08,
+          0.16,
+          0.32,
+          0.64,
+          1.0
+        ],
+        [
+          10.778975844707668,
+          10.7339838677136,
+          10.694214401450953,
+          10.65705953760083,
+          10.61830284320263,
+          10.57188562885747,
+          10.5627653594562
+        ]
+      ],
+      "source": "synthetic: 32-cluster anisotropic rotated Zipf mixture, scale-normalized"
+    },
+    {
+      "num_train": 1200,
+      "num_components": 8,
+      "dim": 8,
+      "batch_size": 32,
+      "epochs": 2,
+      "alpha_0_opt": 0.400264779093845,
+      "nll_opt": 10.337336982417877,
+      "b_knee_opt": null,
+      "alpha_censored": false,
+      "knee_censored": false,
+      "dim_intrinsic": 6.648718801846778,
+      "alpha_curve": [
+        [
+          0.02,
+          0.04,
+          0.08,
+          0.16,
+          0.32,
+          0.64
+        ],
+        [
+          10.599400471373666,
+          10.559164917618437,
+          10.47660964260735,
+          10.416120185000128,
+          10.337336982417877,
+          10.354294273716487
+        ]
+      ],
+      "source": "synthetic: 32-cluster anisotropic rotated Zipf mixture, scale-normalized"
+    },
+    {
+      "num_train": 1200,
+      "num_components": 8,
+      "dim": 8,
+      "batch_size": 128,
+      "epochs": 2,
+      "alpha_0_opt": 1.0,
+      "nll_opt": 10.403639264394407,
+      "b_knee_opt": null,
+      "alpha_censored": true,
+      "knee_censored": false,
+      "dim_intrinsic": 6.648718801846778,
+      "alpha_curve": [
+        [
+          0.02,
+          0.04,
+          0.08,
+          0.16,
+          0.32,
+          0.64,
+          1.0
+        ],
+        [
+          10.634775426483262,
+          10.59699262423952,
+          10.557857674864024,
+          10.504186573467988,
+          10.438235864741024,
+          10.415074907402863,
+          10.403639264394407
+        ]
+      ],
+      "source": "synthetic: 32-cluster anisotropic rotated Zipf mixture, scale-normalized"
+    },
+    {
+      "num_train": 1200,
+      "num_components": 8,
+      "dim": 8,
+      "batch_size": 32,
+      "epochs": 4,
+      "alpha_0_opt": 0.39785452831431933,
+      "nll_opt": 10.318328390025915,
+      "b_knee_opt": null,
+      "alpha_censored": false,
+      "knee_censored": false,
+      "dim_intrinsic": 6.648718801846778,
+      "alpha_curve": [
+        [
+          0.02,
+          0.04,
+          0.08,
+          0.16,
+          0.32,
+          0.64
+        ],
+        [
+          10.519351254210605,
+          10.493616795191361,
+          10.382763136254246,
+          10.327885860178217,
+          10.318328390025915,
+          10.32050984484901
+        ]
+      ],
+      "source": "synthetic: 32-cluster anisotropic rotated Zipf mixture, scale-normalized"
+    },
+    {
+      "num_train": 1200,
+      "num_components": 8,
+      "dim": 8,
+      "batch_size": 128,
+      "epochs": 4,
+      "alpha_0_opt": 1.0,
+      "nll_opt": 10.30020286523023,
+      "b_knee_opt": null,
+      "alpha_censored": true,
+      "knee_censored": false,
+      "dim_intrinsic": 6.648718801846778,
+      "alpha_curve": [
+        [
+          0.02,
+          0.04,
+          0.08,
+          0.16,
+          0.32,
+          0.64,
+          1.0
+        ],
+        [
+          10.589965419356787,
+          10.542496146705245,
+          10.483520996019164,
+          10.421873901664398,
+          10.37241822479663,
+          10.360426862163834,
+          10.30020286523023
+        ]
+      ],
+      "source": "synthetic: 32-cluster anisotropic rotated Zipf mixture, scale-normalized"
+    },
+    {
+      "num_train": 1200,
+      "num_components": 16,
+      "dim": 8,
+      "batch_size": 32,
+      "epochs": 2,
+      "alpha_0_opt": 0.15871297680739535,
+      "nll_opt": 10.169239017094338,
+      "b_knee_opt": null,
+      "alpha_censored": false,
+      "knee_censored": false,
+      "dim_intrinsic": 6.648718801846778,
+      "alpha_curve": [
+        [
+          0.02,
+          0.04,
+          0.08,
+          0.16,
+          0.32,
+          0.64
+        ],
+        [
+          10.375960148204179,
+          10.300676827374069,
+          10.212651994700778,
+          10.169239017094338,
+          10.214723631000657,
+          10.421065662836465
+        ]
+      ],
+      "source": "synthetic: 32-cluster anisotropic rotated Zipf mixture, scale-normalized"
+    },
+    {
+      "num_train": 1200,
+      "num_components": 16,
+      "dim": 8,
+      "batch_size": 128,
+      "epochs": 2,
+      "alpha_0_opt": 0.4841173832641901,
+      "nll_opt": 10.196975984582945,
+      "b_knee_opt": null,
+      "alpha_censored": false,
+      "knee_censored": false,
+      "dim_intrinsic": 6.648718801846778,
+      "alpha_curve": [
+        [
+          0.02,
+          0.04,
+          0.08,
+          0.16,
+          0.32,
+          0.64,
+          1.0
+        ],
+        [
+          10.396164574326864,
+          10.348982709213779,
+          10.29358367913788,
+          10.238252424821471,
+          10.20196417886373,
+          10.196975984582945,
+          10.220898703935237
+        ]
+      ],
+      "source": "synthetic: 32-cluster anisotropic rotated Zipf mixture, scale-normalized"
+    },
+    {
+      "num_train": 1200,
+      "num_components": 16,
+      "dim": 8,
+      "batch_size": 32,
+      "epochs": 4,
+      "alpha_0_opt": 0.118548994652219,
+      "nll_opt": 10.150719465646706,
+      "b_knee_opt": null,
+      "alpha_censored": false,
+      "knee_censored": false,
+      "dim_intrinsic": 6.648718801846778,
+      "alpha_curve": [
+        [
+          0.02,
+          0.04,
+          0.08,
+          0.16,
+          0.32,
+          0.64
+        ],
+        [
+          10.29143906680892,
+          10.211199525776742,
+          10.153656372384047,
+          10.150719465646706,
+          10.191349394424261,
+          10.215524443361064
+        ]
+      ],
+      "source": "synthetic: 32-cluster anisotropic rotated Zipf mixture, scale-normalized"
+    },
+    {
+      "num_train": 1200,
+      "num_components": 16,
+      "dim": 8,
+      "batch_size": 128,
+      "epochs": 4,
+      "alpha_0_opt": 0.4629381744003004,
+      "nll_opt": 10.158179711358802,
+      "b_knee_opt": null,
+      "alpha_censored": false,
+      "knee_censored": false,
+      "dim_intrinsic": 6.648718801846778,
+      "alpha_curve": [
+        [
+          0.02,
+          0.04,
+          0.08,
+          0.16,
+          0.32,
+          0.64,
+          1.0
+        ],
+        [
+          10.339702372967206,
+          10.283000633548124,
+          10.227425576589686,
+          10.188569180685793,
+          10.16275440978955,
+          10.158179711358802,
+          10.22916164324329
+        ]
+      ],
+      "source": "synthetic: 32-cluster anisotropic rotated Zipf mixture, scale-normalized"
+    },
+    {
+      "num_train": 4800,
+      "num_components": 4,
+      "dim": 8,
+      "batch_size": 32,
+      "epochs": 2,
+      "alpha_0_opt": 0.15642538742267129,
+      "nll_opt": 10.674399157886278,
+      "b_knee_opt": null,
+      "alpha_censored": false,
+      "knee_censored": false,
+      "dim_intrinsic": 7.49260955168352,
+      "alpha_curve": [
+        [
+          0.02,
+          0.04,
+          0.08,
+          0.16,
+          0.32,
+          0.64
+        ],
+        [
+          10.76737860120797,
+          10.72614567521503,
+          10.675913540395463,
+          10.674399157886278,
+          10.67612477008748,
+          10.677467296424393
+        ]
+      ],
+      "source": "synthetic: 32-cluster anisotropic rotated Zipf mixture, scale-normalized"
+    },
+    {
+      "num_train": 4800,
+      "num_components": 4,
+      "dim": 8,
+      "batch_size": 128,
+      "epochs": 2,
+      "alpha_0_opt": 1.0,
+      "nll_opt": 10.663772736867777,
+      "b_knee_opt": null,
+      "alpha_censored": true,
+      "knee_censored": false,
+      "dim_intrinsic": 7.49260955168352,
+      "alpha_curve": [
+        [
+          0.02,
+          0.04,
+          0.08,
+          0.16,
+          0.32,
+          0.64,
+          1.0
+        ],
+        [
+          10.982875399184675,
+          10.900466896395205,
+          10.792653153719066,
+          10.768730434299606,
+          10.735597995617495,
+          10.686943951541135,
+          10.663772736867777
+        ]
+      ],
+      "source": "synthetic: 32-cluster anisotropic rotated Zipf mixture, scale-normalized"
+    },
+    {
+      "num_train": 4800,
+      "num_components": 4,
+      "dim": 8,
+      "batch_size": 32,
+      "epochs": 4,
+      "alpha_0_opt": 0.4064461224178084,
+      "nll_opt": 10.655271403646644,
+      "b_knee_opt": null,
+      "alpha_censored": false,
+      "knee_censored": false,
+      "dim_intrinsic": 7.49260955168352,
+      "alpha_curve": [
+        [
+          0.02,
+          0.04,
+          0.08,
+          0.16,
+          0.32,
+          0.64
+        ],
+        [
+          10.718997405504048,
+          10.665675545182406,
+          10.659459110136194,
+          10.671787700790958,
+          10.655271403646644,
+          10.658301200257977
+        ]
+      ],
+      "source": "synthetic: 32-cluster anisotropic rotated Zipf mixture, scale-normalized"
+    },
+    {
+      "num_train": 4800,
+      "num_components": 4,
+      "dim": 8,
+      "batch_size": 128,
+      "epochs": 4,
+      "alpha_0_opt": 1.0,
+      "nll_opt": 10.67587990856113,
+      "b_knee_opt": null,
+      "alpha_censored": true,
+      "knee_censored": false,
+      "dim_intrinsic": 7.49260955168352,
+      "alpha_curve": [
+        [
+          0.02,
+          0.04,
+          0.08,
+          0.16,
+          0.32,
+          0.64,
+          1.0
+        ],
+        [
+          10.875901789527243,
+          10.766662400384071,
+          10.773043455590507,
+          10.734344473770395,
+          10.687372773234944,
+          10.682480803106706,
+          10.67587990856113
+        ]
+      ],
+      "source": "synthetic: 32-cluster anisotropic rotated Zipf mixture, scale-normalized"
+    },
+    {
+      "num_train": 4800,
+      "num_components": 8,
+      "dim": 8,
+      "batch_size": 32,
+      "epochs": 2,
+      "alpha_0_opt": 0.25632689741114195,
+      "nll_opt": 10.392882323971929,
+      "b_knee_opt": null,
+      "alpha_censored": false,
+      "knee_censored": false,
+      "dim_intrinsic": 7.49260955168352,
+      "alpha_curve": [
+        [
+          0.02,
+          0.04,
+          0.08,
+          0.16,
+          0.32,
+          0.64
+        ],
+        [
+          10.573653001446896,
+          10.51432916230122,
+          10.448319798346915,
+          10.40397041921936,
+          10.392882323971929,
+          10.443424556398162
+        ]
+      ],
+      "source": "synthetic: 32-cluster anisotropic rotated Zipf mixture, scale-normalized"
+    },
+    {
+      "num_train": 4800,
+      "num_components": 8,
+      "dim": 8,
+      "batch_size": 128,
+      "epochs": 2,
+      "alpha_0_opt": 1.0,
+      "nll_opt": 10.390514944664869,
+      "b_knee_opt": null,
+      "alpha_censored": true,
+      "knee_censored": false,
+      "dim_intrinsic": 7.49260955168352,
+      "alpha_curve": [
+        [
+          0.02,
+          0.04,
+          0.08,
+          0.16,
+          0.32,
+          0.64,
+          1.0
+        ],
+        [
+          10.623602465452556,
+          10.59033276215764,
+          10.553047253042163,
+          10.51433632514114,
+          10.459216517585661,
+          10.449636474484599,
+          10.390514944664869
+        ]
+      ],
+      "source": "synthetic: 32-cluster anisotropic rotated Zipf mixture, scale-normalized"
+    },
+    {
+      "num_train": 4800,
+      "num_components": 8,
+      "dim": 8,
+      "batch_size": 32,
+      "epochs": 4,
+      "alpha_0_opt": 0.3718403954714705,
+      "nll_opt": 10.368329586786363,
+      "b_knee_opt": null,
+      "alpha_censored": false,
+      "knee_censored": false,
+      "dim_intrinsic": 7.49260955168352,
+      "alpha_curve": [
+        [
+          0.02,
+          0.04,
+          0.08,
+          0.16,
+          0.32,
+          0.64
+        ],
+        [
+          10.492923958518283,
+          10.465708126372276,
+          10.417139320905761,
+          10.413190747721478,
+          10.368329586786363,
+          10.386070204471004
+        ]
+      ],
+      "source": "synthetic: 32-cluster anisotropic rotated Zipf mixture, scale-normalized"
+    },
+    {
+      "num_train": 4800,
+      "num_components": 8,
+      "dim": 8,
+      "batch_size": 128,
+      "epochs": 4,
+      "alpha_0_opt": 1.0,
+      "nll_opt": 10.36152800000759,
+      "b_knee_opt": null,
+      "alpha_censored": true,
+      "knee_censored": false,
+      "dim_intrinsic": 7.49260955168352,
+      "alpha_curve": [
+        [
+          0.02,
+          0.04,
+          0.08,
+          0.16,
+          0.32,
+          0.64,
+          1.0
+        ],
+        [
+          10.579024526558406,
+          10.545599503228214,
+          10.498496620526845,
+          10.466692676346476,
+          10.38297843665558,
+          10.378876863006138,
+          10.36152800000759
+        ]
+      ],
+      "source": "synthetic: 32-cluster anisotropic rotated Zipf mixture, scale-normalized"
+    },
+    {
+      "num_train": 4800,
+      "num_components": 16,
+      "dim": 8,
+      "batch_size": 32,
+      "epochs": 2,
+      "alpha_0_opt": 0.15361230874590492,
+      "nll_opt": 10.126108063104184,
+      "b_knee_opt": null,
+      "alpha_censored": false,
+      "knee_censored": false,
+      "dim_intrinsic": 7.49260955168352,
+      "alpha_curve": [
+        [
+          0.02,
+          0.04,
+          0.08,
+          0.16,
+          0.32,
+          0.64
+        ],
+        [
+          10.306299742296336,
+          10.214131319250452,
+          10.158835103540888,
+          10.126108063104184,
+          10.167554673595667,
+          10.41992041215868
+        ]
+      ],
+      "source": "synthetic: 32-cluster anisotropic rotated Zipf mixture, scale-normalized"
+    },
+    {
+      "num_train": 4800,
+      "num_components": 16,
+      "dim": 8,
+      "batch_size": 128,
+      "epochs": 2,
+      "alpha_0_opt": 0.47426893409509796,
+      "nll_opt": 10.147461993051877,
+      "b_knee_opt": null,
+      "alpha_censored": false,
+      "knee_censored": false,
+      "dim_intrinsic": 7.49260955168352,
+      "alpha_curve": [
+        [
+          0.02,
+          0.04,
+          0.08,
+          0.16,
+          0.32,
+          0.64,
+          1.0
+        ],
+        [
+          10.372815775233303,
+          10.322863171614884,
+          10.271640912154735,
+          10.205092543993533,
+          10.16886696221433,
+          10.147461993051877,
+          10.301165173138546
+        ]
+      ],
+      "source": "synthetic: 32-cluster anisotropic rotated Zipf mixture, scale-normalized"
+    },
+    {
+      "num_train": 4800,
+      "num_components": 16,
+      "dim": 8,
+      "batch_size": 32,
+      "epochs": 4,
+      "alpha_0_opt": 0.09098143837589343,
+      "nll_opt": 10.108750825876722,
+      "b_knee_opt": null,
+      "alpha_censored": false,
+      "knee_censored": false,
+      "dim_intrinsic": 7.49260955168352,
+      "alpha_curve": [
+        [
+          0.02,
+          0.04,
+          0.08,
+          0.16,
+          0.32,
+          0.64
+        ],
+        [
+          10.211447489545229,
+          10.15317163991523,
+          10.108750825876722,
+          10.129123787375068,
+          10.137627975359166,
+          10.186283976770344
+        ]
+      ],
+      "source": "synthetic: 32-cluster anisotropic rotated Zipf mixture, scale-normalized"
+    },
+    {
+      "num_train": 4800,
+      "num_components": 16,
+      "dim": 8,
+      "batch_size": 128,
+      "epochs": 4,
+      "alpha_0_opt": 0.3508009486541124,
+      "nll_opt": 10.106858061622471,
+      "b_knee_opt": null,
+      "alpha_censored": false,
+      "knee_censored": false,
+      "dim_intrinsic": 7.49260955168352,
+      "alpha_curve": [
+        [
+          0.02,
+          0.04,
+          0.08,
+          0.16,
+          0.32,
+          0.64
+        ],
+        [
+          10.317498956756513,
+          10.25911385432319,
+          10.210963737582237,
+          10.170724944741377,
+          10.106858061622471,
+          10.143953599057774
+        ]
+      ],
+      "source": "synthetic: 32-cluster anisotropic rotated Zipf mixture, scale-normalized"
+    },
+    {
+      "num_train": 1200,
+      "num_components": 4,
+      "dim": 16,
+      "batch_size": 32,
+      "epochs": 2,
+      "alpha_0_opt": 0.5857708891111335,
+      "nll_opt": 20.55690828524911,
+      "b_knee_opt": null,
+      "alpha_censored": false,
+      "knee_censored": false,
+      "dim_intrinsic": 9.737178525367232,
+      "alpha_curve": [
+        [
+          0.02,
+          0.04,
+          0.08,
+          0.16,
+          0.32,
+          0.64,
+          1.0
+        ],
+        [
+          21.464076935965203,
+          21.237780771949577,
+          20.923337524091995,
+          20.891716587161064,
+          20.678168133417902,
+          20.55690828524911,
+          20.651214823421846
+        ]
+      ],
+      "source": "synthetic: 32-cluster anisotropic rotated Zipf mixture, scale-normalized"
+    },
+    {
+      "num_train": 1200,
+      "num_components": 4,
+      "dim": 16,
+      "batch_size": 128,
+      "epochs": 2,
+      "alpha_0_opt": 1.0,
+      "nll_opt": 20.716693630725977,
+      "b_knee_opt": null,
+      "alpha_censored": true,
+      "knee_censored": false,
+      "dim_intrinsic": 9.737178525367232,
+      "alpha_curve": [
+        [
+          0.02,
+          0.04,
+          0.08,
+          0.16,
+          0.32,
+          0.64,
+          1.0
+        ],
+        [
+          21.46801424114959,
+          21.210284299203096,
+          21.07286677213974,
+          20.934962181520376,
+          20.97937639963092,
+          20.928773404084467,
+          20.716693630725977
+        ]
+      ],
+      "source": "synthetic: 32-cluster anisotropic rotated Zipf mixture, scale-normalized"
+    },
+    {
+      "num_train": 1200,
+      "num_components": 4,
+      "dim": 16,
+      "batch_size": 32,
+      "epochs": 4,
+      "alpha_0_opt": 0.38023865824194314,
+      "nll_opt": 20.5208039245221,
+      "b_knee_opt": null,
+      "alpha_censored": false,
+      "knee_censored": false,
+      "dim_intrinsic": 9.737178525367232,
+      "alpha_curve": [
+        [
+          0.02,
+          0.04,
+          0.08,
+          0.16,
+          0.32,
+          0.64
+        ],
+        [
+          21.180455967943477,
+          21.03907578333721,
+          20.842530770100367,
+          20.771577444259393,
+          20.5208039245221,
+          20.60491604105305
+        ]
+      ],
+      "source": "synthetic: 32-cluster anisotropic rotated Zipf mixture, scale-normalized"
+    },
+    {
+      "num_train": 1200,
+      "num_components": 4,
+      "dim": 16,
+      "batch_size": 128,
+      "epochs": 4,
+      "alpha_0_opt": 1.0,
+      "nll_opt": 20.608764925842227,
+      "b_knee_opt": null,
+      "alpha_censored": true,
+      "knee_censored": false,
+      "dim_intrinsic": 9.737178525367232,
+      "alpha_curve": [
+        [
+          0.02,
+          0.04,
+          0.08,
+          0.16,
+          0.32,
+          0.64,
+          1.0
+        ],
+        [
+          21.429045595676328,
+          21.023051138833143,
+          20.91127044690839,
+          20.840746533255228,
+          20.88211750667677,
+          20.674556320877535,
+          20.608764925842227
+        ]
+      ],
+      "source": "synthetic: 32-cluster anisotropic rotated Zipf mixture, scale-normalized"
+    },
+    {
+      "num_train": 1200,
+      "num_components": 8,
+      "dim": 16,
+      "batch_size": 32,
+      "epochs": 2,
+      "alpha_0_opt": 0.23137848608085781,
+      "nll_opt": 19.823234871536606,
+      "b_knee_opt": null,
+      "alpha_censored": false,
+      "knee_censored": false,
+      "dim_intrinsic": 9.737178525367232,
+      "alpha_curve": [
+        [
+          0.02,
+          0.04,
+          0.08,
+          0.16,
+          0.32,
+          0.64
+        ],
+        [
+          20.54976441523581,
+          20.441493063773876,
+          20.12907646321061,
+          19.830357509076507,
+          19.823234871536606,
+          20.03743022856635
+        ]
+      ],
+      "source": "synthetic: 32-cluster anisotropic rotated Zipf mixture, scale-normalized"
+    },
+    {
+      "num_train": 1200,
+      "num_components": 8,
+      "dim": 16,
+      "batch_size": 128,
+      "epochs": 2,
+      "alpha_0_opt": 0.7751387404424834,
+      "nll_opt": 19.95618911154476,
+      "b_knee_opt": null,
+      "alpha_censored": false,
+      "knee_censored": false,
+      "dim_intrinsic": 9.737178525367232,
+      "alpha_curve": [
+        [
+          0.02,
+          0.04,
+          0.08,
+          0.16,
+          0.32,
+          0.64,
+          1.0
+        ],
+        [
+          20.61059695953071,
+          20.427331236307396,
+          20.32183529856131,
+          20.151963268886647,
+          20.02317429824818,
+          19.95618911154476,
+          19.958719206035433
+        ]
+      ],
+      "source": "synthetic: 32-cluster anisotropic rotated Zipf mixture, scale-normalized"
+    },
+    {
+      "num_train": 1200,
+      "num_components": 8,
+      "dim": 16,
+      "batch_size": 32,
+      "epochs": 4,
+      "alpha_0_opt": 0.14909244069636737,
+      "nll_opt": 19.678304468828838,
+      "b_knee_opt": null,
+      "alpha_censored": false,
+      "knee_censored": false,
+      "dim_intrinsic": 9.737178525367232,
+      "alpha_curve": [
+        [
+          0.02,
+          0.04,
+          0.08,
+          0.16,
+          0.32,
+          0.64
+        ],
+        [
+          20.448874021891605,
+          20.228584706926952,
+          19.755840786146294,
+          19.678304468828838,
+          19.795516860042568,
+          19.856444860661696
+        ]
+      ],
+      "source": "synthetic: 32-cluster anisotropic rotated Zipf mixture, scale-normalized"
+    },
+    {
+      "num_train": 1200,
+      "num_components": 8,
+      "dim": 16,
+      "batch_size": 128,
+      "epochs": 4,
+      "alpha_0_opt": 1.0,
+      "nll_opt": 19.83296459172505,
+      "b_knee_opt": null,
+      "alpha_censored": true,
+      "knee_censored": false,
+      "dim_intrinsic": 9.737178525367232,
+      "alpha_curve": [
+        [
+          0.02,
+          0.04,
+          0.08,
+          0.16,
+          0.32,
+          0.64,
+          1.0
+        ],
+        [
+          20.451927232782857,
+          20.30580399890428,
+          20.16116447058208,
+          19.938074137829847,
+          19.93393178497827,
+          19.87515747724001,
+          19.83296459172505
+        ]
+      ],
+      "source": "synthetic: 32-cluster anisotropic rotated Zipf mixture, scale-normalized"
+    },
+    {
+      "num_train": 1200,
+      "num_components": 16,
+      "dim": 16,
+      "batch_size": 32,
+      "epochs": 2,
+      "alpha_0_opt": 0.12838436506205556,
+      "nll_opt": 19.006651777105702,
+      "b_knee_opt": null,
+      "alpha_censored": false,
+      "knee_censored": false,
+      "dim_intrinsic": 9.737178525367232,
+      "alpha_curve": [
+        [
+          0.02,
+          0.04,
+          0.08,
+          0.16,
+          0.32,
+          0.64
+        ],
+        [
+          19.516047169580997,
+          19.355841192093894,
+          19.035904548560353,
+          19.006651777105702,
+          19.137778140618114,
+          19.652158646792465
+        ]
+      ],
+      "source": "synthetic: 32-cluster anisotropic rotated Zipf mixture, scale-normalized"
+    },
+    {
+      "num_train": 1200,
+      "num_components": 16,
+      "dim": 16,
+      "batch_size": 128,
+      "epochs": 2,
+      "alpha_0_opt": 0.38740413428913595,
+      "nll_opt": 19.172706492695887,
+      "b_knee_opt": null,
+      "alpha_censored": false,
+      "knee_censored": false,
+      "dim_intrinsic": 9.737178525367232,
+      "alpha_curve": [
+        [
+          0.02,
+          0.04,
+          0.08,
+          0.16,
+          0.32,
+          0.64
+        ],
+        [
+          19.554140403125437,
+          19.494871086202146,
+          19.386454346128513,
+          19.27470812182056,
+          19.172706492695887,
+          19.20218966585156
+        ]
+      ],
+      "source": "synthetic: 32-cluster anisotropic rotated Zipf mixture, scale-normalized"
+    },
+    {
+      "num_train": 1200,
+      "num_components": 16,
+      "dim": 16,
+      "batch_size": 32,
+      "epochs": 4,
+      "alpha_0_opt": 0.10854800235101342,
+      "nll_opt": 18.942093906871367,
+      "b_knee_opt": null,
+      "alpha_censored": false,
+      "knee_censored": false,
+      "dim_intrinsic": 9.737178525367232,
+      "alpha_curve": [
+        [
+          0.02,
+          0.04,
+          0.08,
+          0.16,
+          0.32,
+          0.64
+        ],
+        [
+          19.409856444418686,
+          19.20658378401545,
+          18.942093906871367,
+          18.958898054488593,
+          19.023921098998088,
+          19.363887671444832
+        ]
+      ],
+      "source": "synthetic: 32-cluster anisotropic rotated Zipf mixture, scale-normalized"
+    },
+    {
+      "num_train": 1200,
+      "num_components": 16,
+      "dim": 16,
+      "batch_size": 128,
+      "epochs": 4,
+      "alpha_0_opt": 0.2869063489455896,
+      "nll_opt": 19.079148430072646,
+      "b_knee_opt": null,
+      "alpha_censored": false,
+      "knee_censored": false,
+      "dim_intrinsic": 9.737178525367232,
+      "alpha_curve": [
+        [
+          0.02,
+          0.04,
+          0.08,
+          0.16,
+          0.32,
+          0.64
+        ],
+        [
+          19.46154571196334,
+          19.417637053141494,
+          19.19959560298522,
+          19.093107697785065,
+          19.079148430072646,
+          19.105945197758302
+        ]
+      ],
+      "source": "synthetic: 32-cluster anisotropic rotated Zipf mixture, scale-normalized"
+    },
+    {
+      "num_train": 4800,
+      "num_components": 4,
+      "dim": 16,
+      "batch_size": 32,
+      "epochs": 2,
+      "alpha_0_opt": 0.40533363653817817,
+      "nll_opt": 20.685478297940588,
+      "b_knee_opt": null,
+      "alpha_censored": false,
+      "knee_censored": false,
+      "dim_intrinsic": 11.046508241041499,
+      "alpha_curve": [
+        [
+          0.02,
+          0.04,
+          0.08,
+          0.16,
+          0.32,
+          0.64
+        ],
+        [
+          21.235809865581594,
+          21.021148452475018,
+          20.81507604920735,
+          20.755851186839507,
+          20.685478297940588,
+          20.698779261052856
+        ]
+      ],
+      "source": "synthetic: 32-cluster anisotropic rotated Zipf mixture, scale-normalized"
+    },
+    {
+      "num_train": 4800,
+      "num_components": 4,
+      "dim": 16,
+      "batch_size": 128,
+      "epochs": 2,
+      "alpha_0_opt": 0.4169635075397567,
+      "nll_opt": 20.889253541306946,
+      "b_knee_opt": null,
+      "alpha_censored": false,
+      "knee_censored": false,
+      "dim_intrinsic": 11.046508241041499,
+      "alpha_curve": [
+        [
+          0.02,
+          0.04,
+          0.08,
+          0.16,
+          0.32,
+          0.64
+        ],
+        [
+          21.377720758690625,
+          21.20845856364385,
+          21.098775138658326,
+          20.966347921058617,
+          20.889253541306946,
+          20.899582700634674
+        ]
+      ],
+      "source": "synthetic: 32-cluster anisotropic rotated Zipf mixture, scale-normalized"
+    },
+    {
+      "num_train": 4800,
+      "num_components": 4,
+      "dim": 16,
+      "batch_size": 32,
+      "epochs": 4,
+      "alpha_0_opt": 0.541127315316222,
+      "nll_opt": 20.645407675102348,
+      "b_knee_opt": null,
+      "alpha_censored": false,
+      "knee_censored": false,
+      "dim_intrinsic": 11.046508241041499,
+      "alpha_curve": [
+        [
+          0.02,
+          0.04,
+          0.08,
+          0.16,
+          0.32,
+          0.64,
+          1.0
+        ],
+        [
+          21.05578820568949,
+          20.801200553433148,
+          20.73866669628216,
+          20.72043678886377,
+          20.675662979931474,
+          20.645407675102348,
+          20.68801156155935
+        ]
+      ],
+      "source": "synthetic: 32-cluster anisotropic rotated Zipf mixture, scale-normalized"
+    },
+    {
+      "num_train": 4800,
+      "num_components": 4,
+      "dim": 16,
+      "batch_size": 128,
+      "epochs": 4,
+      "alpha_0_opt": 0.3544493170609603,
+      "nll_opt": 20.703492545669924,
+      "b_knee_opt": null,
+      "alpha_censored": false,
+      "knee_censored": false,
+      "dim_intrinsic": 11.046508241041499,
+      "alpha_curve": [
+        [
+          0.02,
+          0.04,
+          0.08,
+          0.16,
+          0.32,
+          0.64
+        ],
+        [
+          21.191871660253717,
+          21.07059440263786,
+          20.92833973974527,
+          20.88130940073286,
+          20.703492545669924,
+          20.800293158533485
+        ]
+      ],
+      "source": "synthetic: 32-cluster anisotropic rotated Zipf mixture, scale-normalized"
+    },
+    {
+      "num_train": 4800,
+      "num_components": 8,
+      "dim": 16,
+      "batch_size": 32,
+      "epochs": 2,
+      "alpha_0_opt": 0.08963079447148412,
+      "nll_opt": 19.676106052974585,
+      "b_knee_opt": null,
+      "alpha_censored": false,
+      "knee_censored": false,
+      "dim_intrinsic": 11.046508241041499,
+      "alpha_curve": [
+        [
+          0.02,
+          0.04,
+          0.08,
+          0.16,
+          0.32,
+          0.64
+        ],
+        [
+          20.011875981937116,
+          19.81085699268937,
+          19.676106052974585,
+          19.744294961196275,
+          19.874689990465413,
+          20.07204121790374
+        ]
+      ],
+      "source": "synthetic: 32-cluster anisotropic rotated Zipf mixture, scale-normalized"
+    },
+    {
+      "num_train": 4800,
+      "num_components": 8,
+      "dim": 16,
+      "batch_size": 128,
+      "epochs": 2,
+      "alpha_0_opt": 0.42771579011500327,
+      "nll_opt": 19.748939942478664,
+      "b_knee_opt": null,
+      "alpha_censored": false,
+      "knee_censored": false,
+      "dim_intrinsic": 11.046508241041499,
+      "alpha_curve": [
+        [
+          0.02,
+          0.04,
+          0.08,
+          0.16,
+          0.32,
+          0.64
+        ],
+        [
+          20.049820546469498,
+          20.031662190595814,
+          19.901007250049524,
+          19.807505673890937,
+          19.748939942478664,
+          19.75413098291569
+        ]
+      ],
+      "source": "synthetic: 32-cluster anisotropic rotated Zipf mixture, scale-normalized"
+    },
+    {
+      "num_train": 4800,
+      "num_components": 8,
+      "dim": 16,
+      "batch_size": 32,
+      "epochs": 4,
+      "alpha_0_opt": 0.5990337601782671,
+      "nll_opt": 19.687135593192085,
+      "b_knee_opt": null,
+      "alpha_censored": false,
+      "knee_censored": false,
+      "dim_intrinsic": 11.046508241041499,
+      "alpha_curve": [
+        [
+          0.02,
+          0.04,
+          0.08,
+          0.16,
+          0.32,
+          0.64,
+          1.0
+        ],
+        [
+          19.92948697318153,
+          19.739288208637845,
+          19.706617296615406,
+          19.727690751041052,
+          19.87168795162784,
+          19.687135593192085,
+          19.809719469382895
+        ]
+      ],
+      "source": "synthetic: 32-cluster anisotropic rotated Zipf mixture, scale-normalized"
+    },
+    {
+      "num_train": 4800,
+      "num_components": 8,
+      "dim": 16,
+      "batch_size": 128,
+      "epochs": 4,
+      "alpha_0_opt": 0.3413794428305882,
+      "nll_opt": 19.71357443941875,
+      "b_knee_opt": null,
+      "alpha_censored": false,
+      "knee_censored": false,
+      "dim_intrinsic": 11.046508241041499,
+      "alpha_curve": [
+        [
+          0.02,
+          0.04,
+          0.08,
+          0.16,
+          0.32,
+          0.64
+        ],
+        [
+          20.029239218445696,
+          19.96885740186791,
+          19.7903126539263,
+          19.733902864507805,
+          19.71357443941875,
+          19.727509082679987
+        ]
+      ],
+      "source": "synthetic: 32-cluster anisotropic rotated Zipf mixture, scale-normalized"
+    },
+    {
+      "num_train": 4800,
+      "num_components": 16,
+      "dim": 16,
+      "batch_size": 32,
+      "epochs": 2,
+      "alpha_0_opt": 0.053141465525387975,
+      "nll_opt": 18.81974440308577,
+      "b_knee_opt": null,
+      "alpha_censored": false,
+      "knee_censored": false,
+      "dim_intrinsic": 11.046508241041499,
+      "alpha_curve": [
+        [
+          0.02,
+          0.04,
+          0.08,
+          0.16,
+          0.32,
+          0.64
+        ],
+        [
+          18.98818887463984,
+          18.81974440308577,
+          18.836436701839332,
+          18.833281564640746,
+          19.134294925606525,
+          19.627658781983712
+        ]
+      ],
+      "source": "synthetic: 32-cluster anisotropic rotated Zipf mixture, scale-normalized"
+    },
+    {
+      "num_train": 4800,
+      "num_components": 16,
+      "dim": 16,
+      "batch_size": 128,
+      "epochs": 2,
+      "alpha_0_opt": 0.23290388438636297,
+      "nll_opt": 18.7991757468234,
+      "b_knee_opt": null,
+      "alpha_censored": false,
+      "knee_censored": false,
+      "dim_intrinsic": 11.046508241041499,
+      "alpha_curve": [
+        [
+          0.02,
+          0.04,
+          0.08,
+          0.16,
+          0.32,
+          0.64
+        ],
+        [
+          19.113436642749477,
+          18.95454975401773,
+          18.8400641106154,
+          18.810570880641848,
+          18.7991757468234,
+          19.061289232504723
+        ]
+      ],
+      "source": "synthetic: 32-cluster anisotropic rotated Zipf mixture, scale-normalized"
+    },
+    {
+      "num_train": 4800,
+      "num_components": 16,
+      "dim": 16,
+      "batch_size": 32,
+      "epochs": 4,
+      "alpha_0_opt": 0.14364835464807355,
+      "nll_opt": 18.741945321684007,
+      "b_knee_opt": null,
+      "alpha_censored": false,
+      "knee_censored": false,
+      "dim_intrinsic": 11.046508241041499,
+      "alpha_curve": [
+        [
+          0.02,
+          0.04,
+          0.08,
+          0.16,
+          0.32,
+          0.64
+        ],
+        [
+          18.838272509607847,
+          18.75570193846047,
+          18.799284873661016,
+          18.741945321684007,
+          18.851063297758483,
+          19.08082790954476
+        ]
+      ],
+      "source": "synthetic: 32-cluster anisotropic rotated Zipf mixture, scale-normalized"
+    },
+    {
+      "num_train": 4800,
+      "num_components": 16,
+      "dim": 16,
+      "batch_size": 128,
+      "epochs": 4,
+      "alpha_0_opt": 0.07855108304239614,
+      "nll_opt": 18.760157757739695,
+      "b_knee_opt": null,
+      "alpha_censored": false,
+      "knee_censored": false,
+      "dim_intrinsic": 11.046508241041499,
+      "alpha_curve": [
+        [
+          0.02,
+          0.04,
+          0.08,
+          0.16,
+          0.32,
+          0.64
+        ],
+        [
+          18.921665570705706,
+          18.82253977600572,
+          18.760157757739695,
+          18.82948586032321,
+          18.786679474447958,
+          18.805878823544788
+        ]
+      ],
+      "source": "synthetic: 32-cluster anisotropic rotated Zipf mixture, scale-normalized"
+    },
+    {
+      "num_train": 1200,
+      "num_components": 4,
+      "dim": 32,
+      "batch_size": 32,
+      "epochs": 2,
+      "alpha_0_opt": 0.6506777482752315,
+      "nll_opt": 40.57569912806346,
+      "b_knee_opt": null,
+      "alpha_censored": false,
+      "knee_censored": false,
+      "dim_intrinsic": 14.681119890669915,
+      "alpha_curve": [
+        [
+          0.02,
+          0.04,
+          0.08,
+          0.16,
+          0.32,
+          0.64,
+          1.0
+        ],
+        [
+          41.97857626877242,
+          42.07318015185676,
+          41.64492491425199,
+          41.3324409258137,
+          40.856435964177095,
+          40.57569912806346,
+          40.67853927019692
+        ]
+      ],
+      "source": "synthetic: 32-cluster anisotropic rotated Zipf mixture, scale-normalized"
+    },
+    {
+      "num_train": 1200,
+      "num_components": 4,
+      "dim": 32,
+      "batch_size": 128,
+      "epochs": 2,
+      "alpha_0_opt": 0.7732868329866011,
+      "nll_opt": 40.03798399600687,
+      "b_knee_opt": null,
+      "alpha_censored": false,
+      "knee_censored": false,
+      "dim_intrinsic": 14.681119890669915,
+      "alpha_curve": [
+        [
+          0.02,
+          0.04,
+          0.08,
+          0.16,
+          0.32,
+          0.64,
+          1.0
+        ],
+        [
+          41.89312011866797,
+          41.48568950291779,
+          41.27687171660927,
+          40.93149340296155,
+          40.580511302400794,
+          40.03798399600687,
+          40.060126823658535
+        ]
+      ],
+      "source": "synthetic: 32-cluster anisotropic rotated Zipf mixture, scale-normalized"
+    },
+    {
+      "num_train": 1200,
+      "num_components": 4,
+      "dim": 32,
+      "batch_size": 32,
+      "epochs": 4,
+      "alpha_0_opt": 0.5900895651361115,
+      "nll_opt": 39.96242802194161,
+      "b_knee_opt": null,
+      "alpha_censored": false,
+      "knee_censored": false,
+      "dim_intrinsic": 14.681119890669915,
+      "alpha_curve": [
+        [
+          0.02,
+          0.04,
+          0.08,
+          0.16,
+          0.32,
+          0.64,
+          1.0
+        ],
+        [
+          41.884277183002986,
+          42.03818949279811,
+          41.38353560071293,
+          40.77670111690456,
+          40.52173298447471,
+          39.96242802194161,
+          40.375404292308986
+        ]
+      ],
+      "source": "synthetic: 32-cluster anisotropic rotated Zipf mixture, scale-normalized"
+    },
+    {
+      "num_train": 1200,
+      "num_components": 4,
+      "dim": 32,
+      "batch_size": 128,
+      "epochs": 4,
+      "alpha_0_opt": 0.7995346246652305,
+      "nll_opt": 39.90499437350847,
+      "b_knee_opt": null,
+      "alpha_censored": false,
+      "knee_censored": false,
+      "dim_intrinsic": 14.681119890669915,
+      "alpha_curve": [
+        [
+          0.02,
+          0.04,
+          0.08,
+          0.16,
+          0.32,
+          0.64,
+          1.0
+        ],
+        [
+          41.72343332422683,
+          41.36093764046262,
+          41.009442411165125,
+          40.433550150101425,
+          40.05865498672027,
+          39.90499437350847,
+          39.905095525787885
+        ]
+      ],
+      "source": "synthetic: 32-cluster anisotropic rotated Zipf mixture, scale-normalized"
+    },
+    {
+      "num_train": 1200,
+      "num_components": 8,
+      "dim": 32,
+      "batch_size": 32,
+      "epochs": 2,
+      "alpha_0_opt": 0.2975471830429602,
+      "nll_opt": 37.77615767132033,
+      "b_knee_opt": null,
+      "alpha_censored": false,
+      "knee_censored": false,
+      "dim_intrinsic": 14.681119890669915,
+      "alpha_curve": [
+        [
+          0.02,
+          0.04,
+          0.08,
+          0.16,
+          0.32,
+          0.64
+        ],
+        [
+          40.635813231908216,
+          39.909699567831396,
+          39.28746898480199,
+          38.419404848489435,
+          37.77615767132033,
+          38.76119245239899
+        ]
+      ],
+      "source": "synthetic: 32-cluster anisotropic rotated Zipf mixture, scale-normalized"
+    },
+    {
+      "num_train": 1200,
+      "num_components": 8,
+      "dim": 32,
+      "batch_size": 128,
+      "epochs": 2,
+      "alpha_0_opt": 1.0,
+      "nll_opt": 38.825653910487546,
+      "b_knee_opt": null,
+      "alpha_censored": true,
+      "knee_censored": false,
+      "dim_intrinsic": 14.681119890669915,
+      "alpha_curve": [
+        [
+          0.02,
+          0.04,
+          0.08,
+          0.16,
+          0.32,
+          0.64,
+          1.0
+        ],
+        [
+          39.917619702139916,
+          39.737983156947266,
+          39.55687246947844,
+          39.42498755007479,
+          39.55276671453372,
+          39.10358779695044,
+          38.825653910487546
+        ]
+      ],
+      "source": "synthetic: 32-cluster anisotropic rotated Zipf mixture, scale-normalized"
+    },
+    {
+      "num_train": 1200,
+      "num_components": 8,
+      "dim": 32,
+      "batch_size": 32,
+      "epochs": 4,
+      "alpha_0_opt": 0.3239165098143445,
+      "nll_opt": 37.83885978636434,
+      "b_knee_opt": null,
+      "alpha_censored": false,
+      "knee_censored": false,
+      "dim_intrinsic": 14.681119890669915,
+      "alpha_curve": [
+        [
+          0.02,
+          0.04,
+          0.08,
+          0.16,
+          0.32,
+          0.64
+        ],
+        [
+          39.71879971760348,
+          38.96988527054144,
+          38.68210845902074,
+          38.38136538184585,
+          37.83885978636434,
+          38.34457270624442
+        ]
+      ],
+      "source": "synthetic: 32-cluster anisotropic rotated Zipf mixture, scale-normalized"
+    },
+    {
+      "num_train": 1200,
+      "num_components": 8,
+      "dim": 32,
+      "batch_size": 128,
+      "epochs": 4,
+      "alpha_0_opt": 1.0,
+      "nll_opt": 38.05533206519381,
+      "b_knee_opt": null,
+      "alpha_censored": true,
+      "knee_censored": false,
+      "dim_intrinsic": 14.681119890669915,
+      "alpha_curve": [
+        [
+          0.02,
+          0.04,
+          0.08,
+          0.16,
+          0.32,
+          0.64,
+          1.0
+        ],
+        [
+          39.63660488730672,
+          39.288280841940036,
+          39.094099835497495,
+          39.26003047030963,
+          38.81339049248564,
+          38.6206134756454,
+          38.05533206519381
+        ]
+      ],
+      "source": "synthetic: 32-cluster anisotropic rotated Zipf mixture, scale-normalized"
+    },
+    {
+      "num_train": 1200,
+      "num_components": 16,
+      "dim": 32,
+      "batch_size": 32,
+      "epochs": 2,
+      "alpha_0_opt": 0.2229640956562129,
+      "nll_opt": 36.41493440055134,
+      "b_knee_opt": null,
+      "alpha_censored": false,
+      "knee_censored": false,
+      "dim_intrinsic": 14.681119890669915,
+      "alpha_curve": [
+        [
+          0.02,
+          0.04,
+          0.08,
+          0.16,
+          0.32,
+          0.64
+        ],
+        [
+          38.21935347870048,
+          37.98803806831809,
+          36.783930096589536,
+          36.41493440055134,
+          36.422949844484066,
+          36.941946186230794
+        ]
+      ],
+      "source": "synthetic: 32-cluster anisotropic rotated Zipf mixture, scale-normalized"
+    },
+    {
+      "num_train": 1200,
+      "num_components": 16,
+      "dim": 32,
+      "batch_size": 128,
+      "epochs": 2,
+      "alpha_0_opt": 0.37856474452676137,
+      "nll_opt": 36.416381830437416,
+      "b_knee_opt": null,
+      "alpha_censored": false,
+      "knee_censored": false,
+      "dim_intrinsic": 14.681119890669915,
+      "alpha_curve": [
+        [
+          0.02,
+          0.04,
+          0.08,
+          0.16,
+          0.32,
+          0.64
+        ],
+        [
+          38.12041178354424,
+          37.884801100897775,
+          37.76565828502099,
+          36.931708933778054,
+          36.416381830437416,
+          36.59512773194666
+        ]
+      ],
+      "source": "synthetic: 32-cluster anisotropic rotated Zipf mixture, scale-normalized"
+    },
+    {
+      "num_train": 1200,
+      "num_components": 16,
+      "dim": 32,
+      "batch_size": 32,
+      "epochs": 4,
+      "alpha_0_opt": 0.08577031518620151,
+      "nll_opt": 35.97977592596299,
+      "b_knee_opt": null,
+      "alpha_censored": false,
+      "knee_censored": false,
+      "dim_intrinsic": 14.681119890669915,
+      "alpha_curve": [
+        [
+          0.02,
+          0.04,
+          0.08,
+          0.16,
+          0.32,
+          0.64
+        ],
+        [
+          37.85598748000734,
+          36.636922238878824,
+          35.97977592596299,
+          36.41700084861737,
+          36.29919206268238,
+          36.833353541932944
+        ]
+      ],
+      "source": "synthetic: 32-cluster anisotropic rotated Zipf mixture, scale-normalized"
+    },
+    {
+      "num_train": 1200,
+      "num_components": 16,
+      "dim": 32,
+      "batch_size": 128,
+      "epochs": 4,
+      "alpha_0_opt": 0.32952102444024434,
+      "nll_opt": 36.34058836951435,
+      "b_knee_opt": null,
+      "alpha_censored": false,
+      "knee_censored": false,
+      "dim_intrinsic": 14.681119890669915,
+      "alpha_curve": [
+        [
+          0.02,
+          0.04,
+          0.08,
+          0.16,
+          0.32,
+          0.64
+        ],
+        [
+          37.75177536947233,
+          37.54020097153337,
+          36.63866167096243,
+          36.712625718981144,
+          36.34058836951435,
+          36.65458882590521
+        ]
+      ],
+      "source": "synthetic: 32-cluster anisotropic rotated Zipf mixture, scale-normalized"
+    },
+    {
+      "num_train": 4800,
+      "num_components": 4,
+      "dim": 32,
+      "batch_size": 32,
+      "epochs": 2,
+      "alpha_0_opt": 0.4515302978309981,
+      "nll_opt": 39.40337316377477,
+      "b_knee_opt": null,
+      "alpha_censored": false,
+      "knee_censored": false,
+      "dim_intrinsic": 14.861802813508685,
+      "alpha_curve": [
+        [
+          0.02,
+          0.04,
+          0.08,
+          0.16,
+          0.32,
+          0.64
+        ],
+        [
+          40.29268198497927,
+          40.251626384375456,
+          39.967177020381314,
+          39.78980878111146,
+          39.40337316377477,
+          39.40463282794438
+        ]
+      ],
+      "source": "synthetic: 32-cluster anisotropic rotated Zipf mixture, scale-normalized"
+    },
+    {
+      "num_train": 4800,
+      "num_components": 4,
+      "dim": 32,
+      "batch_size": 128,
+      "epochs": 2,
+      "alpha_0_opt": 1.0,
+      "nll_opt": 39.611230026949706,
+      "b_knee_opt": null,
+      "alpha_censored": true,
+      "knee_censored": false,
+      "dim_intrinsic": 14.861802813508685,
+      "alpha_curve": [
+        [
+          0.02,
+          0.04,
+          0.08,
+          0.16,
+          0.32,
+          0.64,
+          1.0
+        ],
+        [
+          40.30567056268111,
+          40.26684306669331,
+          40.37005814241549,
+          40.27777035401442,
+          40.1791570073949,
+          39.802517066780496,
+          39.611230026949706
+        ]
+      ],
+      "source": "synthetic: 32-cluster anisotropic rotated Zipf mixture, scale-normalized"
+    },
+    {
+      "num_train": 4800,
+      "num_components": 4,
+      "dim": 32,
+      "batch_size": 32,
+      "epochs": 4,
+      "alpha_0_opt": 0.3545547684190163,
+      "nll_opt": 39.40357816758558,
+      "b_knee_opt": null,
+      "alpha_censored": false,
+      "knee_censored": false,
+      "dim_intrinsic": 14.861802813508685,
+      "alpha_curve": [
+        [
+          0.02,
+          0.04,
+          0.08,
+          0.16,
+          0.32,
+          0.64
+        ],
+        [
+          40.22743899874267,
+          40.230962557887054,
+          39.92424689075088,
+          39.78945178491827,
+          39.40357816758558,
+          39.61324680062901
+        ]
+      ],
+      "source": "synthetic: 32-cluster anisotropic rotated Zipf mixture, scale-normalized"
+    },
+    {
+      "num_train": 4800,
+      "num_components": 4,
+      "dim": 32,
+      "batch_size": 128,
+      "epochs": 4,
+      "alpha_0_opt": 0.4519838424769322,
+      "nll_opt": 39.820189526152085,
+      "b_knee_opt": null,
+      "alpha_censored": false,
+      "knee_censored": false,
+      "dim_intrinsic": 14.861802813508685,
+      "alpha_curve": [
+        [
+          0.02,
+          0.04,
+          0.08,
+          0.16,
+          0.32,
+          0.64
+        ],
+        [
+          40.26189911416144,
+          40.22092196038304,
+          40.286530366005266,
+          40.105429824341115,
+          39.820189526152085,
+          39.82070408636226
+        ]
+      ],
+      "source": "synthetic: 32-cluster anisotropic rotated Zipf mixture, scale-normalized"
+    },
+    {
+      "num_train": 4800,
+      "num_components": 8,
+      "dim": 32,
+      "batch_size": 32,
+      "epochs": 2,
+      "alpha_0_opt": 0.29401145350422814,
+      "nll_opt": 37.3073009511059,
+      "b_knee_opt": null,
+      "alpha_censored": false,
+      "knee_censored": false,
+      "dim_intrinsic": 14.861802813508685,
+      "alpha_curve": [
+        [
+          0.02,
+          0.04,
+          0.08,
+          0.16,
+          0.32,
+          0.64
+        ],
+        [
+          38.21226145124339,
+          37.87562167889635,
+          37.83427276098486,
+          38.065925486438644,
+          37.3073009511059,
+          38.55667966200157
+        ]
+      ],
+      "source": "synthetic: 32-cluster anisotropic rotated Zipf mixture, scale-normalized"
+    },
+    {
+      "num_train": 4800,
+      "num_components": 8,
+      "dim": 32,
+      "batch_size": 128,
+      "epochs": 2,
+      "alpha_0_opt": 0.5342010690441439,
+      "nll_opt": 37.59435383736156,
+      "b_knee_opt": null,
+      "alpha_censored": false,
+      "knee_censored": false,
+      "dim_intrinsic": 14.861802813508685,
+      "alpha_curve": [
+        [
+          0.02,
+          0.04,
+          0.08,
+          0.16,
+          0.32,
+          0.64,
+          1.0
+        ],
+        [
+          39.071499774651485,
+          38.858380348369934,
+          38.60833167875141,
+          37.95550617763552,
+          37.83239220348487,
+          37.59435383736156,
+          37.967480690313316
+        ]
+      ],
+      "source": "synthetic: 32-cluster anisotropic rotated Zipf mixture, scale-normalized"
+    },
+    {
+      "num_train": 4800,
+      "num_components": 8,
+      "dim": 32,
+      "batch_size": 32,
+      "epochs": 4,
+      "alpha_0_opt": 0.5528487482803993,
+      "nll_opt": 37.307635480125654,
+      "b_knee_opt": null,
+      "alpha_censored": false,
+      "knee_censored": false,
+      "dim_intrinsic": 14.861802813508685,
+      "alpha_curve": [
+        [
+          0.02,
+          0.04,
+          0.08,
+          0.16,
+          0.32,
+          0.64,
+          1.0
+        ],
+        [
+          37.97315968246564,
+          37.397942556536705,
+          37.83253147248891,
+          37.85844300404828,
+          37.743806262053226,
+          37.307635480125654,
+          37.826017409326916
+        ]
+      ],
+      "source": "synthetic: 32-cluster anisotropic rotated Zipf mixture, scale-normalized"
+    },
+    {
+      "num_train": 4800,
+      "num_components": 8,
+      "dim": 32,
+      "batch_size": 128,
+      "epochs": 4,
+      "alpha_0_opt": 0.6052186717442267,
+      "nll_opt": 37.36077713865816,
+      "b_knee_opt": null,
+      "alpha_censored": false,
+      "knee_censored": false,
+      "dim_intrinsic": 14.861802813508685,
+      "alpha_curve": [
+        [
+          0.02,
+          0.04,
+          0.08,
+          0.16,
+          0.32,
+          0.64,
+          1.0
+        ],
+        [
+          38.842462431912,
+          38.150114668501104,
+          38.179700365585234,
+          37.85227968952458,
+          37.799187147445714,
+          37.36077713865816,
+          37.63171499247859
+        ]
+      ],
+      "source": "synthetic: 32-cluster anisotropic rotated Zipf mixture, scale-normalized"
+    },
+    {
+      "num_train": 4800,
+      "num_components": 16,
+      "dim": 32,
+      "batch_size": 32,
+      "epochs": 2,
+      "alpha_0_opt": 0.09112007911934838,
+      "nll_opt": 35.002502429271814,
+      "b_knee_opt": null,
+      "alpha_censored": false,
+      "knee_censored": false,
+      "dim_intrinsic": 14.861802813508685,
+      "alpha_curve": [
+        [
+          0.02,
+          0.04,
+          0.08,
+          0.16,
+          0.32,
+          0.64
+        ],
+        [
+          35.86220085099636,
+          35.290862865003575,
+          35.002502429271814,
+          35.1334113061185,
+          35.59133216535415,
+          37.97620569826567
+        ]
+      ],
+      "source": "synthetic: 32-cluster anisotropic rotated Zipf mixture, scale-normalized"
+    },
+    {
+      "num_train": 4800,
+      "num_components": 16,
+      "dim": 32,
+      "batch_size": 128,
+      "epochs": 2,
+      "alpha_0_opt": 0.16367739347785945,
+      "nll_opt": 35.11402833206124,
+      "b_knee_opt": null,
+      "alpha_censored": false,
+      "knee_censored": false,
+      "dim_intrinsic": 14.861802813508685,
+      "alpha_curve": [
+        [
+          0.02,
+          0.04,
+          0.08,
+          0.16,
+          0.32,
+          0.64
+        ],
+        [
+          36.787451148608596,
+          35.840598209025686,
+          35.49427569992963,
+          35.11402833206124,
+          35.447480999737216,
+          35.80865531565702
+        ]
+      ],
+      "source": "synthetic: 32-cluster anisotropic rotated Zipf mixture, scale-normalized"
+    },
+    {
+      "num_train": 4800,
+      "num_components": 16,
+      "dim": 32,
+      "batch_size": 32,
+      "epochs": 4,
+      "alpha_0_opt": 0.14357031267840503,
+      "nll_opt": 34.896772853062046,
+      "b_knee_opt": null,
+      "alpha_censored": false,
+      "knee_censored": false,
+      "dim_intrinsic": 14.861802813508685,
+      "alpha_curve": [
+        [
+          0.02,
+          0.04,
+          0.08,
+          0.16,
+          0.32,
+          0.64
+        ],
+        [
+          35.51811792837225,
+          35.27790725702522,
+          35.085261009973294,
+          34.896772853062046,
+          35.256716696509216,
+          35.4598235849746
+        ]
+      ],
+      "source": "synthetic: 32-cluster anisotropic rotated Zipf mixture, scale-normalized"
+    },
+    {
+      "num_train": 4800,
+      "num_components": 16,
+      "dim": 32,
+      "batch_size": 128,
+      "epochs": 4,
+      "alpha_0_opt": 0.1493906490365078,
+      "nll_opt": 35.09909231886378,
+      "b_knee_opt": null,
+      "alpha_censored": false,
+      "knee_censored": false,
+      "dim_intrinsic": 14.861802813508685,
+      "alpha_curve": [
+        [
+          0.02,
+          0.04,
+          0.08,
+          0.16,
+          0.32,
+          0.64
+        ],
+        [
+          35.732830878431784,
+          35.58383533212375,
+          35.28685979325708,
+          35.09909231886378,
+          35.37955196064389,
+          35.688275348660866
+        ]
+      ],
+      "source": "synthetic: 32-cluster anisotropic rotated Zipf mixture, scale-normalized"
+    },
+    {
+      "num_train": 1200,
+      "num_components": 4,
+      "dim": 64,
+      "batch_size": 32,
+      "epochs": 2,
+      "alpha_0_opt": 0.4816819861780516,
+      "nll_opt": 78.55851812336641,
+      "b_knee_opt": null,
+      "alpha_censored": false,
+      "knee_censored": false,
+      "dim_intrinsic": 19.264938608498586,
+      "alpha_curve": [
+        [
+          0.02,
+          0.04,
+          0.08,
+          0.16,
+          0.32,
+          0.64,
+          1.0
+        ],
+        [
+          82.23030166568678,
+          81.99728911958803,
+          81.03644655311132,
+          79.75712736505554,
+          78.94106720875581,
+          78.55851812336641,
+          80.56138841553256
+        ]
+      ],
+      "source": "synthetic: 32-cluster anisotropic rotated Zipf mixture, scale-normalized"
+    },
+    {
+      "num_train": 1200,
+      "num_components": 4,
+      "dim": 64,
+      "batch_size": 128,
+      "epochs": 2,
+      "alpha_0_opt": 1.0,
+      "nll_opt": 79.07799540104531,
+      "b_knee_opt": null,
+      "alpha_censored": true,
+      "knee_censored": false,
+      "dim_intrinsic": 19.264938608498586,
+      "alpha_curve": [
+        [
+          0.02,
+          0.04,
+          0.08,
+          0.16,
+          0.32,
+          0.64,
+          1.0
+        ],
+        [
+          82.16856443440386,
+          81.99308781423548,
+          81.93453866962307,
+          81.594305283903,
+          80.78008691075127,
+          80.18282403140138,
+          79.07799540104531
+        ]
+      ],
+      "source": "synthetic: 32-cluster anisotropic rotated Zipf mixture, scale-normalized"
+    },
+    {
+      "num_train": 1200,
+      "num_components": 4,
+      "dim": 64,
+      "batch_size": 32,
+      "epochs": 4,
+      "alpha_0_opt": 0.3937541511122663,
+      "nll_opt": 78.32754442518085,
+      "b_knee_opt": null,
+      "alpha_censored": false,
+      "knee_censored": false,
+      "dim_intrinsic": 19.264938608498586,
+      "alpha_curve": [
+        [
+          0.02,
+          0.04,
+          0.08,
+          0.16,
+          0.32,
+          0.64
+        ],
+        [
+          82.17718742125402,
+          81.23585728735793,
+          79.68749624014549,
+          79.36822968941,
+          78.32754442518085,
+          78.58898005516585
+        ]
+      ],
+      "source": "synthetic: 32-cluster anisotropic rotated Zipf mixture, scale-normalized"
+    },
+    {
+      "num_train": 1200,
+      "num_components": 4,
+      "dim": 64,
+      "batch_size": 128,
+      "epochs": 4,
+      "alpha_0_opt": 1.0,
+      "nll_opt": 78.58711424989187,
+      "b_knee_opt": null,
+      "alpha_censored": true,
+      "knee_censored": false,
+      "dim_intrinsic": 19.264938608498586,
+      "alpha_curve": [
+        [
+          0.02,
+          0.04,
+          0.08,
+          0.16,
+          0.32,
+          0.64,
+          1.0
+        ],
+        [
+          82.01340248430837,
+          81.12083401917724,
+          80.77324716660392,
+          81.32275668399032,
+          80.32765873087538,
+          79.31920955264326,
+          78.58711424989187
+        ]
+      ],
+      "source": "synthetic: 32-cluster anisotropic rotated Zipf mixture, scale-normalized"
+    },
+    {
+      "num_train": 1200,
+      "num_components": 8,
+      "dim": 64,
+      "batch_size": 32,
+      "epochs": 2,
+      "alpha_0_opt": 0.21264346261405487,
+      "nll_opt": 74.59113544089803,
+      "b_knee_opt": null,
+      "alpha_censored": false,
+      "knee_censored": false,
+      "dim_intrinsic": 19.264938608498586,
+      "alpha_curve": [
+        [
+          0.02,
+          0.04,
+          0.08,
+          0.16,
+          0.32,
+          0.64
+        ],
+        [
+          78.18690042846237,
+          77.75847130872783,
+          75.79684119282403,
+          74.59113544089803,
+          74.70985042730511,
+          75.90745770131855
+        ]
+      ],
+      "source": "synthetic: 32-cluster anisotropic rotated Zipf mixture, scale-normalized"
+    },
+    {
+      "num_train": 1200,
+      "num_components": 8,
+      "dim": 64,
+      "batch_size": 128,
+      "epochs": 2,
+      "alpha_0_opt": 0.5388394998114694,
+      "nll_opt": 74.3161086774224,
+      "b_knee_opt": null,
+      "alpha_censored": false,
+      "knee_censored": false,
+      "dim_intrinsic": 19.264938608498586,
+      "alpha_curve": [
+        [
+          0.02,
+          0.04,
+          0.08,
+          0.16,
+          0.32,
+          0.64,
+          1.0
+        ],
+        [
+          77.92809222809335,
+          77.67368819520922,
+          77.09049374539377,
+          76.42118416500718,
+          74.60559435708558,
+          74.3161086774224,
+          74.73816770200239
+        ]
+      ],
+      "source": "synthetic: 32-cluster anisotropic rotated Zipf mixture, scale-normalized"
+    },
+    {
+      "num_train": 1200,
+      "num_components": 8,
+      "dim": 64,
+      "batch_size": 32,
+      "epochs": 4,
+      "alpha_0_opt": 0.20454450906557378,
+      "nll_opt": 74.20798238019546,
+      "b_knee_opt": null,
+      "alpha_censored": false,
+      "knee_censored": false,
+      "dim_intrinsic": 19.264938608498586,
+      "alpha_curve": [
+        [
+          0.02,
+          0.04,
+          0.08,
+          0.16,
+          0.32,
+          0.64
+        ],
+        [
+          78.15683363977067,
+          75.23713772118441,
+          74.45413538162333,
+          74.20798238019546,
+          74.2499490556514,
+          74.71788369301976
+        ]
+      ],
+      "source": "synthetic: 32-cluster anisotropic rotated Zipf mixture, scale-normalized"
+    },
+    {
+      "num_train": 1200,
+      "num_components": 8,
+      "dim": 64,
+      "batch_size": 128,
+      "epochs": 4,
+      "alpha_0_opt": 0.5037212979939791,
+      "nll_opt": 73.89566689993788,
+      "b_knee_opt": null,
+      "alpha_censored": false,
+      "knee_censored": false,
+      "dim_intrinsic": 19.264938608498586,
+      "alpha_curve": [
+        [
+          0.02,
+          0.04,
+          0.08,
+          0.16,
+          0.32,
+          0.64,
+          1.0
+        ],
+        [
+          77.7867463988765,
+          77.14272886317079,
+          75.43123623382256,
+          75.89766349496992,
+          74.32538344891442,
+          73.89566689993788,
+          75.0903718175082
+        ]
+      ],
+      "source": "synthetic: 32-cluster anisotropic rotated Zipf mixture, scale-normalized"
+    },
+    {
+      "num_train": 1200,
+      "num_components": 16,
+      "dim": 64,
+      "batch_size": 32,
+      "epochs": 2,
+      "alpha_0_opt": 0.13608975959950953,
+      "nll_opt": 69.63588577569573,
+      "b_knee_opt": null,
+      "alpha_censored": false,
+      "knee_censored": false,
+      "dim_intrinsic": 19.264938608498586,
+      "alpha_curve": [
+        [
+          0.02,
+          0.04,
+          0.08,
+          0.16,
+          0.32,
+          0.64
+        ],
+        [
+          73.20062282751407,
+          72.89734972316374,
+          70.39225385358816,
+          69.63588577569573,
+          71.717814477812,
+          73.90702518863255
+        ]
+      ],
+      "source": "synthetic: 32-cluster anisotropic rotated Zipf mixture, scale-normalized"
+    },
+    {
+      "num_train": 1200,
+      "num_components": 16,
+      "dim": 64,
+      "batch_size": 128,
+      "epochs": 2,
+      "alpha_0_opt": 0.46675161329968806,
+      "nll_opt": 70.48863163472762,
+      "b_knee_opt": null,
+      "alpha_censored": false,
+      "knee_censored": false,
+      "dim_intrinsic": 19.264938608498586,
+      "alpha_curve": [
+        [
+          0.02,
+          0.04,
+          0.08,
+          0.16,
+          0.32,
+          0.64,
+          1.0
+        ],
+        [
+          72.93276839357235,
+          72.69928742619857,
+          72.05020384409288,
+          71.2876756515908,
+          70.73543407563947,
+          70.48863163472762,
+          73.25928266469865
+        ]
+      ],
+      "source": "synthetic: 32-cluster anisotropic rotated Zipf mixture, scale-normalized"
+    },
+    {
+      "num_train": 1200,
+      "num_components": 16,
+      "dim": 64,
+      "batch_size": 32,
+      "epochs": 4,
+      "alpha_0_opt": 0.07810961483936632,
+      "nll_opt": 69.50351940132356,
+      "b_knee_opt": null,
+      "alpha_censored": false,
+      "knee_censored": false,
+      "dim_intrinsic": 19.264938608498586,
+      "alpha_curve": [
+        [
+          0.02,
+          0.04,
+          0.08,
+          0.16,
+          0.32,
+          0.64
+        ],
+        [
+          73.08391958128794,
+          70.07409359919927,
+          69.50351940132356,
+          70.15866812095845,
+          69.65901473705672,
+          70.56530250486645
+        ]
+      ],
+      "source": "synthetic: 32-cluster anisotropic rotated Zipf mixture, scale-normalized"
+    },
+    {
+      "num_train": 1200,
+      "num_components": 16,
+      "dim": 64,
+      "batch_size": 128,
+      "epochs": 4,
+      "alpha_0_opt": 0.41183893754154105,
+      "nll_opt": 69.85689583560278,
+      "b_knee_opt": null,
+      "alpha_censored": false,
+      "knee_censored": false,
+      "dim_intrinsic": 19.264938608498586,
+      "alpha_curve": [
+        [
+          0.02,
+          0.04,
+          0.08,
+          0.16,
+          0.32,
+          0.64
+        ],
+        [
+          72.8686808922663,
+          72.68644837415059,
+          70.29293741940786,
+          70.87541500689575,
+          69.85689583560278,
+          70.01720693007292
+        ]
+      ],
+      "source": "synthetic: 32-cluster anisotropic rotated Zipf mixture, scale-normalized"
+    },
+    {
+      "num_train": 4800,
+      "num_components": 4,
+      "dim": 64,
+      "batch_size": 32,
+      "epochs": 2,
+      "alpha_0_opt": 0.4934958803584877,
+      "nll_opt": 78.3603565553137,
+      "b_knee_opt": null,
+      "alpha_censored": false,
+      "knee_censored": false,
+      "dim_intrinsic": 20.145948398087093,
+      "alpha_curve": [
+        [
+          0.02,
+          0.04,
+          0.08,
+          0.16,
+          0.32,
+          0.64,
+          1.0
+        ],
+        [
+          81.19132290935951,
+          81.05830181319024,
+          79.0627272774635,
+          79.13389757272932,
+          79.0740839601628,
+          78.3603565553137,
+          80.92329384492452
+        ]
+      ],
+      "source": "synthetic: 32-cluster anisotropic rotated Zipf mixture, scale-normalized"
+    },
+    {
+      "num_train": 4800,
+      "num_components": 4,
+      "dim": 64,
+      "batch_size": 128,
+      "epochs": 2,
+      "alpha_0_opt": 1.0,
+      "nll_opt": 78.36053484551688,
+      "b_knee_opt": null,
+      "alpha_censored": true,
+      "knee_censored": false,
+      "dim_intrinsic": 20.145948398087093,
+      "alpha_curve": [
+        [
+          0.02,
+          0.04,
+          0.08,
+          0.16,
+          0.32,
+          0.64,
+          1.0
+        ],
+        [
+          82.32389387993311,
+          81.24451212374446,
+          82.04953337816329,
+          81.92980207044656,
+          81.19332033428563,
+          79.60409640496763,
+          78.36053484551688
+        ]
+      ],
+      "source": "synthetic: 32-cluster anisotropic rotated Zipf mixture, scale-normalized"
+    },
+    {
+      "num_train": 4800,
+      "num_components": 4,
+      "dim": 64,
+      "batch_size": 32,
+      "epochs": 4,
+      "alpha_0_opt": 0.7996830613228748,
+      "nll_opt": 78.3606955878837,
+      "b_knee_opt": null,
+      "alpha_censored": false,
+      "knee_censored": false,
+      "dim_intrinsic": 20.145948398087093,
+      "alpha_curve": [
+        [
+          0.02,
+          0.04,
+          0.08,
+          0.16,
+          0.32,
+          0.64,
+          1.0
+        ],
+        [
+          81.12037875986601,
+          79.06117504942809,
+          78.81765163875505,
+          79.07416096248303,
+          79.07416286458218,
+          78.3606955878837,
+          78.36101531326261
+        ]
+      ],
+      "source": "synthetic: 32-cluster anisotropic rotated Zipf mixture, scale-normalized"
+    },
+    {
+      "num_train": 4800,
+      "num_components": 4,
+      "dim": 64,
+      "batch_size": 128,
+      "epochs": 4,
+      "alpha_0_opt": 0.04666575164671326,
+      "nll_opt": 79.40683288081303,
+      "b_knee_opt": null,
+      "alpha_censored": false,
+      "knee_censored": false,
+      "dim_intrinsic": 20.145948398087093,
+      "alpha_curve": [
+        [
+          0.02,
+          0.04,
+          0.08,
+          0.16,
+          0.32,
+          0.64
+        ],
+        [
+          81.55540881697121,
+          79.40683288081303,
+          80.23262380074398,
+          80.82173559962538,
+          79.917015814775,
+          79.60401548032289
+        ]
+      ],
+      "source": "synthetic: 32-cluster anisotropic rotated Zipf mixture, scale-normalized"
+    },
+    {
+      "num_train": 4800,
+      "num_components": 8,
+      "dim": 64,
+      "batch_size": 32,
+      "epochs": 2,
+      "alpha_0_opt": 0.26060427677654935,
+      "nll_opt": 72.85547004343658,
+      "b_knee_opt": null,
+      "alpha_censored": false,
+      "knee_censored": false,
+      "dim_intrinsic": 20.145948398087093,
+      "alpha_curve": [
+        [
+          0.02,
+          0.04,
+          0.08,
+          0.16,
+          0.32,
+          0.64
+        ],
+        [
+          74.65436059558948,
+          74.37833152319658,
+          74.2263618792909,
+          73.5499945277587,
+          72.85547004343658,
+          75.56900476890651
+        ]
+      ],
+      "source": "synthetic: 32-cluster anisotropic rotated Zipf mixture, scale-normalized"
+    },
+    {
+      "num_train": 4800,
+      "num_components": 8,
+      "dim": 64,
+      "batch_size": 128,
+      "epochs": 2,
+      "alpha_0_opt": 0.31201166089169036,
+      "nll_opt": 73.52264135272786,
+      "b_knee_opt": null,
+      "alpha_censored": false,
+      "knee_censored": false,
+      "dim_intrinsic": 20.145948398087093,
+      "alpha_curve": [
+        [
+          0.02,
+          0.04,
+          0.08,
+          0.16,
+          0.32,
+          0.64
+        ],
+        [
+          74.51745896075315,
+          74.55410551276621,
+          74.11131068667123,
+          73.77472141530905,
+          73.52264135272786,
+          73.81439044198052
+        ]
+      ],
+      "source": "synthetic: 32-cluster anisotropic rotated Zipf mixture, scale-normalized"
+    },
+    {
+      "num_train": 4800,
+      "num_components": 8,
+      "dim": 64,
+      "batch_size": 32,
+      "epochs": 4,
+      "alpha_0_opt": 0.28153512222723404,
+      "nll_opt": 73.28609725660286,
+      "b_knee_opt": null,
+      "alpha_censored": false,
+      "knee_censored": false,
+      "dim_intrinsic": 20.145948398087093,
+      "alpha_curve": [
+        [
+          0.02,
+          0.04,
+          0.08,
+          0.16,
+          0.32,
+          0.64
+        ],
+        [
+          74.65527659486631,
+          74.01886825519315,
+          73.93340696114066,
+          73.45607551123507,
+          73.28609725660286,
+          73.65531654210987
+        ]
+      ],
+      "source": "synthetic: 32-cluster anisotropic rotated Zipf mixture, scale-normalized"
+    },
+    {
+      "num_train": 4800,
+      "num_components": 8,
+      "dim": 64,
+      "batch_size": 128,
+      "epochs": 4,
+      "alpha_0_opt": 0.329828004595806,
+      "nll_opt": 73.33450119856673,
+      "b_knee_opt": null,
+      "alpha_censored": false,
+      "knee_censored": false,
+      "dim_intrinsic": 20.145948398087093,
+      "alpha_curve": [
+        [
+          0.02,
+          0.04,
+          0.08,
+          0.16,
+          0.32,
+          0.64
+        ],
+        [
+          74.35926473345828,
+          74.25585342277294,
+          73.90231174005595,
+          73.73485487531227,
+          73.33450119856673,
+          73.67057642482874
+        ]
+      ],
+      "source": "synthetic: 32-cluster anisotropic rotated Zipf mixture, scale-normalized"
+    },
+    {
+      "num_train": 4800,
+      "num_components": 16,
+      "dim": 64,
+      "batch_size": 32,
+      "epochs": 2,
+      "alpha_0_opt": 0.1526766026869144,
+      "nll_opt": 68.53371097717286,
+      "b_knee_opt": null,
+      "alpha_censored": false,
+      "knee_censored": false,
+      "dim_intrinsic": 20.145948398087093,
+      "alpha_curve": [
+        [
+          0.02,
+          0.04,
+          0.08,
+          0.16,
+          0.32,
+          0.64
+        ],
+        [
+          70.46600292552714,
+          69.04370432432576,
+          69.33020575236444,
+          68.53371097717286,
+          69.57921834241691,
+          72.71934285529451
+        ]
+      ],
+      "source": "synthetic: 32-cluster anisotropic rotated Zipf mixture, scale-normalized"
+    },
+    {
+      "num_train": 4800,
+      "num_components": 16,
+      "dim": 64,
+      "batch_size": 128,
+      "epochs": 2,
+      "alpha_0_opt": 0.33085748579321583,
+      "nll_opt": 68.06101094017012,
+      "b_knee_opt": null,
+      "alpha_censored": false,
+      "knee_censored": false,
+      "dim_intrinsic": 20.145948398087093,
+      "alpha_curve": [
+        [
+          0.02,
+          0.04,
+          0.08,
+          0.16,
+          0.32,
+          0.64
+        ],
+        [
+          72.26528204806203,
+          69.36947436223537,
+          68.94841162395011,
+          69.23787775189393,
+          68.06101094017012,
+          69.03117056429726
+        ]
+      ],
+      "source": "synthetic: 32-cluster anisotropic rotated Zipf mixture, scale-normalized"
+    },
+    {
+      "num_train": 4800,
+      "num_components": 16,
+      "dim": 64,
+      "batch_size": 32,
+      "epochs": 4,
+      "alpha_0_opt": 0.18176618143570372,
+      "nll_opt": 67.71176887598898,
+      "b_knee_opt": null,
+      "alpha_censored": false,
+      "knee_censored": false,
+      "dim_intrinsic": 20.145948398087093,
+      "alpha_curve": [
+        [
+          0.02,
+          0.04,
+          0.08,
+          0.16,
+          0.32,
+          0.64
+        ],
+        [
+          69.94371941552163,
+          68.53897018890156,
+          69.27691422313737,
+          67.71176887598898,
+          68.43480791719115,
+          69.37478971015298
+        ]
+      ],
+      "source": "synthetic: 32-cluster anisotropic rotated Zipf mixture, scale-normalized"
+    },
+    {
+      "num_train": 4800,
+      "num_components": 16,
+      "dim": 64,
+      "batch_size": 128,
+      "epochs": 4,
+      "alpha_0_opt": 0.37821559509442454,
+      "nll_opt": 68.02398962438568,
+      "b_knee_opt": null,
+      "alpha_censored": false,
+      "knee_censored": false,
+      "dim_intrinsic": 20.145948398087093,
+      "alpha_curve": [
+        [
+          0.02,
+          0.04,
+          0.08,
+          0.16,
+          0.32,
+          0.64
+        ],
+        [
+          69.1648612057844,
+          68.5417469282255,
+          68.57873425535792,
+          69.16592485210683,
+          68.02398962438568,
+          68.42284282051054
+        ]
+      ],
+      "source": "synthetic: 32-cluster anisotropic rotated Zipf mixture, scale-normalized"
+    }
+  ],
+  "skipped_configs": [],
+  "censoring": {
+    "alpha_censored": 17,
+    "alpha_total": 96,
+    "knee_censored": 0,
+    "knee_total": 48
   },
-  "fit_batch_knee": {
-    "num_observations": 18,
-    "c_b": 16.8892,
-    "b_k": 0.0,
-    "b_n": -0.0,
-    "b_d": -0.0,
-    "r2_log": 1.0
+  "intrinsic_dims": {
+    "d=8,n=1200": 6.648718801846778,
+    "d=8,n=4800": 7.49260955168352,
+    "d=16,n=1200": 9.737178525367232,
+    "d=16,n=4800": 11.046508241041499,
+    "d=32,n=1200": 14.681119890669915,
+    "d=32,n=4800": 14.861802813508685,
+    "d=64,n=1200": 19.264938608498586,
+    "d=64,n=4800": 20.145948398087093,
+    "d=128,n=4800": 25.531714377716224,
+    "d=24,n=2400": 13.515607600002676
   },
-  "ood_transfer": {
-    "dim": 24,
-    "k": 12,
-    "oracle_nll": 19.2708,
-    "with_d_pred_alpha0": 0.134,
-    "with_d_nll": 20.1567,
-    "with_d_gap_nats": 0.8859,
-    "no_d_pred_alpha0": 0.1437,
-    "no_d_nll": 20.1569,
-    "no_d_gap_nats": 0.8861
-  }
+  "alpha_laws": {
+    "no_d": {
+      "fit": {
+        "c_alpha": 1.4767209504801488,
+        "a_k": -0.6939545746767783,
+        "a_b": 0.38102314880713534,
+        "a_n": -0.19771011251987275,
+        "a_t": -0.11071840081464118,
+        "a_d": null,
+        "r2_log": 0.4274283428609408,
+        "include_dim": false,
+        "dim_feature": "ambient",
+        "unidentified": [],
+        "n_used": 79,
+        "n_censored_excluded": 17
+      },
+      "loso_n": {
+        "loso_log_rmse": 0.6520934240146975,
+        "loso_mean_rel_err": 0.7735909152660716,
+        "loso_regret_nats_per_dim_mean": 0.003993423848771203,
+        "loso_regret_nats_per_dim_median": 0.002536025270567066,
+        "loso_n_regret_extrapolated": 6.0,
+        "loso_n_heldout_points": 79.0,
+        "n_folds": 2.0
+      },
+      "lodo_d": {
+        "lodo_log_rmse": 0.5341068835931955,
+        "lodo_mean_rel_err": 0.5456133254338058,
+        "lodo_regret_nats_per_dim_mean": 0.0034319059763954387,
+        "lodo_regret_nats_per_dim_median": 0.0017715725691469508,
+        "lodo_n_regret_extrapolated": 1.0,
+        "lodo_n_heldout_points": 79.0,
+        "n_folds": 4.0
+      }
+    },
+    "ambient_d": {
+      "fit": {
+        "c_alpha": 1.6499296639806378,
+        "a_k": -0.697293960400553,
+        "a_b": 0.3862414325591445,
+        "a_n": -0.19825054327835806,
+        "a_t": -0.108676405547132,
+        "a_d": -0.03846114389708963,
+        "r2_log": 0.4292682971847671,
+        "include_dim": true,
+        "dim_feature": "ambient",
+        "unidentified": [],
+        "n_used": 79,
+        "n_censored_excluded": 17
+      },
+      "loso_n": {
+        "loso_log_rmse": 0.6588275849952585,
+        "loso_mean_rel_err": 0.7771432516261246,
+        "loso_regret_nats_per_dim_mean": 0.00417447596100382,
+        "loso_regret_nats_per_dim_median": 0.002948109541323296,
+        "loso_n_regret_extrapolated": 5.0,
+        "loso_n_heldout_points": 79.0,
+        "n_folds": 2.0
+      },
+      "lodo_d": {
+        "lodo_log_rmse": 0.5492600558349509,
+        "lodo_mean_rel_err": 0.546882174128078,
+        "lodo_regret_nats_per_dim_mean": 0.003767727997027994,
+        "lodo_regret_nats_per_dim_median": 0.0022781828921749625,
+        "lodo_n_regret_extrapolated": 1.0,
+        "lodo_n_heldout_points": 79.0,
+        "n_folds": 4.0
+      }
+    },
+    "intrinsic_d": {
+      "fit": {
+        "c_alpha": 1.7570094916693642,
+        "a_k": -0.6983125089678149,
+        "a_b": 0.387367526974752,
+        "a_n": -0.19363243048307544,
+        "a_t": -0.10854752102491291,
+        "a_d": -0.08858036492054416,
+        "r2_log": 0.42979821503946836,
+        "include_dim": true,
+        "dim_feature": "intrinsic",
+        "unidentified": [],
+        "n_used": 79,
+        "n_censored_excluded": 17
+      },
+      "loso_n": {
+        "loso_log_rmse": 0.6556327526193714,
+        "loso_mean_rel_err": 0.7679100534482581,
+        "loso_regret_nats_per_dim_mean": 0.00416541707665388,
+        "loso_regret_nats_per_dim_median": 0.002989745784668596,
+        "loso_n_regret_extrapolated": 5.0,
+        "loso_n_heldout_points": 79.0,
+        "n_folds": 2.0
+      },
+      "lodo_d": {
+        "lodo_log_rmse": 0.551010178485814,
+        "lodo_mean_rel_err": 0.5465873087128245,
+        "lodo_regret_nats_per_dim_mean": 0.0038208860637574593,
+        "lodo_regret_nats_per_dim_median": 0.0023137366804828474,
+        "lodo_n_regret_extrapolated": 1.0,
+        "lodo_n_heldout_points": 79.0,
+        "n_folds": 4.0
+      }
+    }
+  },
+  "lodo_paired_regret": {
+    "ambient_d_vs_no_d": {
+      "n": 79.0,
+      "method_mean": 0.003767727997027994,
+      "reference_mean": 0.0034319059763954387,
+      "mean_diff": 0.0003358220206325551,
+      "std_diff": 0.0006958778646239804,
+      "t_stat": 4.2893323106502175,
+      "p_value": 4.999750012499375e-05,
+      "wins": 25.0,
+      "ties": 0.0
+    },
+    "intrinsic_d_vs_no_d": {
+      "n": 79.0,
+      "method_mean": 0.0038208860637574593,
+      "reference_mean": 0.0034319059763954387,
+      "mean_diff": 0.00038898008736202065,
+      "std_diff": 0.0007407595914291589,
+      "t_stat": 4.667277590382273,
+      "p_value": 4.999750012499375e-05,
+      "wins": 25.0,
+      "ties": 0.0
+    }
+  },
+  "knee_law_alpha_source": "ambient_d",
+  "knee_skip_reason": null,
+  "knees": [
+    {
+      "knee": 32,
+      "censored": false,
+      "best_batch": 32,
+      "batch_sizes": [
+        16,
+        32,
+        64,
+        128,
+        256
+      ],
+      "nlls": [
+        10.607162500633343,
+        10.563434791224708,
+        10.629164686361165,
+        10.619181182865576,
+        10.692904250806361
+      ],
+      "tol_nats_per_dim": 0.002,
+      "d": 8,
+      "k": 4,
+      "n": 1200,
+      "T": 2,
+      "alphas_used": [
+        0.3844462025023392,
+        0.502465019051323,
+        0.6567137189206862,
+        0.8583142950585919,
+        1.0
+      ]
+    },
+    {
+      "knee": 32,
+      "censored": false,
+      "best_batch": 16,
+      "batch_sizes": [
+        16,
+        32,
+        64,
+        128,
+        256
+      ],
+      "nlls": [
+        10.503997623667633,
+        10.5196001569461,
+        10.631572821024402,
+        10.558979659569768,
+        10.598018740225212
+      ],
+      "tol_nats_per_dim": 0.002,
+      "d": 8,
+      "k": 4,
+      "n": 1200,
+      "T": 4,
+      "alphas_used": [
+        0.35655022716355445,
+        0.4660054268149491,
+        0.6090616167841288,
+        0.7960337620424406,
+        1.0
+      ]
+    },
+    {
+      "knee": 32,
+      "censored": false,
+      "best_batch": 32,
+      "batch_sizes": [
+        16,
+        32,
+        64,
+        128,
+        256
+      ],
+      "nlls": [
+        10.37413039323513,
+        10.333463178056139,
+        10.41093214619369,
+        10.419948838974154,
+        10.453032695480019
+      ],
+      "tol_nats_per_dim": 0.002,
+      "d": 8,
+      "k": 8,
+      "n": 1200,
+      "T": 2,
+      "alphas_used": [
+        0.23709870257897178,
+        0.30988420052780247,
+        0.40501367865887256,
+        0.529346380426631,
+        0.6918472269841127
+      ]
+    },
+    {
+      "knee": 32,
+      "censored": false,
+      "best_batch": 32,
+      "batch_sizes": [
+        16,
+        32,
+        64,
+        128,
+        256
+      ],
+      "nlls": [
+        10.312427747352595,
+        10.305572676700994,
+        10.368113882506098,
+        10.369255417582993,
+        10.375582262831076
+      ],
+      "tol_nats_per_dim": 0.002,
+      "d": 8,
+      "k": 8,
+      "n": 1200,
+      "T": 4,
+      "alphas_used": [
+        0.21989447603973158,
+        0.287398552446131,
+        0.37562529735038597,
+        0.49093623753032695,
+        0.6416457864274512
+      ]
+    },
+    {
+      "knee": 32,
+      "censored": false,
+      "best_batch": 32,
+      "batch_sizes": [
+        16,
+        32,
+        64,
+        128,
+        256
+      ],
+      "nlls": [
+        10.173541820934453,
+        10.163048183064006,
+        10.1824902999093,
+        10.201223826634195,
+        10.241069081894935
+      ],
+      "tol_nats_per_dim": 0.002,
+      "d": 8,
+      "k": 16,
+      "n": 1200,
+      "T": 2,
+      "alphas_used": [
+        0.146225387059948,
+        0.1911142350129387,
+        0.24978323914168715,
+        0.32646268631894043,
+        0.42668149362144997
+      ]
+    },
+    {
+      "knee": 32,
+      "censored": false,
+      "best_batch": 32,
+      "batch_sizes": [
+        16,
+        32,
+        64,
+        128,
+        256
+      ],
+      "nlls": [
+        10.19028979722055,
+        10.148635091531483,
+        10.193125154507838,
+        10.163496898202954,
+        10.200744596262385
+      ],
+      "tol_nats_per_dim": 0.002,
+      "d": 8,
+      "k": 16,
+      "n": 1200,
+      "T": 4,
+      "alphas_used": [
+        0.1356150604010347,
+        0.1772467082897967,
+        0.2316586041894252,
+        0.30277407920743915,
+        0.39572086415988733
+      ]
+    },
+    {
+      "knee": 16,
+      "censored": false,
+      "best_batch": 16,
+      "batch_sizes": [
+        16,
+        32,
+        64,
+        128,
+        256,
+        512,
+        1024
+      ],
+      "nlls": [
+        10.66475713640903,
+        10.684872146510681,
+        10.677404730502232,
+        10.686641340785428,
+        10.69913967189613,
+        10.754209748050396,
+        10.794577174312238
+      ],
+      "tol_nats_per_dim": 0.002,
+      "d": 8,
+      "k": 4,
+      "n": 4800,
+      "T": 2,
+      "alphas_used": [
+        0.2920632105864941,
+        0.38172193070535115,
+        0.49890443951778934,
+        0.6520600985922612,
+        0.8522320879467513,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "knee": 256,
+      "censored": false,
+      "best_batch": 64,
+      "batch_sizes": [
+        16,
+        32,
+        64,
+        128,
+        256,
+        512,
+        1024
+      ],
+      "nlls": [
+        10.676691667946887,
+        10.679308347754166,
+        10.670045662962895,
+        10.682379386277962,
+        10.681136803071368,
+        10.686844470062056,
+        10.720362994849209
+      ],
+      "tol_nats_per_dim": 0.002,
+      "d": 8,
+      "k": 4,
+      "n": 4800,
+      "T": 4,
+      "alphas_used": [
+        0.27087067944206805,
+        0.3540236324885415,
+        0.4627032081085293,
+        0.6047456699118932,
+        0.7903928887205892,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "knee": 32,
+      "censored": false,
+      "best_batch": 32,
+      "batch_sizes": [
+        16,
+        32,
+        64,
+        128,
+        256,
+        512,
+        1024
+      ],
+      "nlls": [
+        10.421765629326064,
+        10.393592834031983,
+        10.416695754795485,
+        10.452975504111253,
+        10.462292127216216,
+        10.492641743581942,
+        10.552226741779801
+      ],
+      "tol_nats_per_dim": 0.002,
+      "d": 8,
+      "k": 8,
+      "n": 4800,
+      "T": 2,
+      "alphas_used": [
+        0.18012353315074145,
+        0.23541856813016185,
+        0.30768829175738105,
+        0.40214366112460387,
+        0.525595313552651,
+        0.6869446427576871,
+        0.8978256275228662
+      ]
+    },
+    {
+      "knee": 32,
+      "censored": false,
+      "best_batch": 32,
+      "batch_sizes": [
+        16,
+        32,
+        64,
+        128,
+        256,
+        512,
+        1024
+      ],
+      "nlls": [
+        10.385933754643453,
+        10.366726139189218,
+        10.414336368116105,
+        10.386008469068507,
+        10.4210493225813,
+        10.443298470298277,
+        10.474391310178445
+      ],
+      "tol_nats_per_dim": 0.002,
+      "d": 8,
+      "k": 8,
+      "n": 4800,
+      "T": 4,
+      "alphas_used": [
+        0.16705350773235464,
+        0.21833625458900768,
+        0.28536198200837404,
+        0.37296353246066605,
+        0.4874573535218028,
+        0.637098940839583,
+        0.8326780947838625
+      ]
+    },
+    {
+      "knee": 32,
+      "censored": false,
+      "best_batch": 32,
+      "batch_sizes": [
+        16,
+        32,
+        64,
+        128,
+        256,
+        512,
+        1024
+      ],
+      "nlls": [
+        10.184969848197685,
+        10.137244042279804,
+        10.162911694726978,
+        10.192226246294016,
+        10.232317207122456,
+        10.273847447891995,
+        10.312563139527887
+      ],
+      "tol_nats_per_dim": 0.002,
+      "d": 8,
+      "k": 16,
+      "n": 4800,
+      "T": 2,
+      "alphas_used": [
+        0.11108720995552389,
+        0.14518920125455267,
+        0.18975995678867785,
+        0.2480132192290835,
+        0.3241492986893612,
+        0.42365793310295957,
+        0.5537141218777613
+      ]
+    },
+    {
+      "knee": 128,
+      "censored": false,
+      "best_batch": 128,
+      "batch_sizes": [
+        16,
+        32,
+        64,
+        128,
+        256,
+        512,
+        1024
+      ],
+      "nlls": [
+        10.153454572601866,
+        10.139358994204297,
+        10.12043463102322,
+        10.11256689329515,
+        10.184873004980986,
+        10.24096411422765,
+        10.267947602334495
+      ],
+      "tol_nats_per_dim": 0.002,
+      "d": 8,
+      "k": 16,
+      "n": 4800,
+      "T": 4,
+      "alphas_used": [
+        0.10302656050911704,
+        0.13465406174402464,
+        0.17599069846225804,
+        0.2300170194948306,
+        0.3006285543473287,
+        0.39291669758809256,
+        0.5135358202373779
+      ]
+    },
+    {
+      "knee": 32,
+      "censored": false,
+      "best_batch": 32,
+      "batch_sizes": [
+        16,
+        32,
+        64,
+        128,
+        256
+      ],
+      "nlls": [
+        20.720328074962893,
+        20.60512660176995,
+        20.745133506176728,
+        20.89728143816754,
+        20.894021622141466
+      ],
+      "tol_nats_per_dim": 0.002,
+      "d": 16,
+      "k": 4,
+      "n": 1200,
+      "T": 2,
+      "alphas_used": [
+        0.37433257125296265,
+        0.4892466652600273,
+        0.6394375425757525,
+        0.83573460973516,
+        1.0
+      ]
+    },
+    {
+      "knee": 32,
+      "censored": false,
+      "best_batch": 32,
+      "batch_sizes": [
+        16,
+        32,
+        64,
+        128,
+        256
+      ],
+      "nlls": [
+        20.617896366960025,
+        20.491928192669715,
+        20.731788285208893,
+        20.61004147719619,
+        20.699874087172105
+      ],
+      "tol_nats_per_dim": 0.002,
+      "d": 16,
+      "k": 4,
+      "n": 1200,
+      "T": 4,
+      "alphas_used": [
+        0.3471704557002333,
+        0.45374621599081294,
+        0.5930390249098698,
+        0.7750924915110918,
+        1.0
+      ]
+    },
+    {
+      "knee": 16,
+      "censored": false,
+      "best_batch": 16,
+      "batch_sizes": [
+        16,
+        32,
+        64,
+        128,
+        256
+      ],
+      "nlls": [
+        19.760315946630854,
+        19.816787492642774,
+        19.784738725587353,
+        20.037705055189328,
+        20.103403261864955
+      ],
+      "tol_nats_per_dim": 0.002,
+      "d": 16,
+      "k": 8,
+      "n": 1200,
+      "T": 2,
+      "alphas_used": [
+        0.23086134392649627,
+        0.3017320728341313,
+        0.3943589785467434,
+        0.5154208583120132,
+        0.6736467929856043
+      ]
+    },
+    {
+      "knee": 64,
+      "censored": false,
+      "best_batch": 64,
+      "batch_sizes": [
+        16,
+        32,
+        64,
+        128,
+        256
+      ],
+      "nlls": [
+        19.680049239314258,
+        19.68406247105171,
+        19.640305249038104,
+        19.96135497790199,
+        19.97002506222723
+      ],
+      "tol_nats_per_dim": 0.002,
+      "d": 16,
+      "k": 8,
+      "n": 1200,
+      "T": 4,
+      "alphas_used": [
+        0.21410970919858383,
+        0.279837954988995,
+        0.3657437177675675,
+        0.4780211715444486,
+        0.6247660023785921
+      ]
+    },
+    {
+      "knee": 32,
+      "censored": false,
+      "best_batch": 32,
+      "batch_sizes": [
+        16,
+        32,
+        64,
+        128,
+        256
+      ],
+      "nlls": [
+        19.08880330311146,
+        18.996565023312257,
+        19.05153266415534,
+        19.172861646415946,
+        19.275664446581224
+      ],
+      "tol_nats_per_dim": 0.002,
+      "d": 16,
+      "k": 16,
+      "n": 1200,
+      "T": 2,
+      "alphas_used": [
+        0.1423786339007393,
+        0.1860865903468016,
+        0.2432121882208799,
+        0.3178744281839403,
+        0.4154567780192864
+      ]
+    },
+    {
+      "knee": 64,
+      "censored": false,
+      "best_batch": 32,
+      "batch_sizes": [
+        16,
+        32,
+        64,
+        128,
+        256
+      ],
+      "nlls": [
+        19.018854997445565,
+        18.986488626501547,
+        18.997326408846547,
+        19.098011140108795,
+        19.079143681143478
+      ],
+      "tol_nats_per_dim": 0.002,
+      "d": 16,
+      "k": 16,
+      "n": 1200,
+      "T": 4,
+      "alphas_used": [
+        0.132047433243241,
+        0.17258387682952778,
+        0.22556435827603796,
+        0.29480899756781775,
+        0.3853106302396463
+      ]
+    },
+    {
+      "knee": 32,
+      "censored": false,
+      "best_batch": 32,
+      "batch_sizes": [
+        16,
+        32,
+        64,
+        128,
+        256,
+        512,
+        1024
+      ],
+      "nlls": [
+        20.70630107942295,
+        20.69246984344072,
+        20.860330540183682,
+        20.89948150338642,
+        20.931972915214033,
+        21.09489253734577,
+        21.34683519712385
+      ],
+      "tol_nats_per_dim": 0.002,
+      "d": 16,
+      "k": 4,
+      "n": 4800,
+      "T": 2,
+      "alphas_used": [
+        0.28437989990699053,
+        0.37167996690957017,
+        0.4857797539385916,
+        0.6349063450978328,
+        0.8298124073249166,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "knee": 16,
+      "censored": false,
+      "best_batch": 16,
+      "batch_sizes": [
+        16,
+        32,
+        64,
+        128,
+        256,
+        512,
+        1024
+      ],
+      "nlls": [
+        20.652832803355405,
+        20.69880436888376,
+        20.665170238092827,
+        20.7996368082336,
+        20.84029414152132,
+        20.958122447949847,
+        21.077174020871254
+      ],
+      "tol_nats_per_dim": 0.002,
+      "d": 16,
+      "k": 4,
+      "n": 4800,
+      "T": 4,
+      "alphas_used": [
+        0.2637448809550132,
+        0.3447103281841971,
+        0.4505308687948519,
+        0.5888366177081356,
+        0.7696000127170842,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "knee": 32,
+      "censored": false,
+      "best_batch": 32,
+      "batch_sizes": [
+        16,
+        32,
+        64,
+        128,
+        256,
+        512,
+        1024
+      ],
+      "nlls": [
+        19.847975087350626,
+        19.716303227736958,
+        19.824828574188423,
+        19.734119304600775,
+        19.905534446802214,
+        19.92849985496283,
+        20.039473950102686
+      ],
+      "tol_nats_per_dim": 0.002,
+      "d": 16,
+      "k": 8,
+      "n": 4800,
+      "T": 2,
+      "alphas_used": [
+        0.1753850210214394,
+        0.22922540879648318,
+        0.29959393186429356,
+        0.3915644626010764,
+        0.5117684708030737,
+        0.6688731811061869,
+        0.8742065170624082
+      ]
+    },
+    {
+      "knee": 32,
+      "censored": false,
+      "best_batch": 32,
+      "batch_sizes": [
+        16,
+        32,
+        64,
+        128,
+        256,
+        512,
+        1024
+      ],
+      "nlls": [
+        19.79788536103535,
+        19.688485245546488,
+        19.721523257241316,
+        19.71289409533108,
+        19.858249234102175,
+        19.868765574385847,
+        19.88172113770759
+      ],
+      "tol_nats_per_dim": 0.002,
+      "d": 16,
+      "k": 8,
+      "n": 4800,
+      "T": 4,
+      "alphas_used": [
+        0.1626588289317242,
+        0.21259247989983052,
+        0.27785496063623194,
+        0.3631519759614206,
+        0.4746338065827835,
+        0.6203387707167407,
+        0.810772821314485
+      ]
+    },
+    {
+      "knee": 128,
+      "censored": false,
+      "best_batch": 64,
+      "batch_sizes": [
+        16,
+        32,
+        64,
+        128,
+        256,
+        512,
+        1024
+      ],
+      "nlls": [
+        18.795098247663404,
+        18.82770538504784,
+        18.79502696433132,
+        18.80392586155702,
+        18.84516792786077,
+        18.828926827685855,
+        18.888860187921644
+      ],
+      "tol_nats_per_dim": 0.002,
+      "d": 16,
+      "k": 16,
+      "n": 4800,
+      "T": 2,
+      "alphas_used": [
+        0.10816483727841206,
+        0.14136970704880325,
+        0.18476793913740028,
+        0.24148873224513814,
+        0.31562189887282055,
+        0.41251275834668066,
+        0.5391475572718593
+      ]
+    },
+    {
+      "knee": 512,
+      "censored": false,
+      "best_batch": 512,
+      "batch_sizes": [
+        16,
+        32,
+        64,
+        128,
+        256,
+        512,
+        1024
+      ],
+      "nlls": [
+        18.91705383511598,
+        18.851312459799935,
+        18.782366795019023,
+        18.85304584777273,
+        18.81035045836466,
+        18.727795656770525,
+        18.780995418313616
+      ],
+      "tol_nats_per_dim": 0.002,
+      "d": 16,
+      "k": 16,
+      "n": 4800,
+      "T": 4,
+      "alphas_used": [
+        0.10031623944182948,
+        0.13111171559039977,
+        0.17136090886885802,
+        0.2239659587713547,
+        0.2927199150581071,
+        0.38258023291432697,
+        0.5000262267352926
+      ]
+    },
+    {
+      "knee": 128,
+      "censored": false,
+      "best_batch": 128,
+      "batch_sizes": [
+        16,
+        32,
+        64,
+        128,
+        256
+      ],
+      "nlls": [
+        40.32025440470591,
+        40.64513018456628,
+        40.570515983510404,
+        39.98573251826332,
+        40.52787216438775
+      ],
+      "tol_nats_per_dim": 0.002,
+      "d": 32,
+      "k": 4,
+      "n": 1200,
+      "T": 2,
+      "alphas_used": [
+        0.3644849994324024,
+        0.47637604687383855,
+        0.6226158508266207,
+        0.8137489284872056,
+        1.0
+      ]
+    },
+    {
+      "knee": 128,
+      "censored": false,
+      "best_batch": 128,
+      "batch_sizes": [
+        16,
+        32,
+        64,
+        128,
+        256
+      ],
+      "nlls": [
+        40.09215588063049,
+        40.47093312232357,
+        39.951221969282855,
+        39.90508693484176,
+        40.03625380847039
+      ],
+      "tol_nats_per_dim": 0.002,
+      "d": 32,
+      "k": 4,
+      "n": 1200,
+      "T": 4,
+      "alphas_used": [
+        0.33803743800679203,
+        0.44180950838527194,
+        0.5774379395684384,
+        0.7547021232559756,
+        0.9863835675098922
+      ]
+    },
+    {
+      "knee": 16,
+      "censored": false,
+      "best_batch": 16,
+      "batch_sizes": [
+        16,
+        32,
+        64,
+        128,
+        256
+      ],
+      "nlls": [
+        38.117646263413356,
+        38.59054986695183,
+        38.730122090847544,
+        39.390460108378576,
+        39.306599354647666
+      ],
+      "tol_nats_per_dim": 0.002,
+      "d": 32,
+      "k": 8,
+      "n": 1200,
+      "T": 2,
+      "alphas_used": [
+        0.22478807154921518,
+        0.2937944032697249,
+        0.3839845717690401,
+        0.5018616750887815,
+        0.6559251580410115
+      ]
+    },
+    {
+      "knee": 16,
+      "censored": false,
+      "best_batch": 16,
+      "batch_sizes": [
+        16,
+        32,
+        64,
+        128,
+        256
+      ],
+      "nlls": [
+        37.82875950948058,
+        37.93566239701757,
+        38.35156027830693,
+        38.88114588001518,
+        39.17228296120508
+      ],
+      "tol_nats_per_dim": 0.002,
+      "d": 32,
+      "k": 8,
+      "n": 1200,
+      "T": 4,
+      "alphas_used": [
+        0.20847712229396342,
+        0.27247625426749783,
+        0.3561220930273551,
+        0.4654458623674355,
+        0.6083302750282467
+      ]
+    },
+    {
+      "knee": 64,
+      "censored": false,
+      "best_batch": 64,
+      "batch_sizes": [
+        16,
+        32,
+        64,
+        128,
+        256
+      ],
+      "nlls": [
+        36.28874738548557,
+        36.42969438928002,
+        36.14520084732449,
+        36.41924522529473,
+        36.52197387192597
+      ],
+      "tol_nats_per_dim": 0.002,
+      "d": 32,
+      "k": 16,
+      "n": 1200,
+      "T": 2,
+      "alphas_used": [
+        0.13863307732692115,
+        0.18119120799428665,
+        0.23681400202211006,
+        0.3095121014673973,
+        0.40452735115645877
+      ]
+    },
+    {
+      "knee": 64,
+      "censored": false,
+      "best_batch": 64,
+      "batch_sizes": [
+        16,
+        32,
+        64,
+        128,
+        256
+      ],
+      "nlls": [
+        36.07382448286137,
+        36.50464494020507,
+        35.950472141359,
+        36.34252448397187,
+        36.429038227126725
+      ],
+      "tol_nats_per_dim": 0.002,
+      "d": 32,
+      "k": 16,
+      "n": 1200,
+      "T": 4,
+      "alphas_used": [
+        0.12857365969948836,
+        0.16804371053712946,
+        0.21963043376915664,
+        0.2870534534344846,
+        0.3751742584785416
+      ]
+    },
+    {
+      "knee": 64,
+      "censored": false,
+      "best_batch": 32,
+      "batch_sizes": [
+        16,
+        32,
+        64,
+        128,
+        256,
+        512,
+        1024
+      ],
+      "nlls": [
+        39.40391982424627,
+        39.403353173553946,
+        39.40347763130703,
+        39.80294009241385,
+        40.31850197229929,
+        40.33620766687726,
+        40.27736529731477
+      ],
+      "tol_nats_per_dim": 0.002,
+      "d": 32,
+      "k": 4,
+      "n": 4800,
+      "T": 2,
+      "alphas_used": [
+        0.27689871418146267,
+        0.3619021771859716,
+        0.4730003396336268,
+        0.6182038556196859,
+        0.8079825215327932,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "knee": 64,
+      "censored": false,
+      "best_batch": 32,
+      "batch_sizes": [
+        16,
+        32,
+        64,
+        128,
+        256,
+        512,
+        1024
+      ],
+      "nlls": [
+        39.61316129640755,
+        39.40357315361551,
+        39.40375823586381,
+        39.820829183604445,
+        40.215797016437115,
+        40.22574017389874,
+        40.13658697820139
+      ],
+      "tol_nats_per_dim": 0.002,
+      "d": 32,
+      "k": 4,
+      "n": 4800,
+      "T": 4,
+      "alphas_used": [
+        0.2568065409414362,
+        0.3356420290973169,
+        0.43867874736981416,
+        0.5733460851476171,
+        0.7493541351730377,
+        0.9793938328825529,
+        1.0
+      ]
+    },
+    {
+      "knee": 16,
+      "censored": false,
+      "best_batch": 16,
+      "batch_sizes": [
+        16,
+        32,
+        64,
+        128,
+        256,
+        512,
+        1024
+      ],
+      "nlls": [
+        37.20547138987926,
+        37.36622197455456,
+        37.39427041687901,
+        37.802787786916554,
+        37.62830153012278,
+        37.59044356219726,
+        37.745987861168324
+      ],
+      "tol_nats_per_dim": 0.002,
+      "d": 32,
+      "k": 8,
+      "n": 4800,
+      "T": 2,
+      "alphas_used": [
+        0.17077116499235248,
+        0.2231951729859445,
+        0.2917125104021896,
+        0.3812635711907016,
+        0.4983053709855431,
+        0.651277125631392,
+        0.8512087548480262
+      ]
+    },
+    {
+      "knee": 64,
+      "censored": false,
+      "best_batch": 64,
+      "batch_sizes": [
+        16,
+        32,
+        64,
+        128,
+        256,
+        512,
+        1024
+      ],
+      "nlls": [
+        37.38720124242869,
+        37.22895988357074,
+        37.19197822801655,
+        37.799372670348255,
+        37.48770067772341,
+        37.4553522274807,
+        37.50746966178179
+      ],
+      "tol_nats_per_dim": 0.002,
+      "d": 32,
+      "k": 8,
+      "n": 4800,
+      "T": 4,
+      "alphas_used": [
+        0.15837976100345963,
+        0.20699980676610566,
+        0.270545426572964,
+        0.35359853220661097,
+        0.4621476088598733,
+        0.6040195106073045,
+        0.7894438101591689
+      ]
+    },
+    {
+      "knee": 64,
+      "censored": false,
+      "best_batch": 64,
+      "batch_sizes": [
+        16,
+        32,
+        64,
+        128,
+        256,
+        512,
+        1024
+      ],
+      "nlls": [
+        35.202468475803,
+        34.916688666374995,
+        34.85423802760485,
+        35.41978805720685,
+        35.69399273708893,
+        35.67414953212135,
+        35.76824395217795
+      ],
+      "tol_nats_per_dim": 0.002,
+      "d": 32,
+      "k": 16,
+      "n": 4800,
+      "T": 2,
+      "alphas_used": [
+        0.1053193434973257,
+        0.1376506923268012,
+        0.17990724655940157,
+        0.23513588502513763,
+        0.30731882947416184,
+        0.4016607798476705,
+        0.524964195470499
+      ]
+    },
+    {
+      "knee": 64,
+      "censored": false,
+      "best_batch": 32,
+      "batch_sizes": [
+        16,
+        32,
+        64,
+        128,
+        256,
+        512,
+        1024
+      ],
+      "nlls": [
+        35.36943290388506,
+        34.92045805167753,
+        34.97092313143803,
+        35.243157110149966,
+        35.35338368647953,
+        35.49940733450282,
+        35.43572211976438
+      ],
+      "tol_nats_per_dim": 0.002,
+      "d": 32,
+      "k": 16,
+      "n": 4800,
+      "T": 4,
+      "alphas_used": [
+        0.09767721882610979,
+        0.12766255798311046,
+        0.16685291521050707,
+        0.218074083381032,
+        0.2850193284455277,
+        0.37251568975117133,
+        0.48687203028517395
+      ]
+    },
+    {
+      "knee": 32,
+      "censored": false,
+      "best_batch": 16,
+      "batch_sizes": [
+        16,
+        32,
+        64,
+        128,
+        256
+      ],
+      "nlls": [
+        78.59786498791749,
+        78.64838339196677,
+        79.22101317281414,
+        80.26303986052275,
+        81.09700569960634
+      ],
+      "tol_nats_per_dim": 0.002,
+      "d": 64,
+      "k": 4,
+      "n": 1200,
+      "T": 2,
+      "alphas_used": [
+        0.3548964878118042,
+        0.46384401601293185,
+        0.6062366875411179,
+        0.792341624841789,
+        1.0
+      ]
+    },
+    {
+      "knee": 32,
+      "censored": false,
+      "best_batch": 32,
+      "batch_sizes": [
+        16,
+        32,
+        64,
+        128,
+        256
+      ],
+      "nlls": [
+        78.58897666375405,
+        78.5889718125036,
+        78.9466945313514,
+        78.98927938107666,
+        79.68415742330367
+      ],
+      "tol_nats_per_dim": 0.002,
+      "d": 64,
+      "k": 4,
+      "n": 1200,
+      "T": 4,
+      "alphas_used": [
+        0.32914468272859715,
+        0.43018681990196,
+        0.5622472721819932,
+        0.734848164683746,
+        0.9604347621704018
+      ]
+    },
+    {
+      "knee": 64,
+      "censored": false,
+      "best_batch": 64,
+      "batch_sizes": [
+        16,
+        32,
+        64,
+        128,
+        256
+      ],
+      "nlls": [
+        74.43323897588164,
+        74.70613170769371,
+        73.91865788782934,
+        74.44837615054955,
+        75.58053096469935
+      ],
+      "tol_nats_per_dim": 0.002,
+      "d": 64,
+      "k": 8,
+      "n": 1200,
+      "T": 2,
+      "alphas_used": [
+        0.21887456882735282,
+        0.2860655500817876,
+        0.3738830846453685,
+        0.4886591934749556,
+        0.6386697263773955
+      ]
+    },
+    {
+      "knee": 64,
+      "censored": false,
+      "best_batch": 64,
+      "batch_sizes": [
+        16,
+        32,
+        64,
+        128,
+        256
+      ],
+      "nlls": [
+        73.71271570480341,
+        74.05232181127995,
+        73.65589073372391,
+        74.31918978642324,
+        73.85556092940502
+      ],
+      "tol_nats_per_dim": 0.002,
+      "d": 64,
+      "k": 8,
+      "n": 1200,
+      "T": 4,
+      "alphas_used": [
+        0.20299271192630092,
+        0.26530821790262815,
+        0.3467535844943233,
+        0.4532013720124979,
+        0.5923269225710714
+      ]
+    },
+    {
+      "knee": 32,
+      "censored": false,
+      "best_batch": 32,
+      "batch_sizes": [
+        16,
+        32,
+        64,
+        128,
+        256
+      ],
+      "nlls": [
+        70.33214697811891,
+        69.93070212779674,
+        70.58992817457063,
+        70.81694726897953,
+        71.67164072326062
+      ],
+      "tol_nats_per_dim": 0.002,
+      "d": 64,
+      "k": 16,
+      "n": 1200,
+      "T": 2,
+      "alphas_used": [
+        0.13498605515860554,
+        0.17642460852898917,
+        0.23058413299088676,
+        0.3013697625885478,
+        0.3938854448682608
+      ]
+    },
+    {
+      "knee": 16,
+      "censored": false,
+      "best_batch": 16,
+      "batch_sizes": [
+        16,
+        32,
+        64,
+        128,
+        256
+      ],
+      "nlls": [
+        69.50911259951022,
+        70.52256290113141,
+        69.86040128052704,
+        70.29072365281017,
+        71.00780861939577
+      ],
+      "tol_nats_per_dim": 0.002,
+      "d": 64,
+      "k": 16,
+      "n": 1200,
+      "T": 4,
+      "alphas_used": [
+        0.12519127076153147,
+        0.16362298245843515,
+        0.21385261309145506,
+        0.2795019345015364,
+        0.365304544381191
+      ]
+    },
+    {
+      "knee": 16,
+      "censored": false,
+      "best_batch": 16,
+      "batch_sizes": [
+        16,
+        32,
+        64,
+        128,
+        256,
+        512,
+        1024
+      ],
+      "nlls": [
+        78.3606414645372,
+        79.07391440640257,
+        78.57990985338262,
+        79.60411162316375,
+        80.49742922559153,
+        81.54164509844644,
+        81.95887219951138
+      ],
+      "tol_nats_per_dim": 0.002,
+      "d": 64,
+      "k": 4,
+      "n": 4800,
+      "T": 2,
+      "alphas_used": [
+        0.2696143361061173,
+        0.35238161190380274,
+        0.4605571135469932,
+        0.601940758749475,
+        0.7867269148301249,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "knee": 16,
+      "censored": false,
+      "best_batch": 16,
+      "batch_sizes": [
+        16,
+        32,
+        64,
+        128,
+        256,
+        512,
+        1024
+      ],
+      "nlls": [
+        78.36056260321098,
+        79.07416303074231,
+        78.579916842013,
+        79.60401970289305,
+        80.45575275803688,
+        80.57883627621399,
+        81.55345328090863
+      ],
+      "tol_nats_per_dim": 0.002,
+      "d": 64,
+      "k": 4,
+      "n": 4800,
+      "T": 4,
+      "alphas_used": [
+        0.25005072792883715,
+        0.3268122898724585,
+        0.42713841985725487,
+        0.5582630622286396,
+        0.7296408661928624,
+        0.9536289065828131,
+        1.0
+      ]
+    },
+    {
+      "knee": 64,
+      "censored": false,
+      "best_batch": 64,
+      "batch_sizes": [
+        16,
+        32,
+        64,
+        128,
+        256,
+        512,
+        1024
+      ],
+      "nlls": [
+        73.17181363007498,
+        73.03113606846644,
+        73.00108806642467,
+        73.60656264959232,
+        73.5271979421239,
+        74.11612277934849,
+        74.04719260404823
+      ],
+      "tol_nats_per_dim": 0.002,
+      "d": 64,
+      "k": 8,
+      "n": 4800,
+      "T": 2,
+      "alphas_used": [
+        0.16627868573383106,
+        0.2173235746673035,
+        0.2840384255969958,
+        0.371233665464634,
+        0.48519644511001475,
+        0.6341439698168285,
+        0.8288159950633291
+      ]
+    },
+    {
+      "knee": 64,
+      "censored": false,
+      "best_batch": 64,
+      "batch_sizes": [
+        16,
+        32,
+        64,
+        128,
+        256,
+        512,
+        1024
+      ],
+      "nlls": [
+        73.20146397036034,
+        73.16222415538593,
+        72.93916401015254,
+        73.18185155240533,
+        73.87128220603114,
+        74.00989042482954,
+        73.8577764376935
+      ],
+      "tol_nats_per_dim": 0.002,
+      "d": 64,
+      "k": 8,
+      "n": 4800,
+      "T": 4,
+      "alphas_used": [
+        0.1542132625708379,
+        0.20155426015724862,
+        0.26342818451736694,
+        0.34429641102091224,
+        0.44998988570285653,
+        0.5881295614858173,
+        0.7686759015777229
+      ]
+    },
+    {
+      "knee": 64,
+      "censored": false,
+      "best_batch": 64,
+      "batch_sizes": [
+        16,
+        32,
+        64,
+        128,
+        256,
+        512,
+        1024
+      ],
+      "nlls": [
+        68.2968038642027,
+        68.55179404939777,
+        68.1337106752047,
+        68.98765769350231,
+        69.59888159306482,
+        70.28207364630313,
+        70.97411238836094
+      ],
+      "tol_nats_per_dim": 0.002,
+      "d": 64,
+      "k": 16,
+      "n": 4800,
+      "T": 2,
+      "alphas_used": [
+        0.10254870615814717,
+        0.13402951377346076,
+        0.17517442428427096,
+        0.22895016223957945,
+        0.2992341890301643,
+        0.3910942844881758,
+        0.5111539555525174
+      ]
+    },
+    {
+      "knee": 16,
+      "censored": false,
+      "best_batch": 16,
+      "batch_sizes": [
+        16,
+        32,
+        64,
+        128,
+        256,
+        512,
+        1024
+      ],
+      "nlls": [
+        67.72818682165888,
+        68.39097317564915,
+        68.29802965124554,
+        68.90163275097862,
+        69.53238664265157,
+        70.00775284673662,
+        69.78396027440303
+      ],
+      "tol_nats_per_dim": 0.002,
+      "d": 64,
+      "k": 16,
+      "n": 4800,
+      "T": 4,
+      "alphas_used": [
+        0.09510762296005121,
+        0.1243041374098562,
+        0.16246351339995782,
+        0.2123372056332329,
+        0.27752132126512,
+        0.36271591465590924,
+        0.4740638814521534
+      ]
+    }
+  ],
+  "knee_laws": {
+    "no_d": {
+      "fit": {
+        "c_b": 5.814065297080415,
+        "b_k": 0.21875000000000017,
+        "b_n": 0.14583333333333343,
+        "b_t": 0.37499999999999994,
+        "b_d": null,
+        "r2_log": 0.07375860819137381,
+        "include_dim": false,
+        "dim_feature": "ambient",
+        "unidentified": [],
+        "n_used": 48,
+        "n_censored_excluded": 0
+      }
+    },
+    "ambient_d": {
+      "fit": {
+        "c_b": 6.97429444657872,
+        "b_k": 0.21874999999999992,
+        "b_n": 0.1458333333333327,
+        "b_t": 0.37499999999999944,
+        "b_d": -0.05833333333333372,
+        "r2_log": 0.07731061978977882,
+        "include_dim": true,
+        "dim_feature": "ambient",
+        "unidentified": [],
+        "n_used": 48,
+        "n_censored_excluded": 0
+      }
+    },
+    "intrinsic_d": {
+      "fit": {
+        "c_b": 6.778763259679072,
+        "b_k": 0.2187499999999997,
+        "b_n": 0.14988646846412898,
+        "b_t": 0.375,
+        "b_d": -0.07427305549882893,
+        "r2_log": 0.07518263556723725,
+        "include_dim": true,
+        "dim_feature": "intrinsic",
+        "unidentified": [],
+        "n_used": 48,
+        "n_censored_excluded": 0
+      }
+    }
+  },
+  "ood": {
+    "configs": [
+      {
+        "config": {
+          "d": 128,
+          "k": 8,
+          "n": 4800,
+          "B": 64,
+          "T": 3
+        },
+        "alpha_star": 0.5446060624034622,
+        "censored": false,
+        "nll_min": 142.10052617118126,
+        "regret_nats_per_dim": {
+          "paper_prior_no_d": 0.011520935519188757,
+          "no_d": 0.010154734944585186,
+          "ambient_d": 0.011288444504045092,
+          "intrinsic_d": 0.011210455159683663
+        },
+        "alpha_pred": {
+          "paper_prior_no_d": 0.2612317136950988,
+          "no_d": 0.2819334903359164,
+          "ambient_d": 0.26464407405671286,
+          "intrinsic_d": 0.2657987091770956
+        },
+        "extrapolated": {
+          "paper_prior_no_d": false,
+          "no_d": false,
+          "ambient_d": false,
+          "intrinsic_d": false
+        }
+      },
+      {
+        "config": {
+          "d": 24,
+          "k": 12,
+          "n": 2400,
+          "B": 64,
+          "T": 3
+        },
+        "alpha_star": 0.14434791899824898,
+        "censored": false,
+        "nll_min": 28.14685311782719,
+        "regret_nats_per_dim": {
+          "paper_prior_no_d": 0.015222580530882842,
+          "no_d": 0.01043870273800381,
+          "ambient_d": 0.010441626788217473,
+          "intrinsic_d": 0.010261129741072997
+        },
+        "alpha_pred": {
+          "paper_prior_no_d": 0.2961334173090072,
+          "no_d": 0.2440416808026706,
+          "ambient_d": 0.24407054174001946,
+          "intrinsic_d": 0.24229538283033905
+        },
+        "extrapolated": {
+          "paper_prior_no_d": false,
+          "no_d": false,
+          "ambient_d": false,
+          "intrinsic_d": false
+        }
+      }
+    ],
+    "paired_vs_no_d": {
+      "ambient_d_vs_no_d": {
+        "n": 2.0,
+        "method_mean": 0.010865035646131282,
+        "reference_mean": 0.0102967188412945,
+        "mean_diff": 0.0005683168048367842,
+        "std_diff": 0.0007995861016555017,
+        "t_stat": 1.0051717150418948,
+        "p_value": 0.5,
+        "wins": 0.0,
+        "ties": 0.0
+      },
+      "intrinsic_d_vs_no_d": {
+        "n": 2.0,
+        "method_mean": 0.01073579245037833,
+        "reference_mean": 0.0102967188412945,
+        "mean_diff": 0.0004390736090838319,
+        "std_diff": 0.0008720699934172495,
+        "t_stat": 0.7120344210139125,
+        "p_value": 1.0,
+        "wins": 1.0,
+        "ties": 0.0
+      },
+      "paper_prior_no_d_vs_no_d": {
+        "n": 2.0,
+        "method_mean": 0.0133717580250358,
+        "reference_mean": 0.0102967188412945,
+        "mean_diff": 0.0030750391837413016,
+        "std_diff": 0.002416662736949355,
+        "t_stat": 1.7994906992960253,
+        "p_value": 0.5,
+        "wins": 0.0,
+        "ties": 0.0
+      }
+    }
+  },
+  "seconds": 146.61514140001964
 }

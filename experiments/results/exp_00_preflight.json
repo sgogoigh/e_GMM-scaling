@@ -2,7 +2,7 @@
   "experiment_id": "exp_00_preflight",
   "hardware": {
     "cpu_count": 16,
-    "disk_free_GB": 106.91,
+    "disk_free_GB": 99.74,
     "torch_installed": false,
     "cuda_available": false,
     "gpus": [],

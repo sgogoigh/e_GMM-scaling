@@ -16,6 +16,11 @@ class TorchEGMM(nn.Module):
       - `diag`: Flash-GMM 2d-augmented GEMM + tiled streaming LogSumExp + Top-m M-step
       - `low_rank_diag`: Woodbury + Matrix Determinant Lemma in O(k d r) memory
       - `full`: Cholesky solve with adaptive jitter + 5-step power iteration spectral split
+
+    Status (2026-11-25 review): never executed on the review machine (torch not installed; every
+    torch test skips). The M-step, revival and readout loop over components in Python
+    (for j in range(self.k)), so cost grows with k kernel launches; the Triton kernel is not wired
+    in. Treat speed claims as untested until a GPU run exists.
     """
 
     N: torch.Tensor

@@ -2,6 +2,15 @@
 
 In `e-means`, custom tiled kernels (`CuTe DSL` / `Flash-KMeans`) avoid materializing the $B \times k$ distance matrix in GPU HBM and cast assignments to Tensor Core GEMMs via $\|c_j\|^2 - 2 x_i^\top c_j$. This document derives the exact **Flash-GMM** generalization for Gaussian log-densities.
 
+> **Status (2026-11-25 review).** This page describes a design, not a measured implementation. In the code today:
+> the Triton kernel in `src/e_gmm/triton_kernels.py` computes the log-sum-exp only and is **not called** anywhere; the
+> PyTorch tiled path still writes the full B × k responsibility matrix when `top_m` is unset; the torch M-step loops
+> over components in Python; and none of the torch code has run on the review machine (torch not installed). The
+> speedups quoted below are arithmetic (work ratios), not measurements. The only measured numbers are CPU/NumPy ones
+> from `experiments/exp_04_kernel_and_memory_bench.py`. The [x², x] expansion also cancels catastrophically in low
+> precision when the data mean is far from 0; the code now centers x and μ by the weighted component mean first
+> (exp_04 reports the float32 error with and without centering).
+
 ![Flash-GMM 2d-Augmented GEMM Reformulation](../assets/images/flash-gmm-gemm-reformulation.svg)
 
 ---

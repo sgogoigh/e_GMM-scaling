@@ -1,163 +1,2271 @@
 {
   "poc_id": "poc_02",
-  "title": "Rotated Anisotropic Zipf & Overlapping GMM Collapse + Spectral Splitting Ablation",
+  "title": "Matched tuned baselines + alpha_0 sensitivity, Zipf and Overlap full-cov mixtures",
   "config": {
     "n_train": 2400,
+    "n_val": 800,
     "n_test": 800,
     "dim": 16,
     "num_components": 16,
     "batch_size": 64,
     "epochs": 6,
-    "cov_type": "full",
-    "seeds": 3,
+    "seeds": 10,
+    "out": "C:\\Users\\sgogo\\OneDrive\\Desktop\\Research\\e_means\\e_GMM-scaling\\poc\\results\\poc_02_results.json",
     "dry_run": false
   },
-  "runs": [
-    {
-      "method": "online_em_beta0.60",
-      "splits": 0.0,
-      "dead_components": 5.3,
-      "max_to_mean": 5.6,
-      "norm_entropy": 0.7361,
-      "singular_or_floor_events": 0.0,
-      "train_nll": 13.4997,
-      "test_nll": 15.1395,
-      "test_nll_std": 0.1437,
-      "test_bic": 40580.5
-    },
-    {
-      "method": "online_em_beta0.85",
-      "splits": 0.0,
-      "dead_components": 0.3,
-      "max_to_mean": 3.3,
-      "norm_entropy": 0.8933,
-      "singular_or_floor_events": 0.0,
-      "train_nll": 13.7426,
-      "test_nll": 14.9859,
-      "test_nll_std": 0.0659,
-      "test_bic": 40334.7
-    },
-    {
-      "method": "emeans_posthoc",
-      "splits": 2.3,
-      "dead_components": 0.0,
-      "max_to_mean": 1.93,
-      "norm_entropy": 0.9575,
-      "singular_or_floor_events": 0.0,
-      "train_nll": 13.6269,
-      "test_nll": 14.6991,
-      "test_nll_std": 0.0955,
-      "test_bic": 39875.9
-    },
-    {
-      "method": "egmm_no_revive",
-      "splits": 0.0,
-      "dead_components": 13.7,
-      "max_to_mean": 9.96,
-      "norm_entropy": 0.2652,
-      "singular_or_floor_events": 0.0,
-      "train_nll": 17.1296,
-      "test_nll": 17.6951,
-      "test_nll_std": 0.9746,
-      "test_bic": 44669.4
-    },
-    {
-      "method": "egmm_batch_resample",
-      "splits": 69.0,
-      "dead_components": 1.7,
-      "max_to_mean": 6.57,
-      "norm_entropy": 0.7055,
-      "singular_or_floor_events": 0.0,
-      "train_nll": 13.9052,
-      "test_nll": 15.3059,
-      "test_nll_std": 0.0337,
-      "test_bic": 40846.7
-    },
-    {
-      "method": "egmm_faiss_alt",
-      "splits": 37.3,
-      "dead_components": 0.0,
-      "max_to_mean": 2.16,
-      "norm_entropy": 0.9511,
-      "singular_or_floor_events": 0.0,
-      "train_nll": 13.9105,
-      "test_nll": 15.013,
-      "test_nll_std": 0.093,
-      "test_bic": 40378.0
-    },
-    {
-      "method": "egmm_random_orth",
-      "splits": 47.0,
-      "dead_components": 0.3,
-      "max_to_mean": 3.33,
-      "norm_entropy": 0.9038,
-      "singular_or_floor_events": 0.0,
-      "train_nll": 13.993,
-      "test_nll": 15.2321,
-      "test_nll_std": 0.3115,
-      "test_bic": 40728.6
-    },
-    {
-      "method": "egmm_spectral_v1",
-      "splits": 41.7,
-      "dead_components": 0.3,
-      "max_to_mean": 2.61,
-      "norm_entropy": 0.9212,
-      "singular_or_floor_events": 0.0,
-      "train_nll": 13.6807,
-      "test_nll": 14.8957,
-      "test_nll_std": 0.1355,
-      "test_bic": 40190.4
-    }
+  "seeds": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10
   ],
-  "overlapping_runs": [
-    {
-      "method": "online_em_beta0.85",
-      "splits": 0.0,
-      "dead_components": 3.7,
-      "max_to_mean": 5.05,
-      "norm_entropy": 0.7584,
-      "singular_or_floor_events": 0.0,
-      "train_nll": 18.6089,
-      "test_nll": 19.7397,
-      "test_nll_std": 0.5959,
-      "test_bic": 47940.7
+  "regimes": {
+    "zipf": {
+      "generator": {
+        "sigma_mu_sq": 0.6666666666666666,
+        "sigma_w_sq": 0.3333333333333333,
+        "zipf": true,
+        "zipf_power": 1.2
+      },
+      "benchmark": {
+        "setup": {
+          "k": 16,
+          "cov_type": "full",
+          "cov_floor": 0.0001,
+          "batch_size": 64,
+          "epochs": 6,
+          "seeds": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10
+          ],
+          "tuning_seed": 10000,
+          "reference": "egmm_spectral",
+          "egmm_overrides": {},
+          "unit": "nats per dimension (test NLL / d)"
+        },
+        "methods": {
+          "egmm_spectral": {
+            "description": "e-GMM, spectral v1 revival, alpha_0 tuned",
+            "grid_size": 4
+          },
+          "egmm_no_revive": {
+            "description": "e-GMM without revival, alpha_0 tuned (the H0 control)",
+            "grid_size": 4
+          },
+          "egmm_faiss_alt": {
+            "description": "e-GMM, Faiss-style +/-delta revival, alpha_0 tuned",
+            "grid_size": 4
+          },
+          "online_em": {
+            "description": "Cappe-Moulines online EM, (beta, t0) tuned, matched floor",
+            "grid_size": 15
+          },
+          "emeans_posthoc": {
+            "description": "e-means + per-cell covariance, alpha_0 tuned",
+            "grid_size": 3
+          },
+          "emeans_then_em3": {
+            "description": "e-means init + 3 full-batch EM iterations, alpha_0 tuned",
+            "grid_size": 3
+          },
+          "fullbatch_em_random": {
+            "description": "full-batch EM, random-point init, 25 iterations",
+            "grid_size": 1
+          },
+          "fullbatch_em_emeans": {
+            "description": "full-batch EM, e-means init, 25 iterations",
+            "grid_size": 1
+          }
+        },
+        "skipped_methods": {
+          "sklearn_gmm": "scikit-learn is not installed"
+        },
+        "tuning": {
+          "egmm_spectral": {
+            "best_params": {
+              "alpha_0": 0.1
+            },
+            "table": [
+              {
+                "params": {
+                  "alpha_0": 0.05
+                },
+                "val_nll_per_dim": 0.974926780247749
+              },
+              {
+                "params": {
+                  "alpha_0": 0.1
+                },
+                "val_nll_per_dim": 0.9681478531826474
+              },
+              {
+                "params": {
+                  "alpha_0": 0.2
+                },
+                "val_nll_per_dim": 0.9875063264710584
+              },
+              {
+                "params": {
+                  "alpha_0": 0.35
+                },
+                "val_nll_per_dim": 0.9732353618583052
+              }
+            ],
+            "extensions": 0,
+            "at_grid_edge": [],
+            "seconds": 4.8983087000087835
+          },
+          "egmm_no_revive": {
+            "best_params": {
+              "alpha_0": 0.025
+            },
+            "table": [
+              {
+                "params": {
+                  "alpha_0": 0.05
+                },
+                "val_nll_per_dim": 0.9819836281428806
+              },
+              {
+                "params": {
+                  "alpha_0": 0.1
+                },
+                "val_nll_per_dim": 0.9848352032886857
+              },
+              {
+                "params": {
+                  "alpha_0": 0.2
+                },
+                "val_nll_per_dim": 1.0246480380615224
+              },
+              {
+                "params": {
+                  "alpha_0": 0.35
+                },
+                "val_nll_per_dim": 1.1617192589621599
+              },
+              {
+                "params": {
+                  "alpha_0": 0.025
+                },
+                "val_nll_per_dim": 0.9738379441559079
+              },
+              {
+                "params": {
+                  "alpha_0": 0.0125
+                },
+                "val_nll_per_dim": 0.9901146788951266
+              }
+            ],
+            "extensions": 2,
+            "at_grid_edge": [],
+            "seconds": 10.05128740001237
+          },
+          "egmm_faiss_alt": {
+            "best_params": {
+              "alpha_0": 0.1
+            },
+            "table": [
+              {
+                "params": {
+                  "alpha_0": 0.05
+                },
+                "val_nll_per_dim": 0.9729766418667005
+              },
+              {
+                "params": {
+                  "alpha_0": 0.1
+                },
+                "val_nll_per_dim": 0.9696630162657028
+              },
+              {
+                "params": {
+                  "alpha_0": 0.2
+                },
+                "val_nll_per_dim": 0.9978494767538446
+              },
+              {
+                "params": {
+                  "alpha_0": 0.35
+                },
+                "val_nll_per_dim": 0.9856738655355108
+              }
+            ],
+            "extensions": 0,
+            "at_grid_edge": [],
+            "seconds": 6.4749837999697775
+          },
+          "online_em": {
+            "best_params": {
+              "beta": 0.55,
+              "t0": 100.0
+            },
+            "table": [
+              {
+                "params": {
+                  "beta": 0.55,
+                  "t0": 1.0
+                },
+                "val_nll_per_dim": 1.1523751642413074
+              },
+              {
+                "params": {
+                  "beta": 0.55,
+                  "t0": 10.0
+                },
+                "val_nll_per_dim": 0.9893483738440306
+              },
+              {
+                "params": {
+                  "beta": 0.55,
+                  "t0": 100.0
+                },
+                "val_nll_per_dim": 0.9663366309342406
+              },
+              {
+                "params": {
+                  "beta": 0.65,
+                  "t0": 1.0
+                },
+                "val_nll_per_dim": 1.136170833657511
+              },
+              {
+                "params": {
+                  "beta": 0.65,
+                  "t0": 10.0
+                },
+                "val_nll_per_dim": 0.9840202006584959
+              },
+              {
+                "params": {
+                  "beta": 0.65,
+                  "t0": 100.0
+                },
+                "val_nll_per_dim": 0.9789128599710977
+              },
+              {
+                "params": {
+                  "beta": 0.75,
+                  "t0": 1.0
+                },
+                "val_nll_per_dim": 1.114236064652947
+              },
+              {
+                "params": {
+                  "beta": 0.75,
+                  "t0": 10.0
+                },
+                "val_nll_per_dim": 0.9829757566495912
+              },
+              {
+                "params": {
+                  "beta": 0.75,
+                  "t0": 100.0
+                },
+                "val_nll_per_dim": 0.9828194797138007
+              },
+              {
+                "params": {
+                  "beta": 0.85,
+                  "t0": 1.0
+                },
+                "val_nll_per_dim": 1.1049093709022952
+              },
+              {
+                "params": {
+                  "beta": 0.85,
+                  "t0": 10.0
+                },
+                "val_nll_per_dim": 0.9738555960220764
+              },
+              {
+                "params": {
+                  "beta": 0.85,
+                  "t0": 100.0
+                },
+                "val_nll_per_dim": 1.0140855433212774
+              },
+              {
+                "params": {
+                  "beta": 0.95,
+                  "t0": 1.0
+                },
+                "val_nll_per_dim": 1.0939152043302909
+              },
+              {
+                "params": {
+                  "beta": 0.95,
+                  "t0": 10.0
+                },
+                "val_nll_per_dim": 0.9818999085914671
+              },
+              {
+                "params": {
+                  "beta": 0.95,
+                  "t0": 100.0
+                },
+                "val_nll_per_dim": 1.0566265712905365
+              },
+              {
+                "params": {
+                  "beta": 0.55,
+                  "t0": 1000.0
+                },
+                "val_nll_per_dim": 0.9808620611080177
+              }
+            ],
+            "extensions": 1,
+            "at_grid_edge": [
+              "beta"
+            ],
+            "seconds": 24.70545160002075
+          },
+          "emeans_posthoc": {
+            "best_params": {
+              "alpha_0": 0.7
+            },
+            "table": [
+              {
+                "params": {
+                  "alpha_0": 0.1
+                },
+                "val_nll_per_dim": 0.9811033217652374
+              },
+              {
+                "params": {
+                  "alpha_0": 0.2
+                },
+                "val_nll_per_dim": 0.9767241524980637
+              },
+              {
+                "params": {
+                  "alpha_0": 0.35
+                },
+                "val_nll_per_dim": 0.9735450069401841
+              },
+              {
+                "params": {
+                  "alpha_0": 0.7
+                },
+                "val_nll_per_dim": 0.9722681013017654
+              },
+              {
+                "params": {
+                  "alpha_0": 1.0
+                },
+                "val_nll_per_dim": 0.9731242375703211
+              }
+            ],
+            "extensions": 2,
+            "at_grid_edge": [],
+            "seconds": 0.34854899998754263
+          },
+          "emeans_then_em3": {
+            "best_params": {
+              "alpha_0": 0.2,
+              "em_iters": 3
+            },
+            "table": [
+              {
+                "params": {
+                  "alpha_0": 0.1,
+                  "em_iters": 3
+                },
+                "val_nll_per_dim": 0.9796598737557694
+              },
+              {
+                "params": {
+                  "alpha_0": 0.2,
+                  "em_iters": 3
+                },
+                "val_nll_per_dim": 0.9719197337252697
+              },
+              {
+                "params": {
+                  "alpha_0": 0.35,
+                  "em_iters": 3
+                },
+                "val_nll_per_dim": 0.9722178416269988
+              }
+            ],
+            "extensions": 0,
+            "at_grid_edge": [],
+            "seconds": 1.2055371000315063
+          },
+          "fullbatch_em_random": {
+            "best_params": {
+              "max_iters": 25
+            },
+            "table": [
+              {
+                "params": {
+                  "max_iters": 25
+                },
+                "val_nll_per_dim": 0.9920063669140988
+              }
+            ],
+            "extensions": 0,
+            "at_grid_edge": [],
+            "seconds": 2.466360399965197
+          },
+          "fullbatch_em_emeans": {
+            "best_params": {
+              "max_iters": 25
+            },
+            "table": [
+              {
+                "params": {
+                  "max_iters": 25
+                },
+                "val_nll_per_dim": 0.987697687852357
+              }
+            ],
+            "extensions": 0,
+            "at_grid_edge": [],
+            "seconds": 2.266627899953164
+          }
+        },
+        "per_seed": {
+          "egmm_spectral": {
+            "test_nll_per_dim": [
+              1.0503581513368314,
+              1.048624200792932,
+              0.9345017142009948,
+              0.984180241408116,
+              1.0499102988723175,
+              0.9750117792690715,
+              1.0681797795615224,
+              0.9137840648957325,
+              0.9795728891379738,
+              1.0646128284213288
+            ],
+            "dead_count": [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "seconds": [
+              1.2485623999964446,
+              1.1806268999935128,
+              0.9692022000090219,
+              1.0756343999528326,
+              0.8820095999981277,
+              0.9816630000132136,
+              1.1267467000288889,
+              1.0513993999920785,
+              0.9605677000363357,
+              0.9657549999537878
+            ]
+          },
+          "egmm_no_revive": {
+            "test_nll_per_dim": [
+              1.0523604820220374,
+              1.0485038655209513,
+              0.9507564344235482,
+              0.9853064741673947,
+              1.0490127404984275,
+              0.9727049829291846,
+              1.0860170129691507,
+              0.91843728399697,
+              0.9938069534926833,
+              1.0911443411979491
+            ],
+            "dead_count": [
+              5.0,
+              0.0,
+              3.0,
+              3.0,
+              2.0,
+              2.0,
+              1.0,
+              4.0,
+              3.0,
+              1.0
+            ],
+            "seconds": [
+              2.337670699984301,
+              1.1339793000370264,
+              0.9803113000234589,
+              0.9037123000016436,
+              0.9258377999649383,
+              1.184690700029023,
+              1.0957831999985501,
+              0.9296712999930605,
+              0.9022242000210099,
+              0.8683914999710396
+            ]
+          },
+          "egmm_faiss_alt": {
+            "test_nll_per_dim": [
+              1.0386929986656803,
+              1.0464925031193892,
+              0.940386796309574,
+              0.973906203041207,
+              1.059487661555689,
+              0.955952467755104,
+              1.0748723140532268,
+              0.9133867566642319,
+              0.9873038246681959,
+              1.085983333937798
+            ],
+            "dead_count": [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "seconds": [
+              2.65789210004732,
+              1.2690368999610655,
+              1.018579800031148,
+              0.8788305000052787,
+              0.9299333000089973,
+              1.4594931000028737,
+              0.8859429999720305,
+              0.9959101999993436,
+              1.0910527000087313,
+              1.1096113999956287
+            ]
+          },
+          "online_em": {
+            "test_nll_per_dim": [
+              1.0542930208285646,
+              1.0666684284622603,
+              0.9384679947711448,
+              0.9747128598260414,
+              1.0459605333762985,
+              0.9536064973114758,
+              1.0911051058272587,
+              0.9270347302057439,
+              0.9941110963014077,
+              1.095001259567969
+            ],
+            "dead_count": [
+              5.0,
+              2.0,
+              3.0,
+              4.0,
+              4.0,
+              1.0,
+              1.0,
+              4.0,
+              5.0,
+              5.0
+            ],
+            "seconds": [
+              1.2756643000175245,
+              1.1004954999662004,
+              1.2997469999827445,
+              1.0251588000101037,
+              0.8388086000340991,
+              2.0074275999795645,
+              1.0153217999613844,
+              1.764752400049474,
+              1.1104875999735668,
+              1.3047592000220902
+            ]
+          },
+          "emeans_posthoc": {
+            "test_nll_per_dim": [
+              1.0515075975070585,
+              1.0445483211212716,
+              0.9436681409094831,
+              0.981457671367434,
+              1.0499899077552897,
+              0.9697762917957152,
+              1.0628097390773454,
+              0.9137158270011279,
+              1.011802470176827,
+              1.0532842987615008
+            ],
+            "dead_count": [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "seconds": [
+              0.05015419999836013,
+              0.04409979999763891,
+              0.07447330001741648,
+              0.049852400028612465,
+              0.04011600004741922,
+              0.066042699967511,
+              0.033007999998517334,
+              0.05127960001118481,
+              0.02414569997927174,
+              0.033779699995648116
+            ]
+          },
+          "emeans_then_em3": {
+            "test_nll_per_dim": [
+              1.054484033283185,
+              1.0335494580888758,
+              0.9659650602658064,
+              0.9651234498781271,
+              1.0507912939357507,
+              0.9683762786103098,
+              1.0680281447499427,
+              0.9173482994231411,
+              1.0047595366969921,
+              1.0704483171655739
+            ],
+            "dead_count": [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "seconds": [
+              0.30219850002322346,
+              0.3316935999901034,
+              0.27284269995288923,
+              0.2816690999898128,
+              0.23846329998923466,
+              0.31462680001277477,
+              0.3179869999876246,
+              0.3533891999977641,
+              0.25477499997941777,
+              0.24186479998752475
+            ]
+          },
+          "fullbatch_em_random": {
+            "test_nll_per_dim": [
+              1.0631040929939186,
+              1.0505360620920268,
+              0.9418934012963001,
+              0.9775734921567767,
+              1.067052189011826,
+              0.9651519820706355,
+              1.0710778595193107,
+              0.930805080127219,
+              1.0118434958769884,
+              1.0824317171806692
+            ],
+            "dead_count": [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "seconds": [
+              2.61339680000674,
+              2.3869270000141114,
+              2.3424094999791123,
+              1.8582192999892868,
+              1.5201891000033356,
+              2.2364844999974594,
+              1.9525393000221811,
+              2.30419500003336,
+              1.9061670000082813,
+              2.016300500021316
+            ]
+          },
+          "fullbatch_em_emeans": {
+            "test_nll_per_dim": [
+              1.0591351194409107,
+              1.040134204354025,
+              0.960048555176433,
+              0.9686987371552638,
+              1.0516954821600715,
+              0.980817700912635,
+              1.0712580667859368,
+              0.9194725441868499,
+              1.0074997758191409,
+              1.076317023972326
+            ],
+            "dead_count": [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "seconds": [
+              2.186068399983924,
+              2.3377551999874413,
+              2.402731499983929,
+              1.805176299996674,
+              1.791041899996344,
+              2.5057109999470413,
+              2.1083974999492057,
+              1.9643882000236772,
+              1.980600599956233,
+              1.9878056999878027
+            ]
+          }
+        },
+        "summary": {
+          "egmm_spectral": {
+            "test_nll_per_dim_mean": 1.0068735947896819,
+            "test_nll_per_dim_std": 0.056526578635931274,
+            "n_finite": 10,
+            "dead_count_mean": 0.0,
+            "seconds_mean": 1.0442167299974243
+          },
+          "egmm_no_revive": {
+            "test_nll_per_dim_mean": 1.0148050571218297,
+            "test_nll_per_dim_std": 0.0587721503810948,
+            "n_finite": 10,
+            "dead_count_mean": 2.4,
+            "seconds_mean": 1.1262272300024052
+          },
+          "egmm_faiss_alt": {
+            "test_nll_per_dim_mean": 1.0076464859770096,
+            "test_nll_per_dim_std": 0.060964146747827484,
+            "n_finite": 10,
+            "dead_count_mean": 0.0,
+            "seconds_mean": 1.2296283000032417
+          },
+          "online_em": {
+            "test_nll_per_dim_mean": 1.0140961526478165,
+            "test_nll_per_dim_std": 0.06392681625233201,
+            "n_finite": 10,
+            "dead_count_mean": 3.4,
+            "seconds_mean": 1.2742622799996752
+          },
+          "emeans_posthoc": {
+            "test_nll_per_dim_mean": 1.0082560265473055,
+            "test_nll_per_dim_std": 0.052971755699230134,
+            "n_finite": 10,
+            "dead_count_mean": 0.0,
+            "seconds_mean": 0.04669514000415802
+          },
+          "emeans_then_em3": {
+            "test_nll_per_dim_mean": 1.0098873872097704,
+            "test_nll_per_dim_std": 0.0532455408620317,
+            "n_finite": 10,
+            "dead_count_mean": 0.0,
+            "seconds_mean": 0.29095099999103696
+          },
+          "fullbatch_em_random": {
+            "test_nll_per_dim_mean": 1.0161469372325669,
+            "test_nll_per_dim_std": 0.0580169948456266,
+            "n_finite": 10,
+            "dead_count_mean": 0.0,
+            "seconds_mean": 2.1136828000075183
+          },
+          "fullbatch_em_emeans": {
+            "test_nll_per_dim_mean": 1.0135077209963592,
+            "test_nll_per_dim_std": 0.05410105762532598,
+            "n_finite": 10,
+            "dead_count_mean": 0.0,
+            "seconds_mean": 2.106967629981227
+          }
+        },
+        "paired_vs_reference": {
+          "egmm_no_revive": {
+            "n": 10.0,
+            "method_mean": 1.0148050571218297,
+            "reference_mean": 1.0068735947896819,
+            "mean_diff": 0.00793146233214761,
+            "std_diff": 0.00996049537774079,
+            "t_stat": 2.518096258692938,
+            "p_value": 0.03515625,
+            "wins": 3.0,
+            "ties": 0.0
+          },
+          "egmm_faiss_alt": {
+            "n": 10.0,
+            "method_mean": 1.0076464859770096,
+            "reference_mean": 1.0068735947896819,
+            "mean_diff": 0.0007728911873275401,
+            "std_diff": 0.011977911815032492,
+            "t_stat": 0.20405030302189314,
+            "p_value": 0.837890625,
+            "wins": 5.0,
+            "ties": 0.0
+          },
+          "online_em": {
+            "n": 10.0,
+            "method_mean": 1.0140961526478165,
+            "reference_mean": 1.0068735947896819,
+            "mean_diff": 0.007222557858134404,
+            "std_diff": 0.01575697482008598,
+            "t_stat": 1.449499896067447,
+            "p_value": 0.17578125,
+            "wins": 3.0,
+            "ties": 0.0
+          },
+          "emeans_posthoc": {
+            "n": 10.0,
+            "method_mean": 1.0082560265473055,
+            "reference_mean": 1.0068735947896819,
+            "mean_diff": 0.001382431757623237,
+            "std_diff": 0.012081200953194636,
+            "t_stat": 0.361854179959094,
+            "p_value": 0.84765625,
+            "wins": 6.0,
+            "ties": 0.0
+          },
+          "emeans_then_em3": {
+            "n": 10.0,
+            "method_mean": 1.0098873872097704,
+            "reference_mean": 1.0068735947896819,
+            "mean_diff": 0.0030137924200884015,
+            "std_diff": 0.015749771417210977,
+            "t_stat": 0.6051166197888879,
+            "p_value": 0.5625,
+            "wins": 4.0,
+            "ties": 0.0
+          },
+          "fullbatch_em_random": {
+            "n": 10.0,
+            "method_mean": 1.0161469372325669,
+            "reference_mean": 1.0068735947896819,
+            "mean_diff": 0.009273342442885024,
+            "std_diff": 0.01270402515710441,
+            "t_stat": 2.3083143554566536,
+            "p_value": 0.04296875,
+            "wins": 2.0,
+            "ties": 0.0
+          },
+          "fullbatch_em_emeans": {
+            "n": 10.0,
+            "method_mean": 1.0135077209963592,
+            "reference_mean": 1.0068735947896819,
+            "mean_diff": 0.006634126206677171,
+            "std_diff": 0.013320603959902573,
+            "t_stat": 1.5749247677705338,
+            "p_value": 0.15625,
+            "wins": 2.0,
+            "ties": 0.0
+          }
+        },
+        "failures": {}
+      },
+      "alpha_sensitivity": {
+        "0.05": {
+          "alpha_0": 0.05,
+          "no_revive_vs_spectral": {
+            "n": 10.0,
+            "method_mean": 1.0144838857806837,
+            "reference_mean": 1.0075017870684237,
+            "mean_diff": 0.006982098712260109,
+            "std_diff": 0.010817018750899328,
+            "t_stat": 2.041166358987302,
+            "p_value": 0.08203125,
+            "wins": 3.0,
+            "ties": 1.0
+          },
+          "dead_spectral_mean": 0.0,
+          "dead_no_revive_mean": 1.5,
+          "per_seed": {
+            "spectral": [
+              1.0492486222683257,
+              1.0415596256269637,
+              0.9273988158664954,
+              1.0015773604178937,
+              1.0348271290303928,
+              0.9518020280677716,
+              1.0689777812360106,
+              0.9182107894738146,
+              0.9812075479883197,
+              1.1002081707082498
+            ],
+            "no_revive": [
+              1.0528466085004349,
+              1.0415596256269637,
+              0.9349534680964602,
+              0.9963713346208709,
+              1.0594692829976609,
+              0.9691491824715845,
+              1.085983482709952,
+              0.9134566249974435,
+              0.9954341258798282,
+              1.09561512190564
+            ],
+            "dead_spectral": [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "dead_no_revive": [
+              3.0,
+              0.0,
+              2.0,
+              3.0,
+              0.0,
+              0.0,
+              1.0,
+              3.0,
+              2.0,
+              1.0
+            ]
+          }
+        },
+        "0.1": {
+          "alpha_0": 0.1,
+          "no_revive_vs_spectral": {
+            "n": 10.0,
+            "method_mean": 1.0137075279582022,
+            "reference_mean": 1.0068735947896819,
+            "mean_diff": 0.006833933168520168,
+            "std_diff": 0.010991790887518189,
+            "t_stat": 1.9660849092785542,
+            "p_value": 0.087890625,
+            "wins": 2.0,
+            "ties": 0.0
+          },
+          "dead_spectral_mean": 0.0,
+          "dead_no_revive_mean": 2.7,
+          "per_seed": {
+            "spectral": [
+              1.0503581513368314,
+              1.048624200792932,
+              0.9345017142009948,
+              0.984180241408116,
+              1.0499102988723175,
+              0.9750117792690715,
+              1.0681797795615224,
+              0.9137840648957325,
+              0.9795728891379738,
+              1.0646128284213288
+            ],
+            "no_revive": [
+              1.0522629222493873,
+              1.0495616904636969,
+              0.9449030650168317,
+              0.9845315905371629,
+              1.0625030801006785,
+              0.9655529184454568,
+              1.0904851711511219,
+              0.9077739676005251,
+              0.9929700122735464,
+              1.086530861743615
+            ],
+            "dead_spectral": [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "dead_no_revive": [
+              5.0,
+              0.0,
+              2.0,
+              4.0,
+              1.0,
+              3.0,
+              2.0,
+              4.0,
+              4.0,
+              2.0
+            ]
+          }
+        },
+        "0.2": {
+          "alpha_0": 0.2,
+          "no_revive_vs_spectral": {
+            "n": 10.0,
+            "method_mean": 1.0607450435596917,
+            "reference_mean": 1.0177702773876731,
+            "mean_diff": 0.042974766172018786,
+            "std_diff": 0.021131840076287153,
+            "t_stat": 6.430965903874661,
+            "p_value": 0.001953125,
+            "wins": 0.0,
+            "ties": 0.0
+          },
+          "dead_spectral_mean": 0.0,
+          "dead_no_revive_mean": 9.5,
+          "per_seed": {
+            "spectral": [
+              1.0575519120185373,
+              1.064733226368243,
+              0.9310450830668441,
+              1.005529620287239,
+              1.0501517057913485,
+              0.9663009672716889,
+              1.0870991689268215,
+              0.9377268854835876,
+              0.9915920556918013,
+              1.085972148970618
+            ],
+            "no_revive": [
+              1.127782946971093,
+              1.1136072249610147,
+              0.9770651690601008,
+              1.0217685782856905,
+              1.1120713072276853,
+              1.0015804188049509,
+              1.128244696104179,
+              0.9654278000898745,
+              1.0022986080998597,
+              1.1576036859924688
+            ],
+            "dead_spectral": [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "dead_no_revive": [
+              10.0,
+              10.0,
+              9.0,
+              9.0,
+              11.0,
+              8.0,
+              10.0,
+              9.0,
+              8.0,
+              11.0
+            ]
+          }
+        },
+        "0.35": {
+          "alpha_0": 0.35,
+          "no_revive_vs_spectral": {
+            "n": 10.0,
+            "method_mean": 1.1771777206456167,
+            "reference_mean": 1.008107684687569,
+            "mean_diff": 0.16907003595804768,
+            "std_diff": 0.039417136667914264,
+            "t_stat": 13.563806072935874,
+            "p_value": 0.001953125,
+            "wins": 0.0,
+            "ties": 0.0
+          },
+          "dead_spectral_mean": 0.0,
+          "dead_no_revive_mean": 13.8,
+          "per_seed": {
+            "spectral": [
+              1.05203772431354,
+              1.0361996321435647,
+              0.9318921216240613,
+              0.9719373521206385,
+              1.0549197135967505,
+              0.9623201816002868,
+              1.0822366616637686,
+              0.9311444523356137,
+              0.980497837767241,
+              1.0778911697102247
+            ],
+            "no_revive": [
+              1.2851372887198536,
+              1.2170500510729094,
+              1.0747481288980756,
+              1.1494498740052128,
+              1.1684523677528933,
+              1.1501627828747718,
+              1.2964133021565891,
+              1.1148049550916945,
+              1.105620716553246,
+              1.2099377393309203
+            ],
+            "dead_spectral": [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "dead_no_revive": [
+              15.0,
+              14.0,
+              13.0,
+              14.0,
+              13.0,
+              14.0,
+              15.0,
+              14.0,
+              13.0,
+              13.0
+            ]
+          }
+        }
+      },
+      "seconds": 240.0725812999881
     },
-    {
-      "method": "emeans_posthoc",
-      "splits": 2.3,
-      "dead_components": 0.0,
-      "max_to_mean": 1.82,
-      "norm_entropy": 0.9769,
-      "singular_or_floor_events": 0.0,
-      "train_nll": 19.4617,
-      "test_nll": 20.4754,
-      "test_nll_std": 0.248,
-      "test_bic": 49117.9
-    },
-    {
-      "method": "egmm_no_revive",
-      "splits": 0.0,
-      "dead_components": 14.7,
-      "max_to_mean": 15.61,
-      "norm_entropy": 0.0451,
-      "singular_or_floor_events": 0.0,
-      "train_nll": 21.2867,
-      "test_nll": 21.8137,
-      "test_nll_std": 0.0725,
-      "test_bic": 51259.2
-    },
-    {
-      "method": "egmm_spectral_v1",
-      "splits": 48.0,
-      "dead_components": 0.0,
-      "max_to_mean": 2.42,
-      "norm_entropy": 0.9438,
-      "singular_or_floor_events": 0.0,
-      "train_nll": 17.7694,
-      "test_nll": 19.0163,
-      "test_nll_std": 0.3646,
-      "test_bic": 46783.4
+    "overlap": {
+      "generator": {
+        "sigma_mu_sq": 0.2,
+        "sigma_w_sq": 0.8,
+        "zipf": false,
+        "zipf_power": 1.0
+      },
+      "benchmark": {
+        "setup": {
+          "k": 16,
+          "cov_type": "full",
+          "cov_floor": 0.0001,
+          "batch_size": 64,
+          "epochs": 6,
+          "seeds": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10
+          ],
+          "tuning_seed": 10000,
+          "reference": "egmm_spectral",
+          "egmm_overrides": {},
+          "unit": "nats per dimension (test NLL / d)"
+        },
+        "methods": {
+          "egmm_spectral": {
+            "description": "e-GMM, spectral v1 revival, alpha_0 tuned",
+            "grid_size": 4
+          },
+          "egmm_no_revive": {
+            "description": "e-GMM without revival, alpha_0 tuned (the H0 control)",
+            "grid_size": 4
+          },
+          "egmm_faiss_alt": {
+            "description": "e-GMM, Faiss-style +/-delta revival, alpha_0 tuned",
+            "grid_size": 4
+          },
+          "online_em": {
+            "description": "Cappe-Moulines online EM, (beta, t0) tuned, matched floor",
+            "grid_size": 15
+          },
+          "emeans_posthoc": {
+            "description": "e-means + per-cell covariance, alpha_0 tuned",
+            "grid_size": 3
+          },
+          "emeans_then_em3": {
+            "description": "e-means init + 3 full-batch EM iterations, alpha_0 tuned",
+            "grid_size": 3
+          },
+          "fullbatch_em_random": {
+            "description": "full-batch EM, random-point init, 25 iterations",
+            "grid_size": 1
+          },
+          "fullbatch_em_emeans": {
+            "description": "full-batch EM, e-means init, 25 iterations",
+            "grid_size": 1
+          }
+        },
+        "skipped_methods": {
+          "sklearn_gmm": "scikit-learn is not installed"
+        },
+        "tuning": {
+          "egmm_spectral": {
+            "best_params": {
+              "alpha_0": 0.1
+            },
+            "table": [
+              {
+                "params": {
+                  "alpha_0": 0.05
+                },
+                "val_nll_per_dim": 1.2900248506424186
+              },
+              {
+                "params": {
+                  "alpha_0": 0.1
+                },
+                "val_nll_per_dim": 1.2104423712947256
+              },
+              {
+                "params": {
+                  "alpha_0": 0.2
+                },
+                "val_nll_per_dim": 1.2155889087207945
+              },
+              {
+                "params": {
+                  "alpha_0": 0.35
+                },
+                "val_nll_per_dim": 1.224354400462898
+              }
+            ],
+            "extensions": 0,
+            "at_grid_edge": [],
+            "seconds": 6.158829199965112
+          },
+          "egmm_no_revive": {
+            "best_params": {
+              "alpha_0": 0.1
+            },
+            "table": [
+              {
+                "params": {
+                  "alpha_0": 0.05
+                },
+                "val_nll_per_dim": 1.2900248506424186
+              },
+              {
+                "params": {
+                  "alpha_0": 0.1
+                },
+                "val_nll_per_dim": 1.231098098504209
+              },
+              {
+                "params": {
+                  "alpha_0": 0.2
+                },
+                "val_nll_per_dim": 1.285878783226716
+              },
+              {
+                "params": {
+                  "alpha_0": 0.35
+                },
+                "val_nll_per_dim": 1.3834236088050864
+              }
+            ],
+            "extensions": 0,
+            "at_grid_edge": [],
+            "seconds": 4.739179499971215
+          },
+          "egmm_faiss_alt": {
+            "best_params": {
+              "alpha_0": 0.35
+            },
+            "table": [
+              {
+                "params": {
+                  "alpha_0": 0.05
+                },
+                "val_nll_per_dim": 1.2900248506424186
+              },
+              {
+                "params": {
+                  "alpha_0": 0.1
+                },
+                "val_nll_per_dim": 1.216506558475148
+              },
+              {
+                "params": {
+                  "alpha_0": 0.2
+                },
+                "val_nll_per_dim": 1.2201663826497582
+              },
+              {
+                "params": {
+                  "alpha_0": 0.35
+                },
+                "val_nll_per_dim": 1.1997645013572567
+              },
+              {
+                "params": {
+                  "alpha_0": 0.7
+                },
+                "val_nll_per_dim": 1.2438609628728792
+              }
+            ],
+            "extensions": 1,
+            "at_grid_edge": [],
+            "seconds": 5.636942700017244
+          },
+          "online_em": {
+            "best_params": {
+              "beta": 0.55,
+              "t0": 100.0
+            },
+            "table": [
+              {
+                "params": {
+                  "beta": 0.55,
+                  "t0": 1.0
+                },
+                "val_nll_per_dim": 1.3538286200925267
+              },
+              {
+                "params": {
+                  "beta": 0.55,
+                  "t0": 10.0
+                },
+                "val_nll_per_dim": 1.2454364023959659
+              },
+              {
+                "params": {
+                  "beta": 0.55,
+                  "t0": 100.0
+                },
+                "val_nll_per_dim": 1.2141205799109054
+              },
+              {
+                "params": {
+                  "beta": 0.65,
+                  "t0": 1.0
+                },
+                "val_nll_per_dim": 1.3569594717270417
+              },
+              {
+                "params": {
+                  "beta": 0.65,
+                  "t0": 10.0
+                },
+                "val_nll_per_dim": 1.2349212042776347
+              },
+              {
+                "params": {
+                  "beta": 0.65,
+                  "t0": 100.0
+                },
+                "val_nll_per_dim": 1.2788491774200792
+              },
+              {
+                "params": {
+                  "beta": 0.75,
+                  "t0": 1.0
+                },
+                "val_nll_per_dim": 1.361804517575163
+              },
+              {
+                "params": {
+                  "beta": 0.75,
+                  "t0": 10.0
+                },
+                "val_nll_per_dim": 1.2778830323728587
+              },
+              {
+                "params": {
+                  "beta": 0.75,
+                  "t0": 100.0
+                },
+                "val_nll_per_dim": 1.2922329050489874
+              },
+              {
+                "params": {
+                  "beta": 0.85,
+                  "t0": 1.0
+                },
+                "val_nll_per_dim": 1.3356661290683098
+              },
+              {
+                "params": {
+                  "beta": 0.85,
+                  "t0": 10.0
+                },
+                "val_nll_per_dim": 1.296927387628002
+              },
+              {
+                "params": {
+                  "beta": 0.85,
+                  "t0": 100.0
+                },
+                "val_nll_per_dim": 1.3019412747785664
+              },
+              {
+                "params": {
+                  "beta": 0.95,
+                  "t0": 1.0
+                },
+                "val_nll_per_dim": 1.342441898441332
+              },
+              {
+                "params": {
+                  "beta": 0.95,
+                  "t0": 10.0
+                },
+                "val_nll_per_dim": 1.2955436889735852
+              },
+              {
+                "params": {
+                  "beta": 0.95,
+                  "t0": 100.0
+                },
+                "val_nll_per_dim": 1.3251372202855847
+              },
+              {
+                "params": {
+                  "beta": 0.55,
+                  "t0": 1000.0
+                },
+                "val_nll_per_dim": 1.2914760207204738
+              }
+            ],
+            "extensions": 1,
+            "at_grid_edge": [
+              "beta"
+            ],
+            "seconds": 20.25766509998357
+          },
+          "emeans_posthoc": {
+            "best_params": {
+              "alpha_0": 0.1
+            },
+            "table": [
+              {
+                "params": {
+                  "alpha_0": 0.1
+                },
+                "val_nll_per_dim": 1.2993860486333824
+              },
+              {
+                "params": {
+                  "alpha_0": 0.2
+                },
+                "val_nll_per_dim": 1.3019291091665357
+              },
+              {
+                "params": {
+                  "alpha_0": 0.35
+                },
+                "val_nll_per_dim": 1.301246400749482
+              },
+              {
+                "params": {
+                  "alpha_0": 0.05
+                },
+                "val_nll_per_dim": 1.3085962971321021
+              }
+            ],
+            "extensions": 1,
+            "at_grid_edge": [],
+            "seconds": 0.1729114999761805
+          },
+          "emeans_then_em3": {
+            "best_params": {
+              "alpha_0": 0.2,
+              "em_iters": 3
+            },
+            "table": [
+              {
+                "params": {
+                  "alpha_0": 0.1,
+                  "em_iters": 3
+                },
+                "val_nll_per_dim": 1.2624741331698417
+              },
+              {
+                "params": {
+                  "alpha_0": 0.2,
+                  "em_iters": 3
+                },
+                "val_nll_per_dim": 1.261047084616756
+              },
+              {
+                "params": {
+                  "alpha_0": 0.35,
+                  "em_iters": 3
+                },
+                "val_nll_per_dim": 1.2701514754675614
+              }
+            ],
+            "extensions": 0,
+            "at_grid_edge": [],
+            "seconds": 1.0448765000328422
+          },
+          "fullbatch_em_random": {
+            "best_params": {
+              "max_iters": 25
+            },
+            "table": [
+              {
+                "params": {
+                  "max_iters": 25
+                },
+                "val_nll_per_dim": 1.2316116648530797
+              }
+            ],
+            "extensions": 0,
+            "at_grid_edge": [],
+            "seconds": 2.481576699996367
+          },
+          "fullbatch_em_emeans": {
+            "best_params": {
+              "max_iters": 25
+            },
+            "table": [
+              {
+                "params": {
+                  "max_iters": 25
+                },
+                "val_nll_per_dim": 1.2152742654166149
+              }
+            ],
+            "extensions": 0,
+            "at_grid_edge": [],
+            "seconds": 2.2494859999860637
+          }
+        },
+        "per_seed": {
+          "egmm_spectral": {
+            "test_nll_per_dim": [
+              1.2171272049972404,
+              1.2007627902426719,
+              1.189007677099323,
+              1.1940139624097754,
+              1.1949831571492684,
+              1.1808407599399622,
+              1.1964048726060257,
+              1.212330512988034,
+              1.2031716496824962,
+              1.1705738506001921
+            ],
+            "dead_count": [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "seconds": [
+              1.130896299961023,
+              2.3734663000213914,
+              1.8035672000260092,
+              1.548808799998369,
+              1.4657892999821343,
+              1.5909554999670945,
+              3.521080999984406,
+              2.438687200017739,
+              2.190193200018257,
+              1.6129522999981418
+            ]
+          },
+          "egmm_no_revive": {
+            "test_nll_per_dim": [
+              1.228569286074723,
+              1.2067452465282265,
+              1.1858833282243686,
+              1.1979233242752398,
+              1.21016121372869,
+              1.1837242531856247,
+              1.1987630367162467,
+              1.2076703308881136,
+              1.2031716496824962,
+              1.1660790648836024
+            ],
+            "dead_count": [
+              2.0,
+              3.0,
+              2.0,
+              2.0,
+              4.0,
+              2.0,
+              2.0,
+              2.0,
+              0.0,
+              2.0
+            ],
+            "seconds": [
+              1.070401499979198,
+              1.933167599956505,
+              2.0253539999830537,
+              1.5933599999989383,
+              1.7264734000200406,
+              1.6028288999805227,
+              4.15260460000718,
+              2.1362615999532863,
+              1.970318400010001,
+              1.8042181000346318
+            ]
+          },
+          "egmm_faiss_alt": {
+            "test_nll_per_dim": [
+              1.2104210464277658,
+              1.1987251259318148,
+              1.2169010524287542,
+              1.205869022210073,
+              1.2113670575692588,
+              1.1838525174849792,
+              1.1829007091984198,
+              1.2519318512800839,
+              1.200543139782654,
+              1.1757434334271324
+            ],
+            "dead_count": [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "seconds": [
+              1.146611399948597,
+              1.6316431000013836,
+              1.6212371999863535,
+              3.203772699984256,
+              1.578757699986454,
+              1.4731768000056036,
+              3.8838703999645077,
+              3.1585068999556825,
+              2.5618236000300385,
+              3.22678550001001
+            ]
+          },
+          "online_em": {
+            "test_nll_per_dim": [
+              1.197781753706168,
+              1.2201807204709667,
+              1.2055071682951524,
+              1.2256785838111803,
+              1.1979956315196711,
+              1.2035543717542019,
+              1.1910949643267617,
+              1.2005068234197425,
+              1.2282762590266183,
+              1.2043913024437647
+            ],
+            "dead_count": [
+              1.0,
+              2.0,
+              2.0,
+              1.0,
+              4.0,
+              2.0,
+              0.0,
+              0.0,
+              0.0,
+              2.0
+            ],
+            "seconds": [
+              1.1762786000035703,
+              1.9142599000479095,
+              1.6465735000092536,
+              2.729891899973154,
+              1.7176142000244,
+              1.6844561999896541,
+              2.4618068000418134,
+              1.794459900003858,
+              1.6967733000055887,
+              2.4946514000184834
+            ]
+          },
+          "emeans_posthoc": {
+            "test_nll_per_dim": [
+              1.303905704694476,
+              1.2862524486704436,
+              1.2895273395255367,
+              1.2900889179990285,
+              1.2857401697845552,
+              1.2781758684528197,
+              1.2813171589860408,
+              1.291549159959784,
+              1.2864197234462658,
+              1.2663893713025
+            ],
+            "dead_count": [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "seconds": [
+              0.07067869999445975,
+              0.06375520001165569,
+              0.08886570000322536,
+              0.07902120001381263,
+              0.05857550003565848,
+              0.05723259999649599,
+              0.07915120001416653,
+              0.055885499983560294,
+              0.054436500009614974,
+              0.06582979997619987
+            ]
+          },
+          "emeans_then_em3": {
+            "test_nll_per_dim": [
+              1.241041312969169,
+              1.2551578318870178,
+              1.2364684155797414,
+              1.2490793182615147,
+              1.2485615607373506,
+              1.233161725180506,
+              1.2524840598063987,
+              1.2455246969165588,
+              1.2578375229084053,
+              1.2072681749718281
+            ],
+            "dead_count": [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "seconds": [
+              0.4088581000105478,
+              0.3453754000365734,
+              0.47774809994734824,
+              0.4686373999575153,
+              0.40106020000530407,
+              0.3468316000071354,
+              0.4771333999815397,
+              0.32781609997618943,
+              0.3184064999804832,
+              0.7951175000052899
+            ]
+          },
+          "fullbatch_em_random": {
+            "test_nll_per_dim": [
+              1.2013880226310851,
+              1.1950501496140975,
+              1.1979285888134017,
+              1.1986534603646566,
+              1.2081711579981789,
+              1.185665371485483,
+              1.20750433904385,
+              1.2046369196839133,
+              1.2003570867760116,
+              1.1998184070301199
+            ],
+            "dead_count": [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              1.0,
+              1.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "seconds": [
+              2.556265200022608,
+              2.727280299994163,
+              2.6893696999759413,
+              3.035950799996499,
+              2.773068200040143,
+              3.335453099978622,
+              4.928228200005833,
+              2.7758526999969035,
+              2.849262000003364,
+              3.336906899989117
+            ]
+          },
+          "fullbatch_em_emeans": {
+            "test_nll_per_dim": [
+              1.1914702747062287,
+              1.194474230506247,
+              1.1839035347493756,
+              1.1933921568921548,
+              1.190008014727029,
+              1.174913871263338,
+              1.1868997882897754,
+              1.1910687669717361,
+              1.1845517372643184,
+              1.1736678789934556
+            ],
+            "dead_count": [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "seconds": [
+              3.9114480999996886,
+              2.8509083000244573,
+              2.861623000004329,
+              2.648958700010553,
+              3.0252749000210315,
+              6.23651100002462,
+              4.276333899993915,
+              3.036245000024792,
+              2.789541200036183,
+              4.929879600007553
+            ]
+          }
+        },
+        "summary": {
+          "egmm_spectral": {
+            "test_nll_per_dim_mean": 1.195921643771499,
+            "test_nll_per_dim_std": 0.013813947167398002,
+            "n_finite": 10,
+            "dead_count_mean": 0.0,
+            "seconds_mean": 1.9676397099974565
+          },
+          "egmm_no_revive": {
+            "test_nll_per_dim_mean": 1.198869073418733,
+            "test_nll_per_dim_std": 0.017132519325974725,
+            "n_finite": 10,
+            "dead_count_mean": 2.1,
+            "seconds_mean": 2.0014988099923356
+          },
+          "egmm_faiss_alt": {
+            "test_nll_per_dim_mean": 1.2038254955740937,
+            "test_nll_per_dim_std": 0.021735532810339426,
+            "n_finite": 10,
+            "dead_count_mean": 0.0,
+            "seconds_mean": 2.348618529987289
+          },
+          "online_em": {
+            "test_nll_per_dim_mean": 1.207496757877423,
+            "test_nll_per_dim_std": 0.012714492262265209,
+            "n_finite": 10,
+            "dead_count_mean": 1.4,
+            "seconds_mean": 1.9316765700117684
+          },
+          "emeans_posthoc": {
+            "test_nll_per_dim_mean": 1.285936586282145,
+            "test_nll_per_dim_std": 0.009710010874146207,
+            "n_finite": 10,
+            "dead_count_mean": 0.0,
+            "seconds_mean": 0.06734319000388496
+          },
+          "emeans_then_em3": {
+            "test_nll_per_dim_mean": 1.242658461921849,
+            "test_nll_per_dim_std": 0.014723609363292499,
+            "n_finite": 10,
+            "dead_count_mean": 0.0,
+            "seconds_mean": 0.43669842999079267
+          },
+          "fullbatch_em_random": {
+            "test_nll_per_dim_mean": 1.1999173503440799,
+            "test_nll_per_dim_std": 0.006520814899631745,
+            "n_finite": 10,
+            "dead_count_mean": 0.2,
+            "seconds_mean": 3.1007637100003196
+          },
+          "fullbatch_em_emeans": {
+            "test_nll_per_dim_mean": 1.1864350254363658,
+            "test_nll_per_dim_std": 0.007291778401176599,
+            "n_finite": 10,
+            "dead_count_mean": 0.0,
+            "seconds_mean": 3.656672370014712
+          }
+        },
+        "paired_vs_reference": {
+          "egmm_no_revive": {
+            "n": 10.0,
+            "method_mean": 1.198869073418733,
+            "reference_mean": 1.195921643771499,
+            "mean_diff": 0.0029474296472342234,
+            "std_diff": 0.006591674227260702,
+            "t_stat": 1.4139944734860028,
+            "p_value": 0.2109375,
+            "wins": 3.0,
+            "ties": 1.0
+          },
+          "egmm_faiss_alt": {
+            "n": 10.0,
+            "method_mean": 1.2038254955740937,
+            "reference_mean": 1.195921643771499,
+            "mean_diff": 0.007903851802594675,
+            "std_diff": 0.016346129976259872,
+            "t_stat": 1.5290575824936385,
+            "p_value": 0.173828125,
+            "wins": 4.0,
+            "ties": 0.0
+          },
+          "online_em": {
+            "n": 10.0,
+            "method_mean": 1.207496757877423,
+            "reference_mean": 1.195921643771499,
+            "mean_diff": 0.011575114105923823,
+            "std_diff": 0.01871775947093304,
+            "t_stat": 1.9555612309210944,
+            "p_value": 0.08203125,
+            "wins": 3.0,
+            "ties": 0.0
+          },
+          "emeans_posthoc": {
+            "n": 10.0,
+            "method_mean": 1.285936586282145,
+            "reference_mean": 1.195921643771499,
+            "mean_diff": 0.0900149425106461,
+            "std_diff": 0.007103954082435047,
+            "t_stat": 40.0695497858829,
+            "p_value": 0.001953125,
+            "wins": 0.0,
+            "ties": 0.0
+          },
+          "emeans_then_em3": {
+            "n": 10.0,
+            "method_mean": 1.242658461921849,
+            "reference_mean": 1.195921643771499,
+            "mean_diff": 0.046736818150350135,
+            "std_diff": 0.011361765681962574,
+            "t_stat": 13.00808343361953,
+            "p_value": 0.001953125,
+            "wins": 0.0,
+            "ties": 0.0
+          },
+          "fullbatch_em_random": {
+            "n": 10.0,
+            "method_mean": 1.1999173503440799,
+            "reference_mean": 1.195921643771499,
+            "mean_diff": 0.003995706572580837,
+            "std_diff": 0.012756534894693644,
+            "t_stat": 0.9905145664843803,
+            "p_value": 0.359375,
+            "wins": 4.0,
+            "ties": 0.0
+          },
+          "fullbatch_em_emeans": {
+            "n": 10.0,
+            "method_mean": 1.1864350254363658,
+            "reference_mean": 1.195921643771499,
+            "mean_diff": -0.009486618335133045,
+            "std_diff": 0.00932658306829367,
+            "t_stat": -3.2165393276471885,
+            "p_value": 0.005859375,
+            "wins": 9.0,
+            "ties": 0.0
+          }
+        },
+        "failures": {}
+      },
+      "alpha_sensitivity": {
+        "0.05": {
+          "alpha_0": 0.05,
+          "no_revive_vs_spectral": {
+            "n": 10.0,
+            "method_mean": 1.2221295147315625,
+            "reference_mean": 1.2212943629716784,
+            "mean_diff": 0.0008351517598840675,
+            "std_diff": 0.002315054881014027,
+            "t_stat": 1.1407858080560518,
+            "p_value": 0.5,
+            "wins": 0.0,
+            "ties": 8.0
+          },
+          "dead_spectral_mean": 0.0,
+          "dead_no_revive_mean": 0.2,
+          "per_seed": {
+            "spectral": [
+              1.218208476335316,
+              1.2193345760106735,
+              1.2226667085729317,
+              1.2362465045158206,
+              1.2284595282192858,
+              1.2304656577366793,
+              1.1960909360481535,
+              1.2090114503253562,
+              1.2440596929090724,
+              1.2084000990434947
+            ],
+            "no_revive": [
+              1.218208476335316,
+              1.2193345760106735,
+              1.2226667085729317,
+              1.2362465045158206,
+              1.2284595282192858,
+              1.2314526727836586,
+              1.1960909360481535,
+              1.2090114503253562,
+              1.2440596929090724,
+              1.215764601595356
+            ],
+            "dead_spectral": [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "dead_no_revive": [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              1.0,
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          }
+        },
+        "0.1": {
+          "alpha_0": 0.1,
+          "no_revive_vs_spectral": {
+            "n": 10.0,
+            "method_mean": 1.198869073418733,
+            "reference_mean": 1.195921643771499,
+            "mean_diff": 0.0029474296472342234,
+            "std_diff": 0.006591674227260702,
+            "t_stat": 1.4139944734860028,
+            "p_value": 0.2109375,
+            "wins": 3.0,
+            "ties": 1.0
+          },
+          "dead_spectral_mean": 0.0,
+          "dead_no_revive_mean": 2.1,
+          "per_seed": {
+            "spectral": [
+              1.2171272049972404,
+              1.2007627902426719,
+              1.189007677099323,
+              1.1940139624097754,
+              1.1949831571492684,
+              1.1808407599399622,
+              1.1964048726060257,
+              1.212330512988034,
+              1.2031716496824962,
+              1.1705738506001921
+            ],
+            "no_revive": [
+              1.228569286074723,
+              1.2067452465282265,
+              1.1858833282243686,
+              1.1979233242752398,
+              1.21016121372869,
+              1.1837242531856247,
+              1.1987630367162467,
+              1.2076703308881136,
+              1.2031716496824962,
+              1.1660790648836024
+            ],
+            "dead_spectral": [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "dead_no_revive": [
+              2.0,
+              3.0,
+              2.0,
+              2.0,
+              4.0,
+              2.0,
+              2.0,
+              2.0,
+              0.0,
+              2.0
+            ]
+          }
+        },
+        "0.2": {
+          "alpha_0": 0.2,
+          "no_revive_vs_spectral": {
+            "n": 10.0,
+            "method_mean": 1.2683981069392267,
+            "reference_mean": 1.1949352768950396,
+            "mean_diff": 0.07346283004418701,
+            "std_diff": 0.0287924241526955,
+            "t_stat": 8.068437206588266,
+            "p_value": 0.001953125,
+            "wins": 0.0,
+            "ties": 0.0
+          },
+          "dead_spectral_mean": 0.0,
+          "dead_no_revive_mean": 10.1,
+          "per_seed": {
+            "spectral": [
+              1.2166549399425228,
+              1.2039158995710388,
+              1.1824136198861293,
+              1.2060972529255276,
+              1.1969710300914094,
+              1.1929248644867434,
+              1.1888383501426005,
+              1.206748507077759,
+              1.1891593749662852,
+              1.1656289298603786
+            ],
+            "no_revive": [
+              1.3094558525029782,
+              1.225772545008325,
+              1.2371813004305419,
+              1.2453633943914968,
+              1.2965224169733391,
+              1.2722104617084,
+              1.2872285427159647,
+              1.2606694716289588,
+              1.2819855626922203,
+              1.26759152134004
+            ],
+            "dead_spectral": [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "dead_no_revive": [
+              11.0,
+              8.0,
+              7.0,
+              9.0,
+              11.0,
+              11.0,
+              12.0,
+              10.0,
+              11.0,
+              11.0
+            ]
+          }
+        },
+        "0.35": {
+          "alpha_0": 0.35,
+          "no_revive_vs_spectral": {
+            "n": 10.0,
+            "method_mean": 1.3762508789654073,
+            "reference_mean": 1.202096258352634,
+            "mean_diff": 0.17415462061277326,
+            "std_diff": 0.01669741744082727,
+            "t_stat": 32.98266142836439,
+            "p_value": 0.001953125,
+            "wins": 0.0,
+            "ties": 0.0
+          },
+          "dead_spectral_mean": 0.1,
+          "dead_no_revive_mean": 14.8,
+          "per_seed": {
+            "spectral": [
+              1.2025408622506557,
+              1.203961219368223,
+              1.2241144390490915,
+              1.2131873158659896,
+              1.1938484369851052,
+              1.2054034241462317,
+              1.186560049862485,
+              1.1901287796314215,
+              1.1957554378327786,
+              1.2054626185343604
+            ],
+            "no_revive": [
+              1.3937789059677592,
+              1.3924644831755566,
+              1.3806712896512545,
+              1.3844048939815312,
+              1.3464436167945646,
+              1.3758585097670615,
+              1.3698711784246667,
+              1.3867994081341346,
+              1.3766504242671087,
+              1.3555660794904372
+            ],
+            "dead_spectral": [
+              0.0,
+              0.0,
+              0.0,
+              1.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "dead_no_revive": [
+              15.0,
+              15.0,
+              15.0,
+              15.0,
+              14.0,
+              15.0,
+              15.0,
+              15.0,
+              15.0,
+              14.0
+            ]
+          }
+        }
+      },
+      "seconds": 372.2520637999987
     }
-  ]
+  },
+  "seconds": 612.3416294000344
 }

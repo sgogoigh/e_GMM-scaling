@@ -1,0 +1,2 @@
+Wrote C:\Users\sgogo\OneDrive\Desktop\Research\e_means\e_GMM-scaling\experiments\results\FINAL-EXPERIMENT-REPORT.md (48 verdicts: {'Contradicted': 6, 'Inconclusive': 25, 'H0 not rejected': 4, 'Supported': 13})
+[Experiment Log Saved] C:\Users\sgogo\OneDrive\Desktop\Research\e_means\e_GMM-scaling\experiments\logs\compile_experiment_report\run_20261125_011056.log

@@ -101,7 +101,9 @@ class NumPyEGMM:
       - Cosine-annealed step size alpha(t)
       - Diagonal (Flash-GMM 2d-GEMM), Low-Rank+Diag (Woodbury), and Full (Cholesky) modes
       - Spectral component splitting along principal eigenvector v_1
-      - Dual finalization: Last-Epoch Exact EM and passive Slow-EMA shadow
+      - Finalization: last-epoch accumulated M-step (responsibilities come from the parameters
+        that were live during the last epoch, so this is NOT an exact EM step) or a passive
+        slow-EMA shadow of the statistics
     """
 
     def __init__(self, cfg: EGMMConfig):
@@ -595,8 +597,13 @@ class NumPyEGMM:
 
 class NumPyOnlineEMCappeMoulines:
     """
-    Cappé & Moulines (2009) Online / Stochastic EM baseline using Robbins-Monro
-    step sizes gamma_t = (t + t0)^(-beta), beta in (0.5, 1], with no revival.
+    Cappé & Moulines (2009) online EM baseline: the same stochastic-approximation update of the
+    sufficient statistics as e-GMM, with Robbins-Monro steps gamma_t = (t + t0)^(-beta),
+    beta in (0.5, 1], and no revival.
+
+    Since 2026-11-25 the covariance floor is ADDED to the readout exactly as in e-GMM and defaults
+    to the same 1e-4, so comparisons are matched. (beta, t0) should be tuned on validation data;
+    see `e_gmm.benchmark`.
     """
 
     def __init__(
@@ -606,7 +613,7 @@ class NumPyOnlineEMCappeMoulines:
         cov_type: str = "diag",
         beta: float = 0.75,
         t0: float = 10.0,
-        cov_floor: float = 1e-8,
+        cov_floor: float = 1e-4,
         init_sigma0: float = 1.0,
         seed: int = 42,
     ):
@@ -648,7 +655,7 @@ class NumPyOnlineEMCappeMoulines:
                     raw_var = Q / N_safe[:, None] - mu ** 2
                     if np.any(raw_var <= 1e-10):
                         self.singular_events += int(np.sum(np.min(raw_var, axis=1) <= 1e-10))
-                    cov = np.maximum(raw_var, self.cov_floor)
+                    cov = np.maximum(raw_var, 0.0) + self.cov_floor
                     log_joint, _ = gaussian_log_prob_diag(xb, pi, mu, cov)
                 else:
                     raw_cov = Q / N_safe[:, None, None] - mu[:, :, None] * mu[:, None, :]
@@ -676,7 +683,7 @@ class NumPyOnlineEMCappeMoulines:
         pi = N_safe / N_safe.sum()
         mu = S / N_safe[:, None]
         if self.cov_type == "diag":
-            cov = np.maximum(Q / N_safe[:, None] - mu ** 2, self.cov_floor)
+            cov = np.maximum(Q / N_safe[:, None] - mu ** 2, 0.0) + self.cov_floor
         else:
             cov = 0.5 * (Q / N_safe[:, None, None] - mu[:, :, None] * mu[:, None, :] + np.swapaxes(Q / N_safe[:, None, None] - mu[:, :, None] * mu[:, None, :], -1, -2)) + self.cov_floor * np.eye(d)[None, :, :]
 
@@ -685,7 +692,17 @@ class NumPyOnlineEMCappeMoulines:
 
 
 class NumPyFullBatchEM:
-    """Classical Full-Batch EM baseline (used as oracle reference on tractable sizes)."""
+    """
+    Full-batch EM: an exact E-step over all n points per iteration, accumulated in row chunks so
+    memory is O(chunk_size * k) instead of O(n * k).
+
+    init:
+      - "random": k random training points as means, isotropic init_sigma0, uniform weights
+        (the original baseline);
+      - "emeans": hard e-means clustering + per-cell covariance (the analogue of scikit-learn's
+        default k-means initialization);
+      - or pass `init_params=(pi, mu, cov)` to `fit`.
+    """
 
     def __init__(
         self,
@@ -695,17 +712,74 @@ class NumPyFullBatchEM:
         cov_floor: float = 1e-4,
         init_sigma0: float = 1.0,
         seed: int = 42,
+        init: str = "random",
+        emeans_alpha_0: float = 0.35,
+        emeans_epochs: int = 3,
+        emeans_batch_size: Optional[int] = None,
+        chunk_size: int = 8192,
     ):
+        if cov_type not in ("diag", "full"):
+            raise ValueError(f"NumPyFullBatchEM supports cov_type 'diag' or 'full', got {cov_type!r}.")
+        if init not in ("random", "emeans"):
+            raise ValueError(f"init must be 'random' or 'emeans', got {init!r}.")
         self.k = num_components
         self.d = dim
         self.cov_type = cov_type
         self.cov_floor = cov_floor
         self.init_sigma0 = init_sigma0
+        self.seed = seed
+        self.init = init
+        self.emeans_alpha_0 = emeans_alpha_0
+        self.emeans_epochs = emeans_epochs
+        self.emeans_batch_size = emeans_batch_size
+        self.chunk_size = int(chunk_size)
         self.rng = np.random.default_rng(seed)
 
-    def fit(self, X: np.ndarray, max_iters: int = 25, tol: float = 1e-4) -> FullBatchEMFitResult:
-        X64 = np.asarray(X, dtype=np.float64)
+    def _e_step_stats(self, X64: np.ndarray, pi, mu, cov):
+        k, d = self.k, self.d
+        N = np.zeros(k, dtype=np.float64)
+        S = np.zeros((k, d), dtype=np.float64)
+        if self.cov_type == "diag":
+            Q = np.zeros((k, d), dtype=np.float64)
+        else:
+            Q = np.zeros((k, d, d), dtype=np.float64)
+        total_ll = 0.0
+        for start in range(0, X64.shape[0], self.chunk_size):
+            xb = X64[start : start + self.chunk_size]
+            if self.cov_type == "diag":
+                log_joint, lse = gaussian_log_prob_diag(xb, pi, mu, cov)
+            else:
+                log_joint, lse, _ = gaussian_log_prob_full(xb, pi, mu, cov)
+            r = np.exp(log_joint - lse[:, None])
+            N += r.sum(axis=0)
+            S += r.T @ xb
+            if self.cov_type == "diag":
+                Q += r.T @ (xb ** 2)
+            else:
+                Q += np.einsum("bi,bd,be->ide", r, xb, xb, optimize=True)
+            total_ll += float(np.sum(lse))
+        return N, S, Q, total_ll
+
+    def _m_step(self, N, S, Q):
+        N_eff = np.maximum(N, 1e-12)
+        pi = N_eff / np.sum(N_eff)
+        mu = S / N_eff[:, None]
+        if self.cov_type == "diag":
+            cov = np.maximum(Q / N_eff[:, None] - mu ** 2, 0.0) + self.cov_floor
+        else:
+            raw = Q / N_eff[:, None, None] - mu[:, :, None] * mu[:, None, :]
+            cov = 0.5 * (raw + np.swapaxes(raw, -1, -2)) + self.cov_floor * np.eye(self.d)[None, :, :]
+        return pi, mu, cov, N_eff
+
+    def _initial_params(self, X64: np.ndarray):
         n, d = X64.shape
+        if self.init == "emeans":
+            B = self.emeans_batch_size or int(min(max(2 * self.k, 64), n))
+            post = NumPyEMeansPostHocGMM(
+                self.k, d, cov_type=self.cov_type, cov_floor=self.cov_floor,
+                alpha_0=self.emeans_alpha_0, seed=self.seed,
+            ).fit(X64, batch_size=B, epochs=self.emeans_epochs)
+            return post["pi"], post["mu"], post["cov"]
         idx = self.rng.choice(n, size=self.k, replace=n < self.k)
         mu = X64[idx].copy()
         pi = np.full(self.k, 1.0 / self.k, dtype=np.float64)
@@ -714,44 +788,41 @@ class NumPyFullBatchEM:
             cov = np.full((self.k, d), s0_sq, dtype=np.float64)
         else:
             cov = np.broadcast_to(s0_sq * np.eye(d), (self.k, d, d)).copy()
+        return pi, mu, cov
 
+    def fit(
+        self,
+        X: np.ndarray,
+        max_iters: int = 25,
+        tol: float = 1e-4,
+        init_params: Optional[Tuple[np.ndarray, np.ndarray, np.ndarray]] = None,
+    ) -> FullBatchEMFitResult:
+        X64 = np.asarray(X, dtype=np.float64)
+        n = X64.shape[0]
+        if init_params is not None:
+            pi, mu, cov = (np.asarray(arr, dtype=np.float64).copy() for arr in init_params)
+        else:
+            pi, mu, cov = self._initial_params(X64)
         prev_nll = float("inf")
         nll_history: List[float] = []
         N_eff = np.full(self.k, n / self.k, dtype=np.float64)
-
         for _ in range(max_iters):
-            if self.cov_type == "diag":
-                log_joint, lse = gaussian_log_prob_diag(X64, pi, mu, cov)
-            else:
-                log_joint, lse, _ = gaussian_log_prob_full(X64, pi, mu, cov)
-            r, _ = _softmax_from_log_joint(log_joint)
-            nll = float(-np.mean(lse))
+            N, S, Q, total_ll = self._e_step_stats(X64, pi, mu, cov)
+            nll = -total_ll / max(n, 1)
             nll_history.append(nll)
-
-            N_eff = np.maximum(np.sum(r, axis=0), 1e-12)
-            pi = N_eff / np.sum(N_eff)
-            mu = (r.T @ X64) / N_eff[:, None]
-            if self.cov_type == "diag":
-                var = (r.T @ (X64 ** 2)) / N_eff[:, None] - mu ** 2
-                cov = np.maximum(var, 0.0) + self.cov_floor
-            else:
-                q_sum = np.einsum("bi,bd,be->ide", r, X64, X64, optimize=True)
-                raw = q_sum / N_eff[:, None, None] - mu[:, :, None] * mu[:, None, :]
-                cov = 0.5 * (raw + np.swapaxes(raw, -1, -2)) + self.cov_floor * np.eye(d)[None, :, :]
-
+            pi, mu, cov, N_eff = self._m_step(N, S, Q)
             if abs(prev_nll - nll) < tol:
                 break
             prev_nll = nll
-
         health = compute_gmm_health(N_eff, cov, cov_type=self.cov_type, cov_floor=self.cov_floor)
         return {"pi": pi, "mu": mu, "cov": cov, "nll_history": nll_history, "health": health}
 
 
 class NumPyEMeansPostHocGMM:
     """
-    Strong baseline: runs hard e-means (2-tuple EMA + cosine schedule + donor splitting)
-    followed by 1 exact hard-assignment M-step covariance readout.
-    Proves that joint soft EM in e-GMM outperforms hard clustering + post-hoc covariance!
+    Two-stage baseline: hard e-means (2-tuple EMA + cosine schedule + donor splitting) followed by
+    one hard-assignment covariance readout per Voronoi cell. See also `NumPyEMeansThenEM`, which
+    adds full-batch soft EM iterations on top (the usual k-means-initialized EM recipe).
     """
 
     def __init__(
@@ -844,3 +915,41 @@ class NumPyEMeansPostHocGMM:
 
         health = compute_gmm_health(counts, cov, cov_type=self.cov_type, cov_floor=self.cov_floor)
         return {"pi": pi, "mu": mu, "cov": cov, "splits": splits, "health": health}
+
+
+class NumPyEMeansThenEM:
+    """
+    e-means -> post-hoc covariance -> `em_iters` full-batch soft EM iterations.
+
+    This is the standard "k-means init, then EM" recipe with e-means as the initializer. With
+    em_iters=3 its data passes are roughly matched to a few extra epochs of e-GMM.
+    """
+
+    def __init__(
+        self,
+        num_components: int,
+        dim: int,
+        cov_type: str = "diag",
+        cov_floor: float = 1e-4,
+        alpha_0: float = 0.35,
+        em_iters: int = 3,
+        seed: int = 42,
+        chunk_size: int = 8192,
+    ):
+        self.k = num_components
+        self.d = dim
+        self.cov_type = cov_type
+        self.cov_floor = cov_floor
+        self.alpha_0 = alpha_0
+        self.em_iters = int(em_iters)
+        self.seed = seed
+        self.chunk_size = chunk_size
+
+    def fit(self, X: np.ndarray, batch_size: int = 512, epochs: int = 3) -> FullBatchEMFitResult:
+        post = NumPyEMeansPostHocGMM(
+            self.k, self.d, cov_type=self.cov_type, cov_floor=self.cov_floor, alpha_0=self.alpha_0, seed=self.seed
+        ).fit(X, batch_size=batch_size, epochs=epochs)
+        em = NumPyFullBatchEM(
+            self.k, self.d, cov_type=self.cov_type, cov_floor=self.cov_floor, seed=self.seed, chunk_size=self.chunk_size
+        )
+        return em.fit(X, max_iters=self.em_iters, tol=0.0, init_params=(post["pi"], post["mu"], post["cov"]))

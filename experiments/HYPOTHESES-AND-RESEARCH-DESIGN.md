@@ -1,47 +1,105 @@
-# Research Design & Formal Hypotheses (`e-GMM`)
+# Research Design and Hypotheses (e-GMM)
 
-**Working Paper Title**: *"e-GMM: Scaling Expectation-Maximization to Billion-Scale Datasets via Exponential Moving Averages"*  
-**Research Track**: Tier 1 Extension of `e-means` (`arXiv:2611.09501`)  
-**Total Cluster Allocation**: `200–300 GPU-hours` on `1× to 2× NVIDIA A100 / H100 (80 GB)`
+**Working title:** *e-GMM: fitted step and batch laws, and component revival, for soft mini-batch EM*
+**Track:** Tier 1, candidate 2 of the e-means novelty report (extending arXiv 2611.09501)
+**Budget asked:** 200–300 GPU-hours on 1–2 × A100/H100 80 GB. This is an estimate: no GPU job has run yet.
 
----
-
-## 1. The Research Subject & Core Crux
-
-### Why Expectation-Maximization Still Fails at Billion Scale
-Gaussian Mixture Models (GMMs) provide calibrated density estimation, soft posterior responsibilities, and anisotropic uncertainty modeling that hard Euclidean `k-means` lacks. Yet two decades of scaling attempts hit four intertwined barriers:
-1. **Full-Batch EM Wall ($O(nkd^2)$ / $O(nkd)$)**: Requires 25–100 full dataset passes; intractable when $n \ge 10^8$ or $k \ge 10^4$.
-2. **Robbins-Monro Fragility in Online EM (Cappé & Moulines, 2009)**: Relies on polynomial step decay $\gamma_t = (t + t_0)^{-\beta}$, $\beta \in (0.5, 1]$, with no scaling formula for $(n, k, d, B, T)$. Aggressive decay stalls initialization; slow decay prevents convergence.
-3. **Covariance Singularity & Dead Components**: Whenever a mini-batch routes fewer than $d$ effective points to component $j$, sample covariance becomes rank-deficient ($\det \Sigma_j \to 0$), causing Cholesky `LinAlgError` or $\ln p \to +\infty$, while low-weight components permanently starve ($r_{ij} \to 0$).
-4. **HBM & Parameter Memory Walls**: Storing full covariances at $k=65{,}536, d=1024$ requires **`256.0 GiB` (`274.88 GB`)** for $Q_j$ alone, while materializing $(B \times k)$ E-step matrices at $B=262{,}144, k=65{,}536$ consumes **`64.0 GiB`** of HBM.
-
-### The `e-GMM` Solution (Three Primitives + Two Systems Enablers)
-1. **3-Tuple FP32 EMA Sufficient Statistics + Regularized Readout**: Track $(N_j, S_j, Q_j)$ in FP32 with cosine schedule $\alpha(t)$ down to $0.1\alpha_0$, and read out $\Sigma_j = Q_j/N_j - \mu_j\mu_j^\top + \lambda_0 I_d \succeq \lambda_0 I_d \succ 0$ (with Batch-1 prior mass $\ge 1.0$ to prevent early rank collapse).
-2. **Dimension-Aware Power-Law Tuning**: Fit $\alpha_0(k, B, n, T, d)$ and $B_{\text{knee}}(k, n, T, d)$ once on a proxy domain to eliminate manual hyperparameter sweeps on new datasets.
-3. **Spectral Component Splitting Along $\mathbf{v}_1$**: Every 5 batches, detect starved slots ($N_j < \tau \bar{N}$) and split overloaded donors (weighted by variance mass $N_{j^*} \operatorname{tr}(\Sigma_{j^*})$) along their principal covariance eigenvector $\mathbf{v}_1$ with exact second-moment conservation.
-4. **Flash-GMM `2d`-GEMM + Top-$m$ + Low-Rank Woodbury**: Turn diagonal E-steps into a single $(B \times 2d) \times (2d \times k)$ Tensor-Core GEMM with streaming `logsumexp` + Top-$m$ sparse M-step accumulation, and handle correlated high-$d$ embeddings via $\Sigma_j = D_j + U_j U_j^\top$ ($O(kdr)$).
+> Revised 2026-11-25 after the [review](../docs/review/2026-11-25-REVIEW.md).
+> - The earlier version stated barriers that the repository's own runs did not show.
+> - It also had no numeric pass/fail criteria.
+> - Its verdicts were hard-coded in the report compilers.
+>
+> This version fixes all three. Verdicts are now computed by the compilers using the rule in Section 3.
 
 ---
 
-## 2. Formal Research Questions & Testable Hypotheses (`H1`–`H7`)
+## 1. Subject
 
-| ID | Research Question | Formal Hypothesis & Falsification Criterion | Primary Experiment |
+### What e-GMM is
+- **Update rule.** A stochastic-approximation online EM on the sufficient statistics (N_j, S_j, Q_j), as in Cappé & Moulines (2009): Ŝ_t = (1 − α_t)·Ŝ_{t−1} + α_t·E[s(x) | x, θ_{t−1}].
+- **Step schedule.** α_t is a cosine schedule from α₀ down to 0.1·α₀, as in e-means, instead of (t + t₀)^−β.
+- **Covariance readout.** Σ_j = Q_j/N_j − μ_jμ_jᵀ + λ₀·I.
+- **Revival.** Every 5 batches, components with N_j < τ·mean(N) are rebuilt by splitting a donor. The default split is moment-preserving, along the donor's principal eigenvector v₁.
+- **Finalization.** Either the average of the last epoch's statistics, or a slow EMA of the statistics.
+
+The update rule is not new. The e-means paper itself credits EMA-statistics EM to Nowlan (1991) and Neal & Hinton (1998). The contribution, if any, is empirical:
+- **Step and batch laws.** Can α₀ and the batch-size knee be predicted from (k, B, n, T) for soft EM? Does adding d (ambient or intrinsic) help?
+- **Revival.** Does revival improve held-out NLL against *tuned* baselines?
+
+### Barriers, as far as the evidence supports them
+1. **Full-batch EM costs O(nkd) per iteration** (O(nkd²) for full covariance), and needs many passes. This is standard, and it is the reason to use mini-batches.
+2. **Online EM has no rule for choosing its step size at a fixed epoch budget.** Robbins–Monro conditions are asymptotic.
+   - The re-check in the review shows the cost of a bad choice: at α₀ = 0.35, e-GMM without revival starves 13–15 of 16 components, but at α₀ = 0.10 it does not.
+   - A fitted law for α₀ is therefore useful. Whether the law needs d is open: the e-means authors dropped a d exponent as unstable (their Appendix B.1).
+3. **Starved components.** Mini-batch soft EM can leave components with negligible responsibility. However:
+   - In the repository's runs, this happened at a large hand-set step size, not intrinsically.
+   - Plain online EM did not collapse in the same setting.
+   - For a GMM, a small mixture weight can be correct (a rare mode), so "dead" (weight below τ × mean) is a diagnostic, not an error.
+4. **Singular covariances.** The maximum-likelihood GMM objective is unbounded when a component collapses onto a point. An additive floor λ₀·I prevents this by construction.
+   - "Zero singularity failures" is therefore a property of the floor, not a finding.
+   - No method in the PoCs recorded a singular event.
+5. **Memory.** Full covariance at k = 65 536 and d = 1024 needs 256 GiB in FP32 for Q alone.
+   - Diagonal costs O(kd) and low-rank + diagonal costs O(kdr). This arithmetic is correct.
+   - The claimed GPU savings (a fused Triton E-step, no B × k materialization) are **not implemented**. The kernel is not wired in, and the dense path materializes B × k.
+
+---
+
+## 2. Hypotheses
+
+Every hypothesis is judged by the rule in Section 3.
+Every comparison is paired by seed: each method sees the same splits and the same budget.
+"Tuned" means the step hyperparameters were chosen on a validation split, with the same grid size for every method (Section 4, control 2).
+
+| ID | Question | Hypothesis, and how it is judged | Experiment |
 | :---: | :--- | :--- | :--- |
-| **H1** | Does ambient dimension $d$ stabilize `e-GMM` scaling laws? | **H1**: Including $d^{a_d}$ in $\ln \alpha_0 = \ln C_\alpha + a_k \ln k + a_B \ln B + a_n \ln n + a_T \ln T + a_d \ln d$ achieves $a_d < 0$, raises OLS $R^2$ over the $d$-agnostic law, and cuts LODO-$d$ extrapolation error by $\ge 1.5\times$. *Falsified if $R^2_{\text{with } d} \le R^2_{\text{no } d}$ or LODO error worsens.* | `exp_01` (Phase A) |
-| **H2** | Do fitted $(n, k, d, B, T)$ laws generalize zero-shot OOD? | **H2**: Laws fit on `DEEP` / `StretchedGaussian` transfer zero-shot to unseen $(d, n)$ and OOD datasets (`SIFT`, `SPACEV`, `ImageNet-1k`) with low NLL regret vs. exhaustive oracle grid search. | `exp_01` (Phase A) |
-| **H3** | Does `e-GMM` eliminate singularities and beat Online EM & Full-Batch EM at matched epoch budgets? | **H3**: Across 1–3 epochs on `SIFT1M`, `DEEP1B`, `DINOv2-100M`, and `ImageNet-1k`, `e-GMM` produces **0** Cholesky/singularity failures, lower collapsed-component rate, and strictly faster wall-clock time to target Test NLL than Full-Batch EM and swept Cappé & Moulines Online EM. | `exp_02` (Phase B) |
-| **H4** | When does joint soft `e-GMM` beat `e-means + PostHoc`? | **H4**: On cleanly separated clusters (`SIFT`/`Zipf-Separated`), `e-means + PostHoc` is a near-tie baseline; on **overlapping, correlated, or anisotropic mixtures** (`DINOv2`, `ImageNet-1k`, `Overlapping-Aniso`), joint soft `e-GMM` achieves statistically significantly lower Test NLL ($\Delta \text{NLL} < 0$, paired $t$-test $p < 0.05$ across $\ge 5$ seeds). | `exp_02` (Phase B) |
-| **H5** | Does spectral $\mathbf{v}_1$ splitting outperform alternative revival policies? | **H5**: Spectral splitting along $\mathbf{v}_1$ with variance-mass donor selection achieves lower Test NLL and fewer dead components than no-revival, batch resampling, Faiss alternating $\pm \delta$, and random orthogonal splits. | `exp_03` (Phase C) |
-| **H6** | Do `low_rank_diag` (Woodbury) and Top-$m$ sparsity preserve density quality at huge memory/FLOP savings? | **H6**: `low_rank_diag` ($r \in \{8, 16\}$) strictly beats `diag` on correlated embeddings and achieves superior BIC vs. `full` while saving $>20\times$ VRAM; Top-$m$ ($m \in \{8, 16\}$) stays within $< 0.01$ nats/dim of dense soft EM while cutting M-step work by $k/m$. | `exp_03` & `exp_04` |
-| **H7** | Does dual finalization separate Train NLL optimality from Test NLL generalization? | **H7**: `last_epoch` exact EM minimizes Train NLL, whereas passive `slow_ema` shadow statistics reduce finite-sample variance and win held-out Test NLL in low-$n/k$ regimes. | `exp_03` (Phase C) |
+| **H0** | Is e-GMM better than the standard alternatives once they are all tuned? | **H0 (the null to beat):** at matched epochs and batch size, tuned e-GMM's test NLL is *no better* than the best of tuned online EM (Cappé–Moulines), e-means followed by a few full-batch EM iterations, and full-batch EM from a k-means/e-means initialization. **e-GMM has a contribution only where H0 is rejected** (verdict *Supported* for "e-GMM < baseline"). | `exp_02` |
+| **H1** | Does a d term improve the α₀ law? | **H1:** adding a_d·ln d (ambient d, and separately intrinsic d from TwoNN) lowers the **leave-one-d-out (LODO) test-NLL regret**: the NLL at the law-predicted α₀, minus the NLL at the best grid α₀, in nats/dim. Supported if the regret drops by at least 0.01 nats/dim with p < 0.05 across held-out configurations. **In-sample R² is reported but does not decide H1.** An exponent is reported only if its regressor varies in the sweep (T must take at least 2 values). | `exp_01` |
+| **H2** | Does the fitted law transfer zero-shot? | **H2:** fitted on one data source, the law's predicted α₀ gives a held-out NLL regret of at most 0.01 nats/dim (median over configurations) on unseen (n, k, d) and on an unseen dataset. Batch-knee fits use only uncensored knees: a knee at the largest batch tried is excluded and counted. | `exp_01` |
+| **H3** | Does e-GMM beat online EM and full-batch EM at a matched epoch budget? | **H3:** at T ∈ {1, 2, 3} epochs, tuned e-GMM has lower test NLL than tuned online EM and than full-batch EM given the same number of data passes. Judged per dataset. Wall-clock is compared **only on the same backend and device**. | `exp_02` |
+| **H4** | When does joint soft e-GMM beat a hard e-means pipeline? | **H4:** on overlapping or anisotropic mixtures, e-GMM beats both e-means + post-hoc covariance and e-means → EM. On well-separated mixtures the difference is within the threshold. Both regimes must be reported. | `exp_02` |
+| **H5** | Does spectral v₁ splitting beat other revival policies? | **H5:** at each method's *tuned* α₀, spectral splitting has lower test NLL than no revival, batch resampling, the Faiss ±δ split and a random orthogonal split. No revival at tuned α₀ is the key comparison: at α₀ = 0.10 the re-check found no significant difference. | `exp_03` |
+| **H6** | Do low-rank + diagonal covariance and top-m responsibilities preserve quality? | **H6a:** `low_rank_diag` (r ∈ {8, 16}) beats `diag` on test NLL for correlated data, and beats `full` on BIC **computed on the training set**. **H6b:** top-m (m ∈ {8, 16}) stays within 0.01 nats/dim of dense responsibilities. | `exp_03`, `exp_04` |
+| **H7** | Does the finalization method matter? | **H7:** the slow-EMA readout beats the last-epoch average on test NLL when n/k is small. The last-epoch average is **not** exact EM: its responsibilities come from parameters that move during the epoch. | `exp_03` |
 
 ---
 
-## 3. Experimental Controls & Baseline Fairness Requirements
+## 3. Verdict rule
 
-Enforced automatically across `exp_01`–`exp_04` and verified by `tests/test_diagnostics_and_baselines.py`:
-1. **Shared Holdout & Exact Evaluator**: Every comparator outputs $(\pi, \mu, \Sigma)$ evaluated through the identical `evaluate_gmm_nll()` function over identically deduplicated 10,000-vector validation / 10,000-vector test splits (`e-means` Appendix A protocol).
-2. **Matched Data & Epoch Budgets**: All mini-batch comparators consume identical total passes $T \cdot n$ and identical batch size $B$ (except when $B_{\text{knee}}$ itself is under study in Phase A).
-3. **Transparent Stability Accounting**: Online EM baselines must log `singular_events` and `dead_components` rather than hiding rank collapse behind silent jitter.
-4. **Both Separated & Overlapping Regimes**: Every benchmark suite against `e-means + PostHoc` must include overlapping/correlated mixtures where hard Voronoi partitioning fails.
-5. **Multi-Seed Replication**: Smoke mode uses `2–3` seeds; full GPU runs use **`5–10` seeds** and report `mean ± std` + paired effect size.
+The rule is implemented in [`src/e_gmm/stats.py`](../src/e_gmm/stats.py) and used by both report compilers.
+
+1. **Seeds:** at least 10. Smoke runs use fewer, and the compiler reports them as *Inconclusive (too few seeds)*.
+2. **Test:** for the claim "A beats B" (lower NLL), compute diff = NLL_A − NLL_B on the test split for each seed, and run a two-sided **exact sign-flip permutation test** on the diffs.
+3. **Practical threshold:** 0.01 nats per dimension. The per-point threshold is 0.01·d nats.
+4. **Verdict:**
+   - **Supported:** p < 0.05 and mean(diff) ≤ −threshold.
+   - **Contradicted:** p < 0.05 and mean(diff) > 0.
+   - **Inconclusive:** everything else, including significant differences smaller than the threshold.
+5. **Multiple claims:** each report lists every claim it tested, not only the ones that passed.
+
+---
+
+## 4. Controls
+
+The compilers check these where they can. A run that violates one is flagged in the report.
+
+1. **One evaluator.** Every method outputs (π, μ, Σ), which are scored by the same `evaluate_gmm_nll` on the same deduplicated validation and test splits.
+2. **Validation tuning for every method.** Each method's step hyperparameters are chosen on the validation split, with a grid of the same size per method:
+   - α₀ for e-GMM and e-means;
+   - (β, t₀) for online EM;
+   - the iteration count for full-batch EM.
+   No method uses a hand-set value that another method's grid would have beaten.
+3. **Matched regularization and initialization.** Every method uses the same covariance floor λ₀ (additive) and the same initialization scale. Full-batch EM is also run from a k-means/e-means initialization, which is scikit-learn's default.
+4. **Matched budget.** Every mini-batch method uses the same number of passes T·n and the same batch size B. The only exception is the batch-size sweep in Phase A.
+5. **Strict data handling.**
+   - A missing file is an error; there is no synthetic substitution.
+   - There is no silent dimension truncation; PCA projection is explicit and recorded.
+   - Rows are sampled at random, not taken from the start of the file.
+   - Data is scale-normalized before fitting, so λ₀ means the same thing on every dataset.
+6. **Diagnostics are not results.** Dead-component counts (weight below τ × mean) and the floor-dominated rate (raw variance ≤ λ₀) are reported to explain results. They are never used as quality metrics on their own.
+7. **Information criteria.** BIC and AIC are computed on the training set.
+8. **Sweep identifiability.**
+   - Every regressor in a law fit must vary.
+   - Censored knees are excluded.
+   - The sweep data is a mixture, not a single Gaussian.
+   - Initialization does not depend on B or k.
+9. **Scope of claims.** A report states the largest n, d and k actually run, the backend and device, and whether the data was real or synthetic.

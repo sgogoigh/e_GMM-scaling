@@ -6,25 +6,25 @@
       "top_m": 2,
       "m_step_work_ratio": 0.0625,
       "test_nll": 14.7435,
-      "fit_ms": 31.0
+      "fit_ms": 256.3
     },
     {
       "top_m": 4,
       "m_step_work_ratio": 0.125,
       "test_nll": 14.1575,
-      "fit_ms": 30.6
+      "fit_ms": 321.1
     },
     {
       "top_m": 8,
       "m_step_work_ratio": 0.25,
       "test_nll": 14.4512,
-      "fit_ms": 27.4
+      "fit_ms": 305.0
     },
     {
       "top_m": "dense",
       "m_step_work_ratio": 1.0,
       "test_nll": 14.451,
-      "fit_ms": 28.3
+      "fit_ms": 225.4
     }
   ],
   "covariance_mode_ablation": [

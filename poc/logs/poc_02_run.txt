@@ -1,0 +1,71 @@
+[zipf] benchmark ...
+  tuned egmm_spectral          -> {'alpha_0': 0.1}
+  tuned egmm_no_revive         -> {'alpha_0': 0.025}
+  tuned egmm_faiss_alt         -> {'alpha_0': 0.1}
+  tuned online_em              -> {'beta': 0.55, 't0': 100.0}
+C:\Users\sgogo\OneDrive\Desktop\Research\e_means\e_GMM-scaling\src\e_gmm\numpy_egmm.py:861: RuntimeWarning: invalid value encountered in divide
+  c = S / N[:, None]
+  tuned emeans_posthoc         -> {'alpha_0': 0.7}
+  tuned emeans_then_em3        -> {'alpha_0': 0.2, 'em_iters': 3}
+  tuned fullbatch_em_random    -> {'max_iters': 25}
+  tuned fullbatch_em_emeans    -> {'max_iters': 25}
+  seed 1 done
+  seed 2 done
+  seed 3 done
+  seed 4 done
+  seed 5 done
+  seed 6 done
+  seed 7 done
+  seed 8 done
+  seed 9 done
+  seed 10 done
+[zipf] sensitivity ...
+
+[zipf] test NLL nats/dim, paired vs egmm_spectral (mean_diff>0 means egmm_spectral better)
+  egmm_no_revive         n=10.0 mean_diff=+0.0079 p=0.0352 dead=2.4
+  egmm_faiss_alt         n=10.0 mean_diff=+0.0008 p=0.8379 dead=0.0
+  online_em              n=10.0 mean_diff=+0.0072 p=0.1758 dead=3.4
+  emeans_posthoc         n=10.0 mean_diff=+0.0014 p=0.8477 dead=0.0
+  emeans_then_em3        n=10.0 mean_diff=+0.0030 p=0.5625 dead=0.0
+  fullbatch_em_random    n=10.0 mean_diff=+0.0093 p=0.0430 dead=0.0
+  fullbatch_em_emeans    n=10.0 mean_diff=+0.0066 p=0.1562 dead=0.0
+  alpha_0= 0.05: no_revive-spectral mean_diff=+0.0070 p=0.0820 dead(spectral/none)=0.0/1.5
+  alpha_0=  0.1: no_revive-spectral mean_diff=+0.0068 p=0.0879 dead(spectral/none)=0.0/2.7
+  alpha_0=  0.2: no_revive-spectral mean_diff=+0.0430 p=0.0020 dead(spectral/none)=0.0/9.5
+  alpha_0= 0.35: no_revive-spectral mean_diff=+0.1691 p=0.0020 dead(spectral/none)=0.0/13.8
+[overlap] benchmark ...
+  tuned egmm_spectral          -> {'alpha_0': 0.1}
+  tuned egmm_no_revive         -> {'alpha_0': 0.1}
+  tuned egmm_faiss_alt         -> {'alpha_0': 0.35}
+  tuned online_em              -> {'beta': 0.55, 't0': 100.0}
+  tuned emeans_posthoc         -> {'alpha_0': 0.1}
+  tuned emeans_then_em3        -> {'alpha_0': 0.2, 'em_iters': 3}
+  tuned fullbatch_em_random    -> {'max_iters': 25}
+  tuned fullbatch_em_emeans    -> {'max_iters': 25}
+  seed 1 done
+  seed 2 done
+  seed 3 done
+  seed 4 done
+  seed 5 done
+  seed 6 done
+  seed 7 done
+  seed 8 done
+  seed 9 done
+  seed 10 done
+[overlap] sensitivity ...
+
+[overlap] test NLL nats/dim, paired vs egmm_spectral (mean_diff>0 means egmm_spectral better)
+  egmm_no_revive         n=10.0 mean_diff=+0.0029 p=0.2109 dead=2.1
+  egmm_faiss_alt         n=10.0 mean_diff=+0.0079 p=0.1738 dead=0.0
+  online_em              n=10.0 mean_diff=+0.0116 p=0.0820 dead=1.4
+  emeans_posthoc         n=10.0 mean_diff=+0.0900 p=0.0020 dead=0.0
+  emeans_then_em3        n=10.0 mean_diff=+0.0467 p=0.0020 dead=0.0
+  fullbatch_em_random    n=10.0 mean_diff=+0.0040 p=0.3594 dead=0.2
+  fullbatch_em_emeans    n=10.0 mean_diff=-0.0095 p=0.0059 dead=0.0
+  alpha_0= 0.05: no_revive-spectral mean_diff=+0.0008 p=0.5000 dead(spectral/none)=0.0/0.2
+  alpha_0=  0.1: no_revive-spectral mean_diff=+0.0029 p=0.2109 dead(spectral/none)=0.0/2.1
+  alpha_0=  0.2: no_revive-spectral mean_diff=+0.0735 p=0.0020 dead(spectral/none)=0.0/10.1
+  alpha_0= 0.35: no_revive-spectral mean_diff=+0.1742 p=0.0020 dead(spectral/none)=0.1/14.8
+
+Saved JSON -> C:\Users\sgogo\OneDrive\Desktop\Research\e_means\e_GMM-scaling\poc\results\poc_02_results.json (612s)
+[Log Saved] C:\Users\sgogo\OneDrive\Desktop\Research\e_means\e_GMM-scaling\poc\logs\poc_02\run_20261125_005958_full.log
